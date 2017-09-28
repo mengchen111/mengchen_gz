@@ -9,7 +9,7 @@ use Illuminate\Foundation\Testing\DatabaseTransactions;
 
 class SiteRootTest extends TestCase
 {
-    public function testRootRedirect()
+    public function testRootWithGuest()
     {
         $response = $this->get('/');
 

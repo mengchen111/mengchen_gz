@@ -43,7 +43,7 @@ class SendGameNotification implements ShouldQueue
     public function handle()
     {
         $httpClient = new Client([
-            'timeout' => 6,    //设置超时时间
+            'connect_timeout' => 6,    //设置超时时间
         ]);
 
         $response = $httpClient->request('POST', $this->apiAddress, [

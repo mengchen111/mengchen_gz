@@ -20,7 +20,7 @@ class GameServer
     {
         $this->apiAddress = $apiAddress;
         $this->guzzle = new GuzzleHttp\Client([
-            'timeout' => 5,
+            'connect_timeout' => 5,
             'handler' => $guzzleHandler,
         ]);
     }
