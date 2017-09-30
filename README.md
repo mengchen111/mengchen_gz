@@ -30,6 +30,17 @@ curl --silent --location https://rpm.nodesource.com/setup_8.x | sudo bash -
 yum -y install nodejs
 ```
 
+## 单元测试与代码覆盖率
+测试并生成代码覆盖率报表：  
+```
+cd ${code_ducument_root}
+phpunit --coverage-html public/test/
+```
+查看代码覆盖率：
+```
+URI: /test/index.html
+```
+
 ## 生产环境代码发布  
 
 ```
@@ -37,7 +48,7 @@ cd ${code_ducument_root}
 git pull                #获取最新代码
 composer install        #安装laravle依赖
 chmod +x vendor/phpunit/phpunit/phpunit #添加执行权限
-./vendor/bin/phpunit    #代码测试
+./vendor/bin/phpunit    #单元测试
 
 cd client       #进入js开发目录
 npm install     #安装npm包
@@ -60,7 +71,8 @@ npm install
 npm run build
 ```
 
-## 开发环境使用pre-push钩子
+## 开发环境规范  
+### 开发环境使用pre-push钩子
 ```
 #!/bin/sh
 
