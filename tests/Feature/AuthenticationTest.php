@@ -35,7 +35,7 @@ class AuthenticationTest extends TestCase
     }
 
     //登录过的管理员访问登录页面应该跳转到管理员的home页
-    public function testLoginPageWithAdmin()
+    public function testLoginPageAsAdmin()
     {
         $response = $this->actingAs($this->admin)
             ->get($this->loginPageUri);
@@ -43,14 +43,14 @@ class AuthenticationTest extends TestCase
     }
 
     //登录过的代理商访问登录页面应该跳转到代理商的home页
-    public function testLoginPageWithAgent()
+    public function testLoginPageAsAgent()
     {
         $response = $this->actingAs($this->agent)
             ->get($this->loginPageUri);
         $response->assertRedirect($this->agentHome);
     }
 
-    public function testLoginActionByAgentWithRightPass()
+    public function testLoginActionAsAgentWithRightPass()
     {
         $response = $this->post($this->loginActionUri, [
             'account' => $this->agent->account,
@@ -61,7 +61,7 @@ class AuthenticationTest extends TestCase
         $response->assertRedirect($this->agentHome);
     }
 
-    public function testLoginActionByAgentWithWrongPass()
+    public function testLoginActionAsAgentWithWrongPass()
     {
         $response = $this->post($this->loginActionUri, [
             'account' => $this->agent->account,
@@ -72,7 +72,7 @@ class AuthenticationTest extends TestCase
         $response->assertStatus(422);
     }
 
-    public function testLoginActionByAdminWithRightPass()
+    public function testLoginActionAsAdminWithRightPass()
     {
         $response = $this->post($this->loginActionUri, [
             'account' => $this->admin->account,
@@ -83,7 +83,7 @@ class AuthenticationTest extends TestCase
         $response->assertRedirect($this->adminHome);
     }
 
-    public function testLoginActionByAdminWithWrongPass()
+    public function testLoginActionAsAdminWithWrongPass()
     {
         $response = $this->post($this->loginActionUri, [
             'account' => $this->admin->account,
