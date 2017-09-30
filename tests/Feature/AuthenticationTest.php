@@ -12,6 +12,7 @@ class AuthenticationTest extends TestCase
 {
     protected $agent;
     protected $admin;
+    protected $faker;
     protected $defaultUserPass = 'password';
     protected $defaultAdminPass = 'admin123#';
     protected $adminHome = '/admin/home';
@@ -25,6 +26,7 @@ class AuthenticationTest extends TestCase
         parent::setUp();
         $this->agent = factory(User::class)->create();
         $this->admin = User::find(1);
+        $this->faker = \Faker\Factory::create();
     }
 
     //测试登录页面的展示
@@ -65,7 +67,7 @@ class AuthenticationTest extends TestCase
     {
         $response = $this->post($this->loginActionUri, [
             'account' => $this->agent->account,
-            'password' => 'test',
+            'password' => $this->faker->password,
         ], [
             'Accept' => 'application/json',
         ]);
@@ -87,7 +89,7 @@ class AuthenticationTest extends TestCase
     {
         $response = $this->post($this->loginActionUri, [
             'account' => $this->admin->account,
-            'password' => 'test',
+            'password' => $this->faker->password,
         ], [
             'Accept' => 'application/json',
         ]);
