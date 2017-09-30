@@ -8,10 +8,13 @@ use Illuminate\Foundation\Testing\WithoutMiddleware;
 use Illuminate\Foundation\Testing\DatabaseMigrations;
 use Illuminate\Foundation\Testing\DatabaseTransactions;
 
-class UpdatePassTest extends TestCase
+class UpdatePassApiTest extends TestCase
 {
     protected $changePassApi = 'admin/api/self/password';
 
+    /**
+     * @group admin
+     */
     public function testUpdatePass()
     {
         $admin = factory(User::class)->create([
@@ -39,6 +42,9 @@ class UpdatePassTest extends TestCase
         $response->assertJsonStructure(['message']);
     }
 
+    /**
+     * @group admin
+     */
     public function testUpdatePassAsAgent()
     {
         $this->agent = factory(User::class)->create();
