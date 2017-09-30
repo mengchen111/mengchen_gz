@@ -34,7 +34,7 @@ yum -y install nodejs
 测试并生成代码覆盖率报表：  
 ```
 cd ${code_ducument_root}
-phpunit --coverage-html public/test/
+./vendor/bin/phpunit --coverage-html public/test/
 ```
 查看代码覆盖率：
 ```
