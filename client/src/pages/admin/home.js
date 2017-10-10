@@ -4,8 +4,8 @@
 
 import Vue from 'vue'
 import _ from 'lodash'
-import MyChart from '../components/LineChart.vue'
 import axios from 'axios'
+import MyChart from '../../components/LineChart.vue'
 
 new Vue({
   el: '#app',
