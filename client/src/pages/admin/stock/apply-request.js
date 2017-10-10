@@ -2,7 +2,7 @@ import Vue from 'vue'
 import axios from 'axios'
 
 new Vue({
-  el: '#stock-apply-form',
+  el: '#app',
   data: {
     stockApplyApi: '/admin/api/stock',
     stockApplyData: {
