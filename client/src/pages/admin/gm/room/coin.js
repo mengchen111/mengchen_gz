@@ -3,8 +3,8 @@
  */
 
 import Vue from 'vue'
-import MyVuetable from '../../../components/MyVuetable.vue'
 import axios from 'axios'
+import MyVuetable from '../../../../components/MyVuetable.vue'
 
 Vue.component('custom-actions', {
   template: `
