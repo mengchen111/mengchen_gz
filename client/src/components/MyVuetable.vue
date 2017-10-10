@@ -136,7 +136,7 @@
       }
 
       this.$root.eventHub.$on('vuetableRefresh', this.onTableRefresh)
-      this.$root.eventHub.$on('filterEvent', (eventData) => this.onFilterSet(eventData))
+      this.$root.eventHub.$on('filterEvent', this.onFilterSet)
     },
   }
 </script>
