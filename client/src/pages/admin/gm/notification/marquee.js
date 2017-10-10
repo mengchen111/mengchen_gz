@@ -3,11 +3,11 @@
  */
 
 import Vue from 'vue'
-import MyDatePicker from '../../../components/MyDatePicker.vue'
-import MyVuetable from '../../../components/MyVuetable.vue'
-import TableActions from '../../../components/gm/notification/TableActions.vue'
-import DetailRow from '../../../components/gm/notification/DetailRow.vue'
 import axios from 'axios'
+import MyDatePicker from '../../../../components/MyDatePicker.vue'
+import MyVuetable from '../../../../components/MyVuetable.vue'
+import TableActions from './components/TableActions.vue'
+import DetailRow from './components/DetailRow.vue'
 
 Vue.component('table-actions', TableActions)
 Vue.component('detail-row', DetailRow)
