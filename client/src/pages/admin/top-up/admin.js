@@ -10,7 +10,7 @@ new Vue({
   },
   data: {
     eventHub: new Vue(),
-    tableUrl: '/admin/api/top-up/top-agent',
+    tableUrl: '/admin/api/top-up/admin',
     tableFields: [
       {
         name: 'id',
