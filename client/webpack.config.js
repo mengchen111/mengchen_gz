@@ -85,12 +85,14 @@ const config = {
         },
       }
     }),
-    new webpack.ProvidePlugin({
+    new webpack.ProvidePlugin({                   //引用时自动加载
       Vue: ['vue/dist/vue.esm.js', 'default'],
       jQuery: 'jquery',
       'window.jQuery': 'jquery',
       $: 'jquery',
       moment: 'moment',
+      _: 'lodash',
+      axios: 'axios',
     }),
   ]
 };
