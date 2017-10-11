@@ -2,9 +2,6 @@
  * Created by liudian on 9/14/17.
  */
 
-import Vue from 'vue'
-import _ from 'lodash'
-import axios from 'axios'
 import MyChart from '../../components/LineChart.vue'
 
 new Vue({
