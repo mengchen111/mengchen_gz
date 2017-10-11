@@ -79,11 +79,11 @@ new Vue({
   },
 
   methods: {
-    getOnlineState(state) {
+    getOnlineState (state) {
       return this.onlineState[state]
     },
 
-    topUpPlayer() {
+    topUpPlayer () {
       let _self = this
       let apiUrl = `/admin/api/top-up/player/${_self.activatedRow.rid}/${_self.topUpData.typeId}/${_self.topUpData.amount}`
 
