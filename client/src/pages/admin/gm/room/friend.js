@@ -2,8 +2,7 @@
  * Created by liudian on 9/14/17.
  */
 
-import Vue from 'vue'
-import axios from 'axios'
+import '../../common.js'
 import MyVuetable from '../../../../components/MyVuetable.vue'
 import FilterBar from '../../../../components/FilterBar.vue'
 

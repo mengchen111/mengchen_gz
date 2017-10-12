@@ -2,8 +2,7 @@
  * Created by liudian on 9/18/17.
  */
 
-import Vue from 'vue'
-import axios from 'axios'
+import '../../common.js'
 import MyVuetable from '../../../../components/MyVuetable.vue'
 
 Vue.component('custom-actions', {

@@ -2,7 +2,7 @@
  * Created by liudian on 9/13/17.
  */
 
-import Vue from 'vue'
+import '../common.js'
 import MyVuetable from '../../../components/MyVuetable.vue'
 
 new Vue({

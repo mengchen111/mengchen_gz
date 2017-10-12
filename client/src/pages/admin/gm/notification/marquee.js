@@ -2,8 +2,7 @@
  * Created by liudian on 9/15/17.
  */
 
-import Vue from 'vue'
-import axios from 'axios'
+import '../../common.js'
 import MyDatePicker from '../../../../components/MyDatePicker.vue'
 import MyVuetable from '../../../../components/MyVuetable.vue'
 import TableActions from './components/TableActions.vue'
