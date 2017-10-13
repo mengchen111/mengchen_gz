@@ -13,6 +13,10 @@ class TopUpAdmin extends Model
         'provider_id', 'receiver_id', 'type', 'amount'
     ];
 
+    protected $hidden = [
+        'updated_at',
+    ];
+
     public function provider()
     {
         return $this->hasOne('App\Models\User', 'id', 'provider_id');
