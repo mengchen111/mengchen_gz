@@ -181,8 +181,7 @@ class StatementController extends Controller
     //准备分页数据
     protected function paginateData($data)
     {
-        $paginator = new Paginator($this->per_page, $this->page);
-        return $paginator->paginate($data);
+        return Paginator::paginate($data);
     }
 
     //每小时流水的图表数据
