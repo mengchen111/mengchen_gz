@@ -4,6 +4,7 @@
 
 import '../../common.js'
 import MyVuetable from '../../../../components/MyVuetable.vue'
+import MyToastr from '../../../../components/MyToastr.vue'
 
 Vue.component('custom-actions', {
   template: `
@@ -12,7 +13,11 @@ Vue.component('custom-actions', {
             解散房间
         </button>
         <div class="overlay" v-show="loading"><i class="fa fa-refresh fa-spin"></i></div>
+        <my-toastr ref="toastr"></my-toastr>
     </div>`,
+  components: {
+    MyToastr,
+  },
   props: {
     rowData: {
       type: Object,
@@ -30,11 +35,15 @@ Vue.component('custom-actions', {
   methods: {
     dismissRoom (rowData) {
       let _self = this
+      let toastr = this.$refs.toastr
       this.loading = true
+
       axios.delete(`/admin/api/game/room/coin/${rowData.roomid}`)
         .then(function (response) {
           _self.loading = false
-          return response.data.error ? alert(response.data.error) : alert(response.data.message)
+          return response.data.error
+            ? toastr.message(response.data.error, 'error')
+            : toastr.message(response.data.message)
         })
     },
   },
