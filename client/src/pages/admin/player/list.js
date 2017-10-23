@@ -25,6 +25,7 @@ new Vue({
       amount: null,
     },
     onlineState: ['离线', '在线'],
+    tableClass: 'row',  //绑定class，让table在手机浏览器模式下切换为滚动条
 
     tableUrl: '/admin/api/game/player',
     tableTrackBy: 'rid',
@@ -111,9 +112,13 @@ new Vue({
   mounted: function () {
     let _self = this
 
-    this.$root.eventHub.$on('topUpPlayerEvent', function (data) {
-      _self.activatedRow = data
-    })
+    //判断屏幕大小，更新div的class，使table在手机浏览器下带上滚动条
+    let windowWidth = document.body.clientWidth
+    if (windowWidth < 768) {
+      this.tableClass = 'row pre-scrollable'
+    }
+
+    this.$root.eventHub.$on('topUpPlayerEvent', (data) => _self.activatedRow = data)
     this.$root.eventHub.$on('vuetableDataError', (data) => alert(data.error))
   },
 })
