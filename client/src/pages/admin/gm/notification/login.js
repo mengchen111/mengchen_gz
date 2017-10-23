@@ -5,6 +5,7 @@
 import '../../common.js'
 import DatePicker from '../../../../components/MyDatePicker.vue'
 import MyVuetable from '../../../../components/MyVuetable.vue'
+import MyToastr from '../../../../components/MyToastr.vue'
 import TableActions from './components/TableActions.vue'
 import DetailRow from './components/DetailRow.vue'
 
@@ -16,6 +17,7 @@ new Vue({
   components: {
     DatePicker,
     MyVuetable,
+    MyToastr,
   },
   data: {
     eventHub: new Vue(),
@@ -134,6 +136,7 @@ new Vue({
   methods: {
     createNotification () {
       let _self = this
+      let toastr = this.$refs.toastr
 
       axios({
         method: 'POST',
@@ -145,13 +148,13 @@ new Vue({
       })
         .then(function (response) {
           if (response.status === 422) {
-            return alert(JSON.stringify(response.data))
+            return toastr.message(JSON.stringify(response.data), 'error')
           } else {
             if (response.data.error) {
-              return alert(response.data.error)
+              return toastr.message(response.data.error, 'error')
             }
 
-            alert(response.data.message)
+            toastr.message(response.data.message)
 
             //清空表单数据
             for (let index of Object.keys(_self.formData)) {
@@ -169,6 +172,7 @@ new Vue({
 
     editNotification () {
       let _self = this
+      let toastr = this.$refs.toastr
 
       axios({
         method: 'PUT',
@@ -180,13 +184,13 @@ new Vue({
       })
         .then(function (response) {
           if (response.status === 422) {
-            return alert(JSON.stringify(response.data))
+            return toastr.message(JSON.stringify(response.data), 'error')
           } else {
             if (response.data.error) {
-              return alert(response.data.error)
+              return toastr.message(response.data.error, 'error')
             }
 
-            alert(response.data.message)
+            toastr.message(response.data.message)
 
             //清空表单数据
             for (let index of Object.keys(_self.activatedRow)) {
@@ -205,6 +209,7 @@ new Vue({
 
   mounted: function () {
     let _self = this
+    let toastr = this.$refs.toastr
 
     this.$root.eventHub.$on('editNotificationEvent', function (data) {
       _self.activatedRow = data
@@ -214,7 +219,9 @@ new Vue({
       axios.delete(uri, {})
         .then(function (response) {
           _self.$root.eventHub.$emit('vuetableRefresh')
-          return response.data.error ? alert(response.data.error) : alert(response.data.message)
+          return response.data.error
+            ? toastr.message(response.data.error, 'error')
+            : toastr.message(response.data.message)
         })
         .catch(function (err) {
           alert(err)
@@ -226,7 +233,9 @@ new Vue({
       axios.put(uri, {})
         .then(function (response) {
           _self.$root.eventHub.$emit('vuetableRefresh')
-          return response.data.error ? alert(response.data.error) : alert(response.data.message)
+          return response.data.error
+            ? toastr.message(response.data.error, 'error')
+            : toastr.message(response.data.message)
         })
         .catch(function (err) {
           alert(err)
@@ -237,7 +246,9 @@ new Vue({
       axios.put(uri, {})
         .then(function (response) {
           _self.$root.eventHub.$emit('vuetableRefresh')
-          return response.data.error ? alert(response.data.error) : alert(response.data.message)
+          return response.data.error
+            ? toastr.message(response.data.error, 'error')
+            : toastr.message(response.data.message)
         })
         .catch(function (err) {
           alert(err)
