@@ -46,6 +46,12 @@ new Vue({
             isActive: false,
           },
         },
+        ai: {
+          isActive: false,
+          list: {
+            isActive: false,
+          },
+        },
       },
       stock: {
         isActive: false,

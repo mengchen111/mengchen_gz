@@ -47,6 +47,13 @@
                             <li :class="{ active: uri.gm.room.coin.isActive }"><a href="/admin/gm/room/coin"><i class="fa fa-circle-o"></i>解散金币房</a></li>
                         </ul>
                     </li>
+                    <li :class="{ active: uri.gm.ai.isActive }"><a href="#"><i class="fa fa-gears"></i>AI管理
+                        <span class="pull-right-container"><i class="fa fa-angle-left pull-right"></i></span>
+                    </a>
+                        <ul class="treeview-menu">
+                            <li :class="{ active: uri.gm.ai.list.isActive }"><a href="/admin/gm/ai/list"><i class="fa fa-circle-o"></i>AI列表</a></li>
+                        </ul>
+                    </li>
                 </ul>
             </li>
             <li class="treeview" :class="{ active: uri.stock.isActive }">

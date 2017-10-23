@@ -104,6 +104,7 @@ Route::group([
     Route::get('gm/notification/login', 'ViewController@gmNotificationLogin');
     Route::get('gm/room/friend', 'ViewController@gmRoomFriend');
     Route::get('gm/room/coin', 'ViewController@gmRoomCoin');
+    Route::get('gm/ai/list', 'ViewController@gmAiList');
 
     Route::get('stock/apply-request', 'ViewController@stockApplyRequest');
     Route::get('stock/apply-list', 'ViewController@stockApplyList');
