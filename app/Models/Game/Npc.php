@@ -23,10 +23,14 @@ class Npc extends Model
 
     protected $visible = [
         'rid', 'nick', 'exp', 'diamond', 'crystal', 'create_time', 'status',
-        'game_type', 'room_type'
+        'game_type', 'room_type', 'duration',
     ];
 
     protected $fillable = [
+    ];
+
+    protected $appends = [
+        'duration',
     ];
 
     public function getStatusAttribute($value)
@@ -50,8 +54,8 @@ class Npc extends Model
     }
 
     //获取调用天数
-    public function getDuration()
+    public function getDurationAttribute()
     {
-        return ($this->do_end_date - $this->do_start_date) / 24 * 60 * 60;
+        return ($this->do_end_date - $this->do_start_date) / (24 * 60 * 60);
     }
 }
