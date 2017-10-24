@@ -110,6 +110,7 @@ cd $codeDir
 | game/room/friend/{ownerId} | DELETE | 解散好友房 |
 | game/room/coin | GET | 金币房列表 |
 | game/room/coin/{roomId} | DELETE | 解散金币房 |
+| game/ai/list | GET | 获取AI列表 |
 | stock | POST | 申请库存 |
 | stock/list | GET | 库存申请列表 |
 | stock/history | GET | 库存审批记录 |

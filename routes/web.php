@@ -65,6 +65,8 @@ Route::group([
     Route::get('game/room/coin', 'Game\CoinRoomController@show');
     Route::delete('game/room/coin/{roomId}', 'Game\CoinRoomController@dismiss')->where('roomId', '[0-9]+');
 
+    Route::get('game/ai/list', 'Game\AiController@show');
+
     Route::post('stock', 'StockController@apply');
     Route::get('stock/list', 'StockController@applyList');
     Route::get('stock/history', 'StockController@applyHistory');
