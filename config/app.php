@@ -183,6 +183,10 @@ return [
         Barryvdh\Debugbar\ServiceProvider::class,
         Barryvdh\LaravelIdeHelper\IdeHelperServiceProvider::class,
 
+        /*
+         * 自定义 Service Provider
+         */
+        App\Providers\DynamicGameDbServiceProvider::class,
     ],
 
     /*
