@@ -161,7 +161,10 @@
                                 </div>
                             </div>
                             <div class="modal-footer">
-                                <button class="btn btn-block btn-primary btn-flat" type="submit">提交</button>
+                                <div class="box">
+                                    <button class="btn btn-block btn-primary btn-flat" type="submit">提交</button>
+                                    <div class="overlay" v-if="loading"><i class="fa fa-refresh fa-spin"></i></div>
+                                </div>
                             </div>
                         </form>
                     </div>

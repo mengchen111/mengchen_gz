@@ -2,8 +2,6 @@
 
 namespace App\Http\Controllers\Admin\Game;
 
-use App\Exceptions\CustomException;
-use App\Exceptions\GameServerException;
 use App\Http\Requests\AdminRequest;
 use App\Models\Game\Npc;
 use App\Models\Game\NpcDataMap;

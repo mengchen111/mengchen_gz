@@ -87,8 +87,10 @@ new Vue({
       let _self = this
       let toastr = this.$refs.toastr
 
+      this.loading = true
       axios.put(this.editAiApi, this.activatedRow)
         .then((response) => {
+          _self.loading = false
           return response.data.error
             ? toastr.message(response.data.error, 'error')
             : toastr.message(response.data.message)
