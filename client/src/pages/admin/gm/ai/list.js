@@ -11,10 +11,11 @@ new Vue({
   data: {
     eventHub: new Vue(),
     loading: true,
+    activatedRow: {},   //被点击的行
     searchAiFormData: {
-      db: 10014,   //游戏后端数据库id
-      game_type: '', //游戏类型
-      status: '', //状态
+      db: 10014,        //游戏后端数据库id
+      game_type: '',    //游戏类型
+      status: '',       //状态
     },
 
     serverList: {},
@@ -23,6 +24,7 @@ new Vue({
 
     serverListApi: '/admin/api/game/server',
     gameTypeApi: '/admin/api/game/ai/type-map',
+    editAiApi: '/admin/api/game/ai',
 
     tableUrl: '/admin/api/game/ai/list',
     tableFields: [
@@ -66,12 +68,6 @@ new Vue({
         name: 'create_time',
         title: '创建时间',
       },
-      // {
-      //   name: '__component:table-actions',
-      //   title: '操作',
-      //   titleClass: 'text-center',
-      //   dataClass: 'text-center',
-      // },
     ],
   },
 
@@ -85,6 +81,18 @@ new Vue({
       this.tableUrl = this.getTableUrl() + `?db=${this.searchAiFormData.db}`
         + `&game_type=${this.searchAiFormData.game_type}`
         + `&status=${this.searchAiFormData.status}`
+    },
+
+    editAi () {
+      let _self = this
+      let toastr = this.$refs.toastr
+
+      axios.put(this.editAiApi, this.activatedRow)
+        .then((response) => {
+          return response.data.error
+            ? toastr.message(response.data.error, 'error')
+            : toastr.message(response.data.message)
+        })
     },
   },
 
@@ -100,5 +108,13 @@ new Vue({
       })
 
     this.loading = false
+  },
+
+  mounted: function () {
+    let _self = this
+    this.$root.eventHub.$on('vuetableCellClicked', (data) => {
+      _self.activatedRow = data
+      jQuery('#edit-ai-modal-button').click()   //打开编辑AI模态框
+    })
   },
 })

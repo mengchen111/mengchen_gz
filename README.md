@@ -112,6 +112,7 @@ cd $codeDir
 | game/room/coin/{roomId} | DELETE | 解散金币房 |
 | game/ai/list | GET | 获取AI列表 |
 | game/ai/type-map | GET | 获取游戏类型和ai状态的映射关系表 |
+| game/ai | PUT | AI编辑 |
 | game/server | GET | 获取游戏后端服务器列表 |
 | stock | POST | 申请库存 |
 | stock/list | GET | 库存申请列表 |

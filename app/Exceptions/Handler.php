@@ -49,6 +49,11 @@ class Handler extends ExceptionHandler
         if ($exception instanceof CustomException) {
             return response()->json(['error' => $exception->getMessage()], 200);
         }
+
+        //捕获游戏服接口调用服务的异常
+        if ($exception instanceof GameServerException) {
+            return response()->json(['error' => $exception->getMessage()], 200);
+        }
         return parent::render($request, $exception);
     }
 
