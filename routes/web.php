@@ -66,7 +66,7 @@ Route::group([
     Route::delete('game/room/coin/{roomId}', 'Game\CoinRoomController@dismiss')->where('roomId', '[0-9]+');
 
     Route::get('game/ai/list', 'Game\AiController@show');
-    Route::get('game/ai/game-type-map', 'Game\AiController@getGameTypeMap');
+    Route::get('game/ai/type-map', 'Game\AiController@getMaps');
 
     Route::get('game/server', 'Platform\ServerController@show');
 
