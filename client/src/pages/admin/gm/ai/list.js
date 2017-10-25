@@ -96,6 +96,15 @@ new Vue({
             : toastr.message(response.data.message)
         })
     },
+
+    aiListButtonAction () {
+      this.tableUrl = this.getTableUrl()
+      this.searchAiFormData = {
+        db: 10014,
+        game_type: '',
+        status: '',
+      }
+    },
   },
 
   created: function () {
