@@ -26,8 +26,8 @@ new Vue({
     gameTypeApi: '/admin/api/game/ai/type-map',
     editAiApi: '/admin/api/game/ai',
 
-    tableUrl: '/admin/api/game/ai/list',
-    tableFields: [
+    aiTableUrl: '/admin/api/game/ai/list',
+    aiTableFields: [
       {
         name: 'rid',
         title: 'id',
@@ -72,13 +72,13 @@ new Vue({
   },
 
   methods: {
-    getTableUrl () {
+    getAiTableUrl () {
       return '/admin/api/game/ai/list'
     },
 
     searchAiList () {
       //刷新表格
-      this.tableUrl = this.getTableUrl() + `?db=${this.searchAiFormData.db}`
+      this.aiTableUrl = this.getAiTableUrl() + `?db=${this.searchAiFormData.db}`
         + `&game_type=${this.searchAiFormData.game_type}`
         + `&status=${this.searchAiFormData.status}`
     },
@@ -98,7 +98,7 @@ new Vue({
     },
 
     aiListButtonAction () {
-      this.tableUrl = this.getTableUrl()
+      this.aiTableUrl = this.getAiTableUrl()
       this.searchAiFormData = {
         db: 10014,
         game_type: '',

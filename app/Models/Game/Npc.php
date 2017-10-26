@@ -35,7 +35,9 @@ class Npc extends Model
 
     public function getStatusAttribute($value)
     {
-        return $this->statusMap[$value];
+        return array_key_exists($value, $this->statusMap)
+            ? $this->statusMap[$value]
+            : '未定义的状态类型';
     }
 
     public function getCreateTimeAttribute($value)
@@ -45,12 +47,16 @@ class Npc extends Model
 
     public function getGameTypeAttribute($value)
     {
-        return $this->gameTypeMap[$value];
+        return array_key_exists($value, $this->gameTypeMap)
+            ? $this->gameTypeMap[$value]
+            : '未定义的游戏类型';
     }
 
     public function getRoomTypeAttribute($value)
     {
-        return $this->roomTypeMap[$value];
+        return array_key_exists($value, $this->roomTypeMap)
+            ? $this->roomTypeMap[$value]
+            : '未定义的房间类型';
     }
 
     //获取调用天数

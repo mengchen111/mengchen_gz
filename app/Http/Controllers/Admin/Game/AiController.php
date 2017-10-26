@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Admin\Game;
 use App\Http\Requests\AdminRequest;
 use App\Models\Game\Npc;
 use App\Models\Game\NpcDataMap;
+use App\Models\Log\NpcDispatchLog;
 use App\Services\GameServer;
 use App\Services\Paginator;
 use Illuminate\Http\Request;
@@ -32,9 +33,6 @@ class AiController extends Controller
 
     public function show(AdminRequest $request)
     {
-        OperationLogs::add($request->user()->id, $request->path(), $request->method(),
-            '查看AI列表', $request->header('User-Agent'), json_encode($request->all()));
-
         $result = Npc::all();
         if ($request->has('game_type')) {
             $result = $result->where('game_type', $request->game_type);
@@ -42,8 +40,26 @@ class AiController extends Controller
         if ($request->has('status')) {
             $result = $result->where('status', $request->status);
         }
+        $result = $result->reverse()->toArray();    //倒序排列
 
-        return Paginator::paginate($result->reverse()->toArray(), $this->per_page, $this->page);
+        OperationLogs::add($request->user()->id, $request->path(), $request->method(),
+            '查看AI列表', $request->header('User-Agent'), json_encode($request->all()));
+
+        return Paginator::paginate($result, $this->per_page, $this->page);
+    }
+
+    public function showDispatch(AdminRequest $request)
+    {
+        $result = NpcDispatchLog::all();
+        if ($request->has('game_type')) {
+            $result = $result->where('game_type', $request->game_type);
+        }
+        $result = $result->reverse()->toArray();    //倒序排列
+
+        OperationLogs::add($request->user()->id, $request->path(), $request->method(),
+            '查看AI调度列表', $request->header('User-Agent'), json_encode($request->all()));
+
+        return Paginator::paginate($result, $this->per_page, $this->page);
     }
 
     public function getMaps(AdminRequest $request)

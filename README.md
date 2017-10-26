@@ -111,6 +111,7 @@ cd $codeDir
 | game/room/coin | GET | 金币房列表 |
 | game/room/coin/{roomId} | DELETE | 解散金币房 |
 | game/ai/list | GET | 获取AI列表 |
+| game/ai/dispatch/list | GET | 获取AI调度列表 |
 | game/ai/type-map | GET | 获取游戏类型和ai状态的映射关系表 |
 | game/ai | PUT | AI编辑 |
 | game/server | GET | 获取游戏后端服务器列表 |
@@ -164,3 +165,10 @@ cd $codeDir
 | Room.dismissRoomById| POST | 解散金币房 |
 | FriendRoom.forceClearRoom | POST | 解散好友房 |
 | notice.systemSendNOticeToAll | POST | 同步登录和跑马灯公告 |
+
+> **以下接口没有前缀**  
+
+| Action | Method | Description |
+| ----  | :-----: | ----------: |
+| /Npc/edit | POST | 编辑AI |
+| /Npc/add | POST | 添加AI |
