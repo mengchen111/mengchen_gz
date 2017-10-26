@@ -41,6 +41,16 @@ class NpcDispatchLog extends Model
         return Carbon::createFromTimestamp($value)->format('Y-m-d');
     }
 
+    public function getDoStartTimeAttribute($value)
+    {
+        return Carbon::createFromTimestamp(Carbon::today()->timestamp + $value)->toTimeString();
+    }
+
+    public function getDoEndTimeAttribute($value)
+    {
+        return Carbon::createFromTimestamp(Carbon::today()->timestamp + $value)->toTimeString();
+    }
+
     public function getStartVsEndDateAttribute()
     {
         return $this->do_start_date . '/' . $this->do_end_date;
@@ -51,8 +61,7 @@ class NpcDispatchLog extends Model
         if ($this->is_all_day) {
             return '全天';
         }
-        return '原代码计算方式有误(待补充)';
-        //TODO
+        return $this->do_start_time . '/' . $this->do_end_time;
     }
 
     public function getGameTypeAttribute($value)
@@ -64,8 +73,8 @@ class NpcDispatchLog extends Model
 
     public function getRoomTypeAttribute($value)
     {
-        return array_key_exists($value, $this->dispatchRoomTypeMap)
-            ? $this->dispatchRoomTypeMap[$value]
+        return array_key_exists($value, $this->roomTypeMap)
+            ? $this->roomTypeMap[$value]
             : '未定义的房间类型';
     }
 

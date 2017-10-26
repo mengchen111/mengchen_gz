@@ -114,6 +114,7 @@ cd $codeDir
 | game/ai/dispatch/list | GET | 获取AI调度列表 |
 | game/ai/type-map | GET | 获取游戏类型和ai状态的映射关系表 |
 | game/ai | PUT | AI编辑 |
+| game/ai-dispatch | PUT | AI调度编辑 |
 | game/server | GET | 获取游戏后端服务器列表 |
 | stock | POST | 申请库存 |
 | stock/list | GET | 库存申请列表 |
@@ -172,3 +173,4 @@ cd $codeDir
 | ----  | :-----: | ----------: |
 | /Npc/edit | POST | 编辑AI |
 | /Npc/add | POST | 添加AI |
+| /Npc/dispatch | POST | 编辑AI调度 |

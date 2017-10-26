@@ -8,6 +8,7 @@ use App\Models\Game\NpcDataMap;
 use App\Models\Log\NpcDispatchLog;
 use App\Services\GameServer;
 use App\Services\Paginator;
+use Carbon\Carbon;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 use App\Models\OperationLogs;
@@ -21,6 +22,7 @@ class AiController extends Controller
     protected $order = ['rid', 'desc'];
     protected $backendServerApi;
     protected $editAiUri = '/Npc/edit';
+    protected $editAiDispatchUri = '/Npc/dispatch';
     protected $addAiUri = '/Npc/add';
 
     public function __construct(Request $request)
@@ -94,6 +96,64 @@ class AiController extends Controller
         return [
             'message' => '编辑AI成功',
         ];
+    }
+
+    public function editDispatch(AdminRequest $request)
+    {
+        $formData = $this->filterEditDispatchForm($request);
+        $api = $this->backendServerApi . $this->editAiDispatchUri;
+        $gameServer = new GameServer($api);
+
+        $gameServer->request('POST', $formData);    //发送编辑请求
+
+        OperationLogs::add($request->user()->id, $request->path(), $request->method(),
+            '编辑AI调度', $request->header('User-Agent'), json_encode($request->all()));
+
+        return [
+            'message' => '编辑AI调度成功',
+        ];
+    }
+
+    protected function filterEditDispatchForm($request)
+    {
+        $this->validate($request, [
+            'id' => 'required|integer',
+            'ids' => 'required|string',
+            'golds' => 'required|string',
+            'theme' => 'required|string',
+            'game_type' => 'required|in:' . implode(',', $this->gameTypeMap),
+            'room_type' => 'required|in:' . implode(',', $this->roomTypeMap),
+            'do_start_date' => 'required|date_format:Y-m-d',
+            'do_end_date' => 'required|date_format:Y-m-d',
+            'do_start_time' => 'required|date_format:H:i:s',
+            'do_end_time' => 'required|date_format:H:i:s',
+            'is_all_day' => 'required|in:0,1',
+            'server_id' => 'required|integer',
+        ]);
+
+        $formData = $request->intersect([
+            'theme',
+        ]);
+
+        //构建POST请求的数据结构
+        $formData['lodId'] = $request->id;
+        $formData['id'] = $request->ids;
+        $formData['gold'] = $request->golds;
+        $formData['serverId'] = $request->server_id;
+        $formData['gameType'] = array_search($request->game_type, $this->gameTypeMap);
+        $formData['roomType'] = array_search($request->room_type, $this->roomTypeMap);
+        $formData['sdate'] = Carbon::parse($request->do_start_date)->timestamp;
+        $formData['edate'] = Carbon::parse($request->do_end_date)->timestamp;
+        $formData['isAllDay'] = $request->is_all_day;
+        $formData['creator'] = $request->user()->account;
+
+        $startTime = explode(':', $request->do_start_time);
+        $formData['stime'] = $startTime[0] * 3600 + $startTime[1] * 60 + $startTime[2];
+
+        $endTime = explode(':', $request->do_end_time);
+        $formData['etime'] = $endTime[0] * 3600 + $endTime[1] * 60 + $endTime[2];
+
+        return $formData;
     }
 
     protected function filterEditForm($request)

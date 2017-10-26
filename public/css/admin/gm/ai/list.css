@@ -5,3 +5,7 @@
 .row {
     margin-top: 10px;
 }
+
+.modal-dialog {
+    width: 35%;
+}

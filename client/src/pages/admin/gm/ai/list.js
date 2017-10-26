@@ -2,8 +2,10 @@ import '../../common.js'
 import MyVuetable from '../../../../components/MyVuetable.vue'
 import MyToastr from '../../../../components/MyToastr.vue'
 import AiTableActions from './components/AiTableActions.vue'
+import AiDispatchTableActions from './components/AiDispatchTableActions.vue'
 
 Vue.component('ai-table-actions', AiTableActions)
+Vue.component('ai-dispatch-table-actions', AiDispatchTableActions)
 
 new Vue({
   el: '#app',
@@ -14,7 +16,7 @@ new Vue({
   data: {
     eventHub: new Vue(),
     loading: true,
-    activatedRow: {},   //被点击的行
+    activatedRow: {},   //待编辑的行数据
     searchAiFormData: {
       db: 10014,        //游戏后端数据库id
       game_type: '',    //游戏类型
@@ -125,6 +127,12 @@ new Vue({
         name: 'is_open',
         title: '状态',
       },
+      {
+        name: '__component:ai-dispatch-table-actions',
+        title: '操作',
+        titleClass: 'text-center',
+        dataClass: 'text-center',
+      },
     ],
   },
 
@@ -156,6 +164,15 @@ new Vue({
             ? toastr.message(response.data.error, 'error')
             : toastr.message(response.data.message)
         })
+    },
+
+    editAiDispatch () {
+      let _self = this
+      let toastr = this.$refs.toastr
+
+      this.loading = true
+
+      console.log(_self.activatedRow)
     },
 
     aiListButtonAction () {
@@ -199,8 +216,7 @@ new Vue({
   },
 
   mounted: function () {
-    //let _self = this
-
     this.$root.eventHub.$on('editAiEvent', (data) => this.activatedRow = data)
+    this.$root.eventHub.$on('editAiDispatchEvent', (data) => this.activatedRow = data)
   },
 })
