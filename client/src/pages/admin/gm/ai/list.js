@@ -34,6 +34,7 @@ new Vue({
     typeApi: '/admin/api/game/ai/type-map',
     editAiApi: '/admin/api/game/ai',
     editAiDispatchApi: '/admin/api/game/ai-dispatch',
+    switchAiDispatchApi: '/admin/api/game/ai-dispatch/switch', //启用停用
 
     aiTableUrl: '/admin/api/game/ai/list',
     aiTableFields: [
@@ -211,6 +212,32 @@ new Vue({
         + `&game_type=${this.searchAiFormData.game_type}`
         + `&is_open=${this.searchAiFormData.status}`
     },
+
+    enableAiDispatch (data) {
+      let toastr = this.$refs.toastr
+
+      axios.put(`${this.switchAiDispatchApi}/${data.id}/1`, {
+        ids: data.ids
+      })
+        .then(function (response) {
+          return response.data.error
+            ? toastr.message(response.data.error, 'error')
+            : toastr.message('启用成功')
+        })
+    },
+
+    disableAiDispatch (data) {
+      let toastr = this.$refs.toastr
+
+      axios.put(`${this.switchAiDispatchApi}/${data.id}/0`, {
+        ids: data.ids
+      })
+        .then(function (response) {
+          return response.data.error
+            ? toastr.message(response.data.error, 'error')
+            : toastr.message('停用成功')
+        })
+    },
   },
 
   created: function () {
@@ -231,5 +258,8 @@ new Vue({
   mounted: function () {
     this.$root.eventHub.$on('editAiEvent', (data) => this.activatedRow = data)
     this.$root.eventHub.$on('editAiDispatchEvent', (data) => this.activatedRow = data)
+
+    this.$root.eventHub.$on('enableAiDispatchEvent', (data) => this.enableAiDispatch(data))
+    this.$root.eventHub.$on('disableAiDispatchEvent', (data) => this.disableAiDispatch(data))
   },
 })

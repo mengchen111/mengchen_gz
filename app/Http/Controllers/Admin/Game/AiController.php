@@ -120,12 +120,11 @@ class AiController extends Controller
     public function switchAiDispatch(AdminRequest $request, $id, $switch)
     {
         $api = $this->backendServerApi . $this->switchAiDispatchUri;
-        $aiDispatch = NpcDispatchLog::find($id);
 
         $gameServer = new GameServer($api);
         $gameServer->request('POST', [
             'logId' => $id,
-            'id' => $aiDispatch->ids,
+            'id' => $request->ids,
             'isOpen' => $switch
         ]);
 
