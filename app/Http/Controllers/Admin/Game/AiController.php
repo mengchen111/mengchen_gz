@@ -75,6 +75,7 @@ class AiController extends Controller
                 '14', '15', '16', '17',     //只返回使用到的几种游戏类型
             ]);
         $map['status_type'] = $this->statusMap;
+        $map['room_type'] = $this->roomTypeMap;
 
         OperationLogs::add($request->user()->id, $request->path(), $request->method(),
             '查看游戏类型映射关系', $request->header('User-Agent'), json_encode($request->all()));
@@ -109,6 +110,7 @@ class AiController extends Controller
         OperationLogs::add($request->user()->id, $request->path(), $request->method(),
             '编辑AI调度', $request->header('User-Agent'), json_encode($request->all()));
 
+        //TODO 编辑完成之后后端数据库添加了一条记录，而不是更新
         return [
             'message' => '编辑AI调度成功',
         ];
@@ -127,7 +129,7 @@ class AiController extends Controller
             'do_end_date' => 'required|date_format:Y-m-d',
             'do_start_time' => 'required|date_format:H:i:s',
             'do_end_time' => 'required|date_format:H:i:s',
-            'is_all_day' => 'required|in:0,1',
+            'is_all_day' => 'required|integer|in:0,1',
             'server_id' => 'required|integer',
         ]);
 
@@ -140,8 +142,8 @@ class AiController extends Controller
         $formData['id'] = $request->ids;
         $formData['gold'] = $request->golds;
         $formData['serverId'] = $request->server_id;
-        $formData['gameType'] = array_search($request->game_type, $this->gameTypeMap);
-        $formData['roomType'] = array_search($request->room_type, $this->roomTypeMap);
+        $formData['gameType'] = (string) array_search($request->game_type, $this->gameTypeMap);
+        $formData['roomType'] = (string) array_search($request->room_type, $this->roomTypeMap);
         $formData['sdate'] = Carbon::parse($request->do_start_date)->timestamp;
         $formData['edate'] = Carbon::parse($request->do_end_date)->timestamp;
         $formData['isAllDay'] = $request->is_all_day;

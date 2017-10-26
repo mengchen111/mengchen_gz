@@ -1,6 +1,7 @@
 import '../../common.js'
 import MyVuetable from '../../../../components/MyVuetable.vue'
 import MyToastr from '../../../../components/MyToastr.vue'
+import MyDatePicker from '../../../../components/MyDatePicker.vue'
 import AiTableActions from './components/AiTableActions.vue'
 import AiDispatchTableActions from './components/AiDispatchTableActions.vue'
 
@@ -12,6 +13,7 @@ new Vue({
   components: {
     MyVuetable,
     MyToastr,
+    MyDatePicker,
   },
   data: {
     eventHub: new Vue(),
@@ -26,10 +28,12 @@ new Vue({
     serverList: {},
     gameType: {},
     statusType: {},
+    roomType: {},
 
     serverListApi: '/admin/api/game/server',
-    gameTypeApi: '/admin/api/game/ai/type-map',
+    typeApi: '/admin/api/game/ai/type-map',
     editAiApi: '/admin/api/game/ai',
+    editAiDispatchApi: '/admin/api/game/ai-dispatch',
 
     aiTableUrl: '/admin/api/game/ai/list',
     aiTableFields: [
@@ -170,9 +174,17 @@ new Vue({
       let _self = this
       let toastr = this.$refs.toastr
 
-      this.loading = true
+      //转换is_all_day的值
+      this.activatedRow.is_all_day = this.activatedRow.is_all_day ? 1 : 0
 
-      console.log(_self.activatedRow)
+      this.loading = true
+      axios.put(this.editAiDispatchApi, this.activatedRow)
+        .then((response) => {
+          _self.loading = false
+          return response.data.error
+            ? toastr.message(response.data.error, 'error')
+            : toastr.message(response.data.message)
+        })
     },
 
     aiListButtonAction () {
@@ -206,10 +218,11 @@ new Vue({
 
     axios.get(this.serverListApi)
       .then((res) => _self.serverList = res.data)
-    axios.get(this.gameTypeApi)
+    axios.get(this.typeApi)
       .then((res) => {
         _self.gameType = res.data.game_type
         _self.statusType = res.data.status_type
+        _self.roomType = res.data.room_type
       })
 
     this.loading = false
