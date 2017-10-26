@@ -54,7 +54,10 @@ class AiController extends Controller
         if ($request->has('game_type')) {
             $result = $result->where('game_type', $request->game_type);
         }
-        $result = $result->reverse()->toArray();    //倒序排列
+        if ($request->has('is_open')) {
+            $result = $result->where('is_open', $request->is_open);  //查询开启状态
+        }
+        $result = $result->reverse()->toArray();                    //倒序排列
 
         OperationLogs::add($request->user()->id, $request->path(), $request->method(),
             '查看AI调度列表', $request->header('User-Agent'), json_encode($request->all()));

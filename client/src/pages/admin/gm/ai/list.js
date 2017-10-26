@@ -166,6 +166,22 @@ new Vue({
         status: '',
       }
     },
+
+    aiDispatchListButtonAction () {
+      this.aiDispatchTableUrl = this.getAiDispatchTableUrl()  //刷新表格
+      this.searchAiFormData = {
+        db: 10014,
+        game_type: '',
+        status: '',
+      }
+    },
+
+    searchAiDispatchList () {
+      //刷新表格，通过方法拿地址前缀，不然下一次提交查询，参数会append上去，造成错误
+      this.aiDispatchTableUrl = this.getAiDispatchTableUrl() + `?db=${this.searchAiFormData.db}`
+        + `&game_type=${this.searchAiFormData.game_type}`
+        + `&is_open=${this.searchAiFormData.status}`
+    },
   },
 
   created: function () {

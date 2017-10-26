@@ -71,6 +71,6 @@ class NpcDispatchLog extends Model
 
     public function getIsOpenAttribute($value)
     {
-        return $value ? '开启' : '关闭';
+        return $value ? '开启' : '关闭';    //0关闭，1开启
     }
 }
