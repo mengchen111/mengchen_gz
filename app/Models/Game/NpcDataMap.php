@@ -40,4 +40,10 @@ trait NpcDataMap
         2 => '空闲',
         3 => '等待上线',
     ];
+
+    protected $dispatchRoomTypeMap = [  //ai调度列表的房间映射关系表
+        1 => '低级房',
+        2 => '中级房',
+        3 => '高级房',
+    ];
 }

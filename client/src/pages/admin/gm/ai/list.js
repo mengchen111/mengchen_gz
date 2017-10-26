@@ -1,6 +1,9 @@
 import '../../common.js'
 import MyVuetable from '../../../../components/MyVuetable.vue'
 import MyToastr from '../../../../components/MyToastr.vue'
+import AiTableActions from './components/AiTableActions.vue'
+
+Vue.component('ai-table-actions', AiTableActions)
 
 new Vue({
   el: '#app',
@@ -68,6 +71,60 @@ new Vue({
         name: 'create_time',
         title: '创建时间',
       },
+      {
+        name: '__component:ai-table-actions',
+        title: '操作',
+        titleClass: 'text-center',
+        dataClass: 'text-center',
+      },
+    ],
+
+    aiDispatchTableUrl: '/admin/api/game/ai/dispatch/list',
+    aiDispatchTableFields: [
+      {
+        name: 'id',
+        title: 'id',
+      },
+      {
+        name: 'start_vs_end_date',
+        title: '开始/结束日期',
+      },
+      {
+        name: 'start_vs_end_time',
+        title: '开始/结束时间',
+      },
+      {
+        name: 'theme',
+        title: '主题',
+      },
+      {
+        name: 'room_type',
+        title: '房间',
+      },
+      {
+        name: 'game_type',
+        title: '游戏类型',
+      },
+      {
+        name: 'golds',
+        title: '金币数',
+      },
+      {
+        name: 'num',
+        title: 'ai数量',
+      },
+      {
+        name: 'create_time',
+        title: '创建时间',
+      },
+      {
+        name: 'creator',
+        title: '创建人',
+      },
+      {
+        name: 'is_open',
+        title: '状态',
+      },
     ],
   },
 
@@ -76,8 +133,12 @@ new Vue({
       return '/admin/api/game/ai/list'
     },
 
+    getAiDispatchTableUrl () {
+      return '/admin/api/game/ai/dispatch/list'
+    },
+
     searchAiList () {
-      //刷新表格
+      //刷新表格，通过方法拿地址前缀，不然下一次提交查询，参数会append上去，造成错误
       this.aiTableUrl = this.getAiTableUrl() + `?db=${this.searchAiFormData.db}`
         + `&game_type=${this.searchAiFormData.game_type}`
         + `&status=${this.searchAiFormData.status}`
@@ -98,7 +159,7 @@ new Vue({
     },
 
     aiListButtonAction () {
-      this.aiTableUrl = this.getAiTableUrl()
+      this.aiTableUrl = this.getAiTableUrl()  //刷新表格
       this.searchAiFormData = {
         db: 10014,
         game_type: '',
@@ -122,10 +183,8 @@ new Vue({
   },
 
   mounted: function () {
-    let _self = this
-    this.$root.eventHub.$on('vuetableCellClicked', (data) => {
-      _self.activatedRow = data
-      jQuery('#edit-ai-modal-button').click()   //打开编辑AI模态框
-    })
+    //let _self = this
+
+    this.$root.eventHub.$on('editAiEvent', (data) => this.activatedRow = data)
   },
 })

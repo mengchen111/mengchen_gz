@@ -38,7 +38,16 @@
                         </ul>
                         <div class="tab-content no-padding">
                             <div class="tab-pane" id="ai-dispatch-list">
-                                ai dispatch list
+                                <div class="row phone-scrollable">
+                                    <div class="col-md-12">
+                                        <my-vuetable
+                                                :table-url="aiDispatchTableUrl"
+                                                :table-fields="aiDispatchTableFields"
+                                                table-track-by="id"
+                                        >
+                                        </my-vuetable>
+                                    </div>
+                                </div>
                             </div>
                             <div class="tab-pane active" id="ai-list">
                                 <div class="row">
@@ -106,9 +115,6 @@
                 </div>
             </div>
 
-            <!--jQuery('#detail-record-modal').modal('show') 报错 变通方法-->
-            <button style="display: none" class="btn btn-default" data-toggle="modal"
-                    data-target="#edit-ai-modal" id="edit-ai-modal-button"></button>
             <!-- 编辑AI模态框 -->
             <div id="edit-ai-modal" class="modal fade" tabindex="-1">
                 <div class="modal-dialog" style="width: 35%;">
@@ -140,7 +146,7 @@
                                     <div class="form-group">
                                         <label class="col-md-3 control-label text-center">钻石</label>
                                         <div class="col-md-8">
-                                            <input type="text" class="form-control" v-model="activatedRow.diamond">
+                                            <input type="number" min="0" class="form-control" v-model="activatedRow.diamond">
                                         </div>
                                     </div>
                                 </div>
@@ -148,7 +154,7 @@
                                     <div class="form-group">
                                         <label class="col-md-3 control-label text-center">兑换券</label>
                                         <div class="col-md-8">
-                                            <input type="text" class="form-control" v-model="activatedRow.crystal">
+                                            <input type="number" min="0" class="form-control" v-model="activatedRow.crystal">
                                         </div>
                                     </div>
                                 </div>
@@ -156,7 +162,7 @@
                                     <div class="form-group">
                                         <label class="col-md-3 control-label text-center">经验</label>
                                         <div class="col-md-8">
-                                            <input type="text" class="form-control" v-model="activatedRow.exp">
+                                            <input type="number" min="0" class="form-control" v-model="activatedRow.exp">
                                         </div>
                                     </div>
                                 </div>
