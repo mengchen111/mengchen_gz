@@ -23,6 +23,7 @@ class AiController extends Controller
     protected $backendServerApi;
     protected $editAiUri = '/Npc/edit';
     protected $editAiDispatchUri = '/Npc/dispatch';
+    protected $switchAiDispatchUri = '/Npc/change';     //停用启用
     protected $addAiUri = '/Npc/add';
 
     public function __construct(Request $request)
@@ -113,6 +114,26 @@ class AiController extends Controller
         //TODO 编辑完成之后后端数据库添加了一条记录，而不是更新
         return [
             'message' => '编辑AI调度成功',
+        ];
+    }
+
+    public function switchAiDispatch(AdminRequest $request, $id, $switch)
+    {
+        $api = $this->backendServerApi . $this->switchAiDispatchUri;
+        $aiDispatch = NpcDispatchLog::find($id);
+
+        $gameServer = new GameServer($api);
+        $gameServer->request('POST', [
+            'logId' => $id,
+            'id' => $aiDispatch->ids,
+            'isOpen' => $switch
+        ]);
+
+        OperationLogs::add($request->user()->id, $request->path(), $request->method(),
+            'AI调度启用(停用)', $request->header('User-Agent'), json_encode($request->all()));
+
+        return [
+            'message' => '操作成功',
         ];
     }
 
