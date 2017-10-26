@@ -111,7 +111,6 @@ class AiController extends Controller
         OperationLogs::add($request->user()->id, $request->path(), $request->method(),
             '编辑AI调度', $request->header('User-Agent'), json_encode($request->all()));
 
-        //TODO 编辑完成之后后端数据库添加了一条记录，而不是更新
         return [
             'message' => '编辑AI调度成功',
         ];
@@ -158,7 +157,7 @@ class AiController extends Controller
         ]);
 
         //构建POST请求的数据结构
-        $formData['lodId'] = $request->id;
+        $formData['logId'] = $request->id;
         $formData['id'] = $request->ids;
         $formData['gold'] = $request->golds;
         $formData['serverId'] = $request->server_id;

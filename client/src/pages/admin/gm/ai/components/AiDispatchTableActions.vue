@@ -1,9 +1,9 @@
 <template>
     <div class="table-actions">
-        <!--<button class="btn btn-primary btn-flat" data-toggle="modal" data-target="#edit-ai-dispatch-modal"-->
-                <!--@click="editAiDispatchAction(rowData)">-->
-            <!--编辑-->
-        <!--</button>-->
+        <button class="btn btn-primary btn-flat" data-toggle="modal" data-target="#edit-ai-dispatch-modal"
+                @click="editAiDispatchAction(rowData)">
+            编辑
+        </button>
         <button class="btn btn-success btn-flat" @click="enableAiDispatchAction(rowData)">
             启用
         </button>

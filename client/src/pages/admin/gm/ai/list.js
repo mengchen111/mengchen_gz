@@ -217,7 +217,7 @@ new Vue({
       let toastr = this.$refs.toastr
 
       axios.put(`${this.switchAiDispatchApi}/${data.id}/1`, {
-        ids: data.ids
+        ids: data.ids,
       })
         .then(function (response) {
           return response.data.error
@@ -230,7 +230,7 @@ new Vue({
       let toastr = this.$refs.toastr
 
       axios.put(`${this.switchAiDispatchApi}/${data.id}/0`, {
-        ids: data.ids
+        ids: data.ids,
       })
         .then(function (response) {
           return response.data.error
