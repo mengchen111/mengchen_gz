@@ -88,7 +88,18 @@ class AiController extends Controller
 
     public function addMassAi(AdminRequest $request)
     {
-        //TODO
+        $formData = $this->filterAddAiFrom($request);
+        $api = $this->backendServerApi . $this->addAiUri;
+
+        $gameServer = new GameServer($api);
+        $gameServer->request('POST', $formData);    //发送AI添加请求
+
+        OperationLogs::add($request->user()->id, $request->path(), $request->method(),
+            '批量添加AI', $request->header('User-Agent'), json_encode($request->all()));
+
+        return [
+            'message' => '批量添加AI成功',
+        ];
     }
 
     public function getMaps(AdminRequest $request)

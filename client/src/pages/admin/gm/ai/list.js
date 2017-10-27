@@ -28,6 +28,7 @@ new Vue({
     massEditAiFormData: {},
     addAiDispatchFormData: {},
     addSingleAiFormData: {},
+    addMassAiFormData: {},
 
     serverList: {},
     gameType: {},
@@ -42,6 +43,7 @@ new Vue({
     addAiDispatchApi: '/admin/api/game/ai-dispatch',
     switchAiDispatchApi: '/admin/api/game/ai-dispatch/switch', //启用停用
     addSingleAiApi: '/admin/api/game/ai',
+    addMassAiApi: '/admin/api/game/ai/mass',
 
     aiSelectedTo: [],   //被选中的行rid
     aiTableUrl: '/admin/api/game/ai/list',
@@ -208,6 +210,25 @@ new Vue({
       })
         .then(function (response) {
           _self.addSingleAiFormData = {}
+          _self.resolveResponse(response, toastr)
+        })
+        .catch((error) => toastr.message(error, 'error'))
+    },
+
+    addMassAi () {
+      let _self = this
+      let toastr = this.$refs.toastr
+
+      axios({
+        method: 'POST',
+        url: this.addMassAiApi,
+        data: this.addMassAiFormData,
+        validateStatus: function (status) {
+          return status === 200 || status === 422
+        },
+      })
+        .then(function (response) {
+          _self.addMassAiFormData = {}
           _self.resolveResponse(response, toastr)
         })
         .catch((error) => toastr.message(error, 'error'))

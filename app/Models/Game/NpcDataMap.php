@@ -12,6 +12,7 @@ namespace App\Models\Game;
 trait NpcDataMap
 {
     protected $gameTypeMap = [
+        0 => '未分配',
         1 => '闷鸡',
         2 => '斗地主',
         3 => '昭通麻将',
@@ -28,6 +29,7 @@ trait NpcDataMap
     ];
 
     protected $roomTypeMap = [
+        0 => '未分配',
         1 => '房间类型1',
         2 => '房间类型2',
         3 => '房间类型3',
