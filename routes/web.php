@@ -69,6 +69,8 @@ Route::group([
     Route::get('game/ai/dispatch/list', 'Game\AiController@showDispatch');
     Route::get('game/ai/type-map', 'Game\AiController@getMaps');
     Route::put('game/ai', 'Game\AiController@edit');
+    Route::post('game/ai', 'Game\AiController@addSingleAi');
+    Route::post('game/ai/mass', 'Game\AiController@addMassAi');
     Route::put('game/ai/mass', 'Game\AiController@massEdit');
     Route::put('game/ai-dispatch', 'Game\AiController@editDispatch');
     Route::post('game/ai-dispatch', 'Game\AiController@addDispatch');

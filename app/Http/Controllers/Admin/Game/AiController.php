@@ -70,6 +70,27 @@ class AiController extends Controller
         return Paginator::paginate($result, $this->per_page, $this->page);
     }
 
+    public function addSingleAi(AdminRequest $request)
+    {
+        $formData = $this->filterAddAiFrom($request);
+        $api = $this->backendServerApi . $this->addAiUri;
+
+        $gameServer = new GameServer($api);
+        $gameServer->request('POST', $formData);    //发送AI添加请求
+
+        OperationLogs::add($request->user()->id, $request->path(), $request->method(),
+            '添加单个AI', $request->header('User-Agent'), json_encode($request->all()));
+
+        return [
+            'message' => '添加单个AI成功',
+        ];
+    }
+
+    public function addMassAi(AdminRequest $request)
+    {
+        //TODO
+    }
+
     public function getMaps(AdminRequest $request)
     {
         $map = [];
@@ -90,8 +111,8 @@ class AiController extends Controller
     {
         $formData = $this->filterEditForm($request);
         $api = $this->backendServerApi . $this->editAiUri;
-        $gameServer = new GameServer($api);
 
+        $gameServer = new GameServer($api);
         $gameServer->request('POST', $formData);    //发送编辑请求
 
         OperationLogs::add($request->user()->id, $request->path(), $request->method(),
@@ -295,6 +316,21 @@ class AiController extends Controller
 
         return $request->intersect([
             'id', 'diamond', 'lottery', 'exp', 'nick',
+        ]);
+    }
+
+    protected function filterAddAiFrom($request)
+    {
+        $this->validate($request, [
+            'nick' => 'required|string',
+            'diamond' => 'required',
+            'lottery' => 'required',
+            'exp' => 'required',
+            'server_id' => 'required|integer',
+        ]);
+
+        return $request->intersect([
+            'nick', 'diamond', 'lottery', 'exp', 'server_id'
         ]);
     }
 }

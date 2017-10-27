@@ -315,14 +315,51 @@
                             <h4 class="text-center">添加AI</h4>
                         </div>
 
-                        <form role="form" class="from-horizontal" method="POST" action="#" @submit.prevent="addAi">
-                            <div class="modal-body">
-                                <div class="form-group">
-                                    <label>addAi</label>
-                                    <input type="text" class="form-control">
+                        <div class="modal-body">
+                            <div class="nav-tabs-custom">
+                                <ul class="nav nav-tabs pull-right">
+                                    <li><a href="#mass-ai-add" data-toggle="tab">批量添加</a></li>
+                                    <li class="active"><a href="#single-ai-add" data-toggle="tab">单个添加</a></li>
+                                    <li class="pull-left header"><i class="fa fa-user-secret"></i> AI</li>
+                                </ul>
+                                <div class="tab-content no-padding">
+                                    <div class="chart tab-pane" id="mass-ai-add">
+                                        mass ai
+                                    </div>
+                                    <div class="chart tab-pane active" id="single-ai-add">
+                                        <form role="form" method="POST" action="#" @submit.prevent="addSingleAi">
+                                            <div class="form-group">
+                                                <label>昵称</label>
+                                                <input type="text" required class="form-control" v-model="addSingleAiFormData.nick">
+                                            </div>
+                                            <div class="form-group">
+                                                <label>钻石</label>
+                                                <input type="number" min="0" required class="form-control" v-model="addSingleAiFormData.diamond">
+                                            </div>
+                                            <div class="form-group">
+                                                <label>兑换券</label>
+                                                <input type="number" min="0" required class="form-control" v-model="addSingleAiFormData.lottery">
+                                            </div>
+                                            <div class="form-group">
+                                                <label>经验</label>
+                                                <input type="number" min="0" required class="form-control" v-model="addSingleAiFormData.exp">
+                                            </div>
+                                            <div class="form-group">
+                                                <label>选择区服</label>
+                                                <select class="form-control" required v-model="addSingleAiFormData.server_id">
+                                                    <option v-for="(server,index) in serverList" :value="server.id">
+                                                        {{ server.name }}
+                                                    </option>
+                                                </select>
+                                            </div>
+                                            <div class="form-group">
+                                                <button class="btn btn-block btn-primary btn-flat" type="submit">提交</button>
+                                            </div>
+                                        </form>
+                                    </div>
                                 </div>
                             </div>
-                        </form>
+                        </div>
                     </div>
                 </div>>
             </div>
@@ -336,7 +373,7 @@
                             <h4 class="text-center">批量编辑AI</h4>
                         </div>
 
-                        <form role="form" class="from-horizontal" method="POST" action="#" @submit.prevent="massEditAi">
+                        <form role="form" class="from-horizontal" method="PUT" action="#" @submit.prevent="massEditAi">
                             <div class="modal-body">
                                 <div class="form-group">
                                     <label>选中的AI</label>

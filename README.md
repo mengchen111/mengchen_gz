@@ -114,6 +114,8 @@ cd $codeDir
 | game/ai/dispatch/list | GET | 获取AI调度列表 |
 | game/ai/type-map | GET | 获取游戏类型和ai状态的映射关系表 |
 | game/ai | PUT | AI编辑 |
+| game/ai | POST | 添加单个AI |
+| game/ai/mass | POST | 添加多个AI |
 | game/ai/mass | PUT | 批量AI编辑 |
 | game/ai-dispatch | PUT | 编辑AI调度 |
 | game/ai-dispatch | POST | 添加AI调度 |
@@ -175,6 +177,6 @@ cd $codeDir
 | Action | Method | Description |
 | ----  | :-----: | ----------: |
 | /Npc/edit | POST | 编辑AI(单个或批量) |
-| /Npc/add | POST | 添加AI |
+| /Npc/add | POST | 添加AI(单个或多个) |
 | /Npc/dispatch | POST | 编辑(添加)AI调度 |
 | /Npc/changes | POST | 启用停用AI调度 |
