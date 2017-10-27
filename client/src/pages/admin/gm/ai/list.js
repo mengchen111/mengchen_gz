@@ -26,6 +26,7 @@ new Vue({
       status: '',       //状态
     },
     massEditAiFormData: {},
+    addAiDispatchFormData: {},
 
     serverList: {},
     gameType: {},
@@ -37,6 +38,7 @@ new Vue({
     editAiApi: '/admin/api/game/ai',
     massEditAiApi: '/admin/api/game/ai/mass',
     editAiDispatchApi: '/admin/api/game/ai-dispatch',
+    addAiDispatchApi: '/admin/api/game/ai-dispatch',
     switchAiDispatchApi: '/admin/api/game/ai-dispatch/switch', //启用停用
 
     aiSelectedTo: [],   //被选中的行rid
@@ -88,6 +90,7 @@ new Vue({
             ? toastr.message(response.data.error, 'error')
             : toastr.message(response.data.message)
         })
+        .catch((error) => toastr.message(error, 'error'))
     },
 
     massEditAi () {
@@ -105,10 +108,13 @@ new Vue({
       axios.put(this.massEditAiApi, this.massEditAiFormData)
         .then((response) => {
           _self.loading = false
+          _self.massEditAiFormData = {}
+
           return response.data.error
             ? toastr.message(response.data.error, 'error')
             : toastr.message(response.data.message)
         })
+        .catch((error) => toastr.message(error, 'error'))
     },
 
     editAiDispatch () {
@@ -126,6 +132,37 @@ new Vue({
             ? toastr.message(response.data.error, 'error')
             : toastr.message(response.data.message)
         })
+        .catch((error) => toastr.message(error, 'error'))
+    },
+
+    addAiDispatch () {
+      let _self = this
+      let toastr = this.$refs.toastr
+
+      if (this.aiSelectedTo.length === 0) {
+        return toastr.message('未选中ai', 'error')
+      }
+
+      //构建后端接口需要的参数
+      this.addAiDispatchFormData.isAllDay = this.addAiDispatchFormData.isAllDay ? 1 : 0
+      Object.assign(this.addAiDispatchFormData, {
+        serverId: this.searchAiFormData.db,
+      })
+
+      this.loading = true
+      Object.assign(this.addAiDispatchFormData, {
+        id: this.selectedAiIds,
+      })
+      axios.post(this.addAiDispatchApi, this.addAiDispatchFormData)
+        .then((response) => {
+          _self.loading = false
+          _self.addAiDispatchFormData = {}
+
+          return response.data.error
+            ? toastr.message(response.data.error, 'error')
+            : toastr.message(response.data.message)
+        })
+        .catch((error) => toastr.message(error, 'error'))
     },
 
     aiListButtonAction () {
@@ -171,6 +208,7 @@ new Vue({
             ? toastr.message(response.data.error, 'error')
             : toastr.message('启用成功')
         })
+        .catch((error) => toastr.message(error, 'error'))
     },
 
     disableAiDispatch (data) {
@@ -184,6 +222,7 @@ new Vue({
             ? toastr.message(response.data.error, 'error')
             : toastr.message('停用成功')
         })
+        .catch((error) => toastr.message(error, 'error'))
     },
 
     onVuetableCheckboxToggled (isChecked, data) {

@@ -24,6 +24,7 @@ class AiController extends Controller
     protected $backendServerApi;
     protected $editAiUri = '/Npc/edit';
     protected $editAiDispatchUri = '/Npc/dispatch';
+    protected $addAiDispatchUri = '/Npc/dispatch';
     protected $switchAiDispatchUri = '/Npc/change';     //停用启用
     protected $addAiUri = '/Npc/add';
 
@@ -121,8 +122,8 @@ class AiController extends Controller
     {
         $formData = $this->filterEditDispatchForm($request);
         $api = $this->backendServerApi . $this->editAiDispatchUri;
-        $gameServer = new GameServer($api);
 
+        $gameServer = new GameServer($api);
         $gameServer->request('POST', $formData);    //发送编辑请求
 
         OperationLogs::add($request->user()->id, $request->path(), $request->method(),
@@ -130,6 +131,22 @@ class AiController extends Controller
 
         return [
             'message' => '编辑AI调度成功',
+        ];
+    }
+
+    public function addDispatch(AdminRequest $request)
+    {
+        $formData = $this->filterAddDispatchForm($request);
+        $api = $this->backendServerApi . $this->addAiDispatchUri;
+
+        $gameServer = new GameServer($api);
+        $gameServer->request('POST', $formData);    //发送编辑请求
+
+        OperationLogs::add($request->user()->id, $request->path(), $request->method(),
+            '添加AI调度', $request->header('User-Agent'), json_encode($request->all()));
+
+        return [
+            'message' => '添加AI调度成功',
         ];
     }
 
@@ -190,6 +207,49 @@ class AiController extends Controller
 
         $endTime = explode(':', $request->do_end_time);
         $formData['etime'] = $endTime[0] * 3600 + $endTime[1] * 60 + $endTime[2];
+
+        return $formData;
+    }
+
+    protected function filterAddDispatchForm($request)
+    {
+        $this->validate($request, [
+            'id' => 'required',
+            'theme' => 'required',
+            'gold' => 'required',
+            'gameType' => 'required|in:' . implode(',', array_keys($this->gameTypeMap)),
+            'roomType' => 'required|in:' . implode(',', array_keys($this->roomTypeMap)),
+            'serverId' => 'required|integer',
+            'sdate' => 'required|date_format:Y-m-d',
+            'edate' => 'required|date_format:Y-m-d',
+            'stime' => 'date_format:H:i:s',
+            'etime' => 'date_format:H:i:s',
+            'isAllDay' => 'required|integer|in:0,1',
+        ]);
+
+        $formData = $request->intersect([
+            'id', 'theme', 'gold', 'gameType', 'roomType', 'serverId',
+            'sdate', 'edate',
+        ]);
+
+        $formData['creator'] = $request->user()->account;
+        $formData['isAllDay'] = $request->isAllDay;
+        $formData['sdate'] = Carbon::parse($request->sdate)->timestamp;
+        $formData['edate'] = Carbon::parse($request->edate)->timestamp;
+
+        if ($request->has('stime')) {
+            $startTime = explode(':', $request->stime);
+            $formData['stime'] = $startTime[0] * 3600 + $startTime[1] * 60 + $startTime[2];
+        } else {
+            $formData['stime'] = 0;
+        }
+
+        if ($request->has('etime')) {
+            $endTime = explode(':', $request->etime);
+            $formData['etime'] = $endTime[0] * 3600 + $endTime[1] * 60 + $endTime[2];
+        } else {
+            $formData['etime'] = 86399;
+        }
 
         return $formData;
     }

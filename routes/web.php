@@ -71,6 +71,7 @@ Route::group([
     Route::put('game/ai', 'Game\AiController@edit');
     Route::put('game/ai/mass', 'Game\AiController@massEdit');
     Route::put('game/ai-dispatch', 'Game\AiController@editDispatch');
+    Route::post('game/ai-dispatch', 'Game\AiController@addDispatch');
     Route::put('game/ai-dispatch/switch/{id}/{switch}', 'Game\AiController@switchAiDispatch')->where('id', '[0-9]+')->where('switch', '[01]');
 
     Route::get('game/server', 'Platform\ServerController@show');
