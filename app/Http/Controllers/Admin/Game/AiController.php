@@ -139,8 +139,11 @@ class AiController extends Controller
             ->only([
                 '14', '15', '16', '17',     //只返回使用到的几种游戏类型
             ]);
+        $map['room_type'] = collect($this->roomTypeMap)
+            ->only([
+                1, 2, 3, 4                  //"未分配"不返回
+            ]);
         $map['status_type'] = $this->statusMap;
-        $map['room_type'] = $this->roomTypeMap;
 
         OperationLogs::add($request->user()->id, $request->path(), $request->method(),
             '查看游戏类型映射关系', $request->header('User-Agent'), json_encode($request->all()));
