@@ -174,5 +174,5 @@ cd $codeDir
 | ----  | :-----: | ----------: |
 | /Npc/edit | POST | 编辑AI |
 | /Npc/add | POST | 添加AI |
-| /Npc/dispatch | POST | 编辑AI调度 |
+| /Npc/dispatch | POST | 编辑(添加)AI调度 |
 | /Npc/changes | POST | 启用停用AI调度 |

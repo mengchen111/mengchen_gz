@@ -4,10 +4,12 @@
                 @click="editAiDispatchAction(rowData)">
             编辑
         </button>
-        <button class="btn btn-success btn-flat" @click="enableAiDispatchAction(rowData)">
+        <button class="btn btn-success btn-flat" @click="enableAiDispatchAction(rowData)"
+            v-if="rowData.is_open === '关闭'">
             启用
         </button>
-        <button class="btn btn-danger btn-flat" @click="disableAiDispatchAction(rowData)">
+        <button class="btn btn-danger btn-flat" @click="disableAiDispatchAction(rowData)"
+            v-else>
             停用
         </button>
     </div>
