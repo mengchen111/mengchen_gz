@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Admin\Game;
 
+use App\Exceptions\CustomException;
 use App\Http\Requests\AdminRequest;
 use App\Models\Game\Npc;
 use App\Models\Game\NpcDataMap;
@@ -220,13 +221,20 @@ class AiController extends Controller
     {
         $this->validate($request, [
             'id' => 'required',         //传进来的id列表
+            'nick' => 'string',         //昵称，应该与id数量匹配
             'diamond' => 'required',    //diamond范围
             'lottery' => 'required',
             'exp' => 'required',
         ]);
 
+        if ($request->has('nick')) {
+            if (count(explode(',', $request->nick)) !== count(explode(',', $request->id))) {
+                throw new CustomException('昵称与id数量不匹配，请重新输入');
+            }
+        }
+
         return $request->intersect([
-            'id', 'diamond', 'lottery', 'exp'
+            'id', 'diamond', 'lottery', 'exp', 'nick',
         ]);
     }
 }
