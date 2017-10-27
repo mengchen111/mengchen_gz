@@ -24,6 +24,7 @@ new Vue({
       game_type: '',    //游戏类型
       status: '',       //状态
     },
+    massEditAiFormData: {},
 
     serverList: {},
     gameType: {},
@@ -33,11 +34,19 @@ new Vue({
     serverListApi: '/admin/api/game/server',
     typeApi: '/admin/api/game/ai/type-map',
     editAiApi: '/admin/api/game/ai',
+    massEditAiApi: '/admin/api/game/ai/mass',
     editAiDispatchApi: '/admin/api/game/ai-dispatch',
     switchAiDispatchApi: '/admin/api/game/ai-dispatch/switch', //启用停用
 
+    aiSelectedTo: [],   //被选中的行rid
     aiTableUrl: '/admin/api/game/ai/list',
+    aiTableTrackBy: 'rid',
     aiTableFields: [
+      {
+        name: '__checkbox',
+        titleClass: 'text-center',
+        dataClass: 'text-center',
+      },
       {
         name: 'rid',
         title: 'id',
@@ -141,6 +150,15 @@ new Vue({
     ],
   },
 
+  computed: {
+    selectedAiIds: function () {
+      return this.aiSelectedTo.join(',')
+    },
+    selectedAiAmount: function () {
+      return this.aiSelectedTo.length
+    },
+  },
+
   methods: {
     getAiTableUrl () {
       return '/admin/api/game/ai/list'
@@ -155,6 +173,9 @@ new Vue({
       this.aiTableUrl = this.getAiTableUrl() + `?db=${this.searchAiFormData.db}`
         + `&game_type=${this.searchAiFormData.game_type}`
         + `&status=${this.searchAiFormData.status}`
+
+      this.aiSelectedTo = []  //清空选择框
+      this.$root.eventHub.$emit('vuetableFlushSelectedTo')
     },
 
     editAi () {
@@ -163,6 +184,27 @@ new Vue({
 
       this.loading = true
       axios.put(this.editAiApi, this.activatedRow)
+        .then((response) => {
+          _self.loading = false
+          return response.data.error
+            ? toastr.message(response.data.error, 'error')
+            : toastr.message(response.data.message)
+        })
+    },
+
+    massEditAi () {
+      let _self = this
+      let toastr = this.$refs.toastr
+
+      if (this.aiSelectedTo.length === 0) {
+        return toastr.message('未选中ai', 'error')
+      }
+
+      this.loading = true
+      Object.assign(this.massEditAiFormData, {
+        id: this.selectedAiIds,
+      })
+      axios.put(this.massEditAiApi, this.massEditAiFormData)
         .then((response) => {
           _self.loading = false
           return response.data.error
@@ -195,6 +237,8 @@ new Vue({
         game_type: '',
         status: '',
       }
+      this.aiSelectedTo = []  //清空选择框
+      this.$root.eventHub.$emit('vuetableFlushSelectedTo')
     },
 
     aiDispatchListButtonAction () {
@@ -204,6 +248,8 @@ new Vue({
         game_type: '',
         status: '',
       }
+      this.aiSelectedTo = []  //清空选择框
+      this.$root.eventHub.$emit('vuetableFlushSelectedTo')
     },
 
     searchAiDispatchList () {
@@ -211,6 +257,9 @@ new Vue({
       this.aiDispatchTableUrl = this.getAiDispatchTableUrl() + `?db=${this.searchAiFormData.db}`
         + `&game_type=${this.searchAiFormData.game_type}`
         + `&is_open=${this.searchAiFormData.status}`
+
+      this.aiSelectedTo = []  //清空选择框
+      this.$root.eventHub.$emit('vuetableFlushSelectedTo')
     },
 
     enableAiDispatch (data) {
@@ -238,6 +287,22 @@ new Vue({
             : toastr.message('停用成功')
         })
     },
+
+    onVuetableCheckboxToggled (isChecked, data) {
+      if (isChecked === true) {
+        this.aiSelectedTo.push(data[this.aiTableTrackBy])
+      } else {
+        _.pull(this.aiSelectedTo, data[this.aiTableTrackBy])
+      }
+    },
+    onVuetableCheckboxToggledAll (isChecked, data) {
+      if (isChecked === true) {
+        this.aiSelectedTo = data
+      } else {
+        this.aiSelectedTo = []
+        this.$root.eventHub.$emit('vuetableFlushSelectedTo')
+      }
+    },
   },
 
   created: function () {
@@ -261,5 +326,7 @@ new Vue({
 
     this.$root.eventHub.$on('enableAiDispatchEvent', (data) => this.enableAiDispatch(data))
     this.$root.eventHub.$on('disableAiDispatchEvent', (data) => this.disableAiDispatch(data))
+    this.$root.eventHub.$on('vuetableCheckboxToggled', (isChecked, data) => this.onVuetableCheckboxToggled(isChecked, data))
+    this.$root.eventHub.$on('vuetableCheckboxToggledAll', (isChecked, data) => this.onVuetableCheckboxToggledAll(isChecked, data))
   },
 })

@@ -100,6 +100,22 @@ class AiController extends Controller
         ];
     }
 
+    public function massEdit(AdminRequest $request)
+    {
+        $formData = $this->filterMassEditForm($request);
+        $api = $this->backendServerApi . $this->editAiUri;
+
+        $gameServer = new GameServer($api);
+        $gameServer->request('POST', $formData);    //发送批量编辑请求
+
+        OperationLogs::add($request->user()->id, $request->path(), $request->method(),
+            '批量编辑AI', $request->header('User-Agent'), json_encode($request->all()));
+
+        return [
+            'message' => '批量编辑AI成功',
+        ];
+    }
+
     public function editDispatch(AdminRequest $request)
     {
         $formData = $this->filterEditDispatchForm($request);
@@ -161,8 +177,8 @@ class AiController extends Controller
         $formData['id'] = $request->ids;
         $formData['gold'] = $request->golds;
         $formData['serverId'] = $request->server_id;
-        $formData['gameType'] = (string) array_search($request->game_type, $this->gameTypeMap);
-        $formData['roomType'] = (string) array_search($request->room_type, $this->roomTypeMap);
+        $formData['gameType'] = array_search($request->game_type, $this->gameTypeMap);
+        $formData['roomType'] = array_search($request->room_type, $this->roomTypeMap);
         $formData['sdate'] = Carbon::parse($request->do_start_date)->timestamp;
         $formData['edate'] = Carbon::parse($request->do_end_date)->timestamp;
         $formData['isAllDay'] = $request->is_all_day;
@@ -198,5 +214,19 @@ class AiController extends Controller
         //$formData['head'] = -2;                       //经测试不用传此参数
 
         return $formData;
+    }
+
+    protected function filterMassEditForm($request)
+    {
+        $this->validate($request, [
+            'id' => 'required',         //传进来的id列表
+            'diamond' => 'required',    //diamond范围
+            'lottery' => 'required',
+            'exp' => 'required',
+        ]);
+
+        return $request->intersect([
+            'id', 'diamond', 'lottery', 'exp'
+        ]);
     }
 }

@@ -114,6 +114,7 @@ cd $codeDir
 | game/ai/dispatch/list | GET | 获取AI调度列表 |
 | game/ai/type-map | GET | 获取游戏类型和ai状态的映射关系表 |
 | game/ai | PUT | AI编辑 |
+| game/ai/mass | PUT | 批量AI编辑 |
 | game/ai-dispatch | PUT | AI调度编辑 |
 | game/ai-dispatch/switch/{id}/{switch} | PUT | AI调度启用停用 |
 | game/server | GET | 获取游戏后端服务器列表 |
