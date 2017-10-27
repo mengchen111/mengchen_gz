@@ -68,6 +68,15 @@ new Vue({
       return '/admin/api/game/ai/dispatch/list'
     },
 
+    resolveResponse (res, toastr) {
+      if (res.status === 422) {
+        return toastr.message(JSON.stringify(res.data), 'error')
+      }
+      return res.data.error
+        ? toastr.message(res.data.error, 'error')
+        : toastr.message(res.data.message)
+    },
+
     searchAiList () {
       //刷新表格，通过方法拿地址前缀，不然下一次提交查询，参数会append上去，造成错误
       this.aiTableUrl = this.getAiTableUrl() + `?db=${this.searchAiFormData.db}`
@@ -83,12 +92,17 @@ new Vue({
       let toastr = this.$refs.toastr
 
       this.loading = true
-      axios.put(this.editAiApi, this.activatedRow)
-        .then((response) => {
+      axios({
+        method: 'PUT',
+        url: this.editAiApi,
+        data: this.activatedRow,
+        validateStatus: function (status) {
+          return status === 200 || status === 422
+        },
+      })
+        .then(function (response) {
           _self.loading = false
-          return response.data.error
-            ? toastr.message(response.data.error, 'error')
-            : toastr.message(response.data.message)
+          _self.resolveResponse(response, toastr)
         })
         .catch((error) => toastr.message(error, 'error'))
     },
@@ -105,14 +119,18 @@ new Vue({
       Object.assign(this.massEditAiFormData, {
         id: this.selectedAiIds,
       })
-      axios.put(this.massEditAiApi, this.massEditAiFormData)
-        .then((response) => {
+      axios({
+        method: 'PUT',
+        url: this.massEditAiApi,
+        data: this.massEditAiFormData,
+        validateStatus: function (status) {
+          return status === 200 || status === 422
+        },
+      })
+        .then(function (response) {
           _self.loading = false
           _self.massEditAiFormData = {}
-
-          return response.data.error
-            ? toastr.message(response.data.error, 'error')
-            : toastr.message(response.data.message)
+          _self.resolveResponse(response, toastr)
         })
         .catch((error) => toastr.message(error, 'error'))
     },
@@ -125,12 +143,17 @@ new Vue({
       this.activatedRow.is_all_day = this.activatedRow.is_all_day ? 1 : 0
 
       this.loading = true
-      axios.put(this.editAiDispatchApi, this.activatedRow)
-        .then((response) => {
+      axios({
+        method: 'PUT',
+        url: this.editAiDispatchApi,
+        data: this.activatedRow,
+        validateStatus: function (status) {
+          return status === 200 || status === 422
+        },
+      })
+        .then(function (response) {
           _self.loading = false
-          return response.data.error
-            ? toastr.message(response.data.error, 'error')
-            : toastr.message(response.data.message)
+          _self.resolveResponse(response, toastr)
         })
         .catch((error) => toastr.message(error, 'error'))
     },
@@ -153,14 +176,18 @@ new Vue({
       Object.assign(this.addAiDispatchFormData, {
         id: this.selectedAiIds,
       })
-      axios.post(this.addAiDispatchApi, this.addAiDispatchFormData)
-        .then((response) => {
+      axios({
+        method: 'POST',
+        url: this.addAiDispatchApi,
+        data: this.addAiDispatchFormData,
+        validateStatus: function (status) {
+          return status === 200 || status === 422
+        },
+      })
+        .then(function (response) {
           _self.loading = false
           _self.addAiDispatchFormData = {}
-
-          return response.data.error
-            ? toastr.message(response.data.error, 'error')
-            : toastr.message(response.data.message)
+          _self.resolveResponse(response, toastr)
         })
         .catch((error) => toastr.message(error, 'error'))
     },
