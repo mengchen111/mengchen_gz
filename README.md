@@ -173,7 +173,7 @@ cd $codeDir
 
 | Action | Method | Description |
 | ----  | :-----: | ----------: |
-| /Npc/edit | POST | 编辑AI |
+| /Npc/edit | POST | 编辑AI(单个或批量) |
 | /Npc/add | POST | 添加AI |
 | /Npc/dispatch | POST | 编辑(添加)AI调度 |
 | /Npc/changes | POST | 启用停用AI调度 |
