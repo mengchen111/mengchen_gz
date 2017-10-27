@@ -10,6 +10,7 @@ use App\Models\Log\NpcDispatchLog;
 use App\Services\GameServer;
 use App\Services\Paginator;
 use Carbon\Carbon;
+use Faker\Factory as Faker;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 use App\Models\OperationLogs;
@@ -99,6 +100,35 @@ class AiController extends Controller
 
         return [
             'message' => '批量添加AI成功',
+        ];
+    }
+
+    public function quickAddAi(AdminRequest $request)
+    {
+        $this->validate($request,[
+            'num' => 'required|numeric|max:15',
+        ]);
+
+        $nicks = [];
+        for ($i = 1; $i <= $request->num; $i++) {
+            array_push($nicks, strtolower(Faker::create()->firstName));
+        }
+
+        $api = $this->backendServerApi . $this->addAiUri;
+        $gameServer = new GameServer($api);
+        $gameServer->request('POST', [
+            'nick' => implode(',', $nicks),
+            'diamond' => $request->diamond,
+            'lottery' => $request->lottery,
+            'exp' => $request->exp,
+            'server_id' => $request->server_id,
+        ]);    //发送AI添加请求
+
+        OperationLogs::add($request->user()->id, $request->path(), $request->method(),
+            '快速添加AI', $request->header('User-Agent'), json_encode($request->all()));
+
+        return [
+            'message' => '一键添加AI成功',
         ];
     }
 

@@ -116,6 +116,7 @@ cd $codeDir
 | game/ai | PUT | AI编辑 |
 | game/ai | POST | 添加单个AI |
 | game/ai/mass | POST | 添加多个AI |
+| game/ai/quick | POST | 快速添加AI(随机生成昵称) |
 | game/ai/mass | PUT | 批量AI编辑 |
 | game/ai-dispatch | PUT | 编辑AI调度 |
 | game/ai-dispatch | POST | 添加AI调度 |
