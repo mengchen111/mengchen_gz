@@ -137,7 +137,7 @@ class AiController extends Controller
         $map = [];
         $map['game_type'] = collect($this->gameTypeMap)
             ->only([
-                '14', '15', '16', '17',     //只返回使用到的几种游戏类型
+                '14', '15', '16', '17', '18',     //只返回使用到的几种游戏类型
             ]);
         $map['room_type'] = collect($this->roomTypeMap)
             ->only([
