@@ -163,6 +163,11 @@ cd $codeDir
 | ----  | :-----: | ----------: |
 | /api/info | GET | 获取用户个人信息 |
 
+### platform接口(游戏客户端调用)  
+| URI   | Method  | Description |     
+| ----  | :-----: | ----------: |
+| /api/server/lists | GET | 获取服务端列表信息 |
+
 ## 游戏服接口
 > **前缀: ?action={Action}**
 

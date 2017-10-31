@@ -14,7 +14,7 @@ class Server extends Model
 
     protected $visible = [
         'id', 'area', 'area_name', 'name', 'host', 'port', 'http_port', 'status',
-        'status_msg', 'is_update', 'is_update_msg', 'open_time', 'start_time',
+        'status_msg', 'is_update', 'is_update_msg', 'open_time', 'start_time', 'rate',
         'mysql_host', 'mysql_port', 'mysql_user', 'mysql_passwd', 'mysql_data_name',
         'mysql_log_name', 'type', 'can_see'
     ];

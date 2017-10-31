@@ -25,9 +25,11 @@ Route::prefix('dev')->group(function () {
     Route::post('base64-decode', 'DevToolsController@base64Decode');
 });
 
-//公共接口
-Route::prefix('api')->middleware(['auth'])->group(function () {
-    Route::get('info', 'InfoController@info');
+Route::prefix('api')->group(function () {
+    Route::get('info', 'InfoController@info');  //网站的管理员和代理商后台的公共接口
+
+    //platform接口
+    Route::get('server/lists', 'Admin\Platform\ServerListController@show');
 });
 
 //管理员接口
