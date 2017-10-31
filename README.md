@@ -167,6 +167,7 @@ cd $codeDir
 | URI   | Method  | Description |     
 | ----  | :-----: | ----------: |
 | /api/server/lists | GET | 获取服务端列表信息 |
+| /api/api/func_switch_version | GET | 获取版本模式控制信息 |
 
 ## 游戏服接口
 > **前缀: ?action={Action}**

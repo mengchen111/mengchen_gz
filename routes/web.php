@@ -30,6 +30,7 @@ Route::prefix('api')->group(function () {
 
     //platform接口
     Route::get('server/lists', 'Admin\Platform\ServerListController@show');
+    Route::get('api/func_switch_version', 'Admin\Platform\VersionController@showFuncSwitchVersion');
 });
 
 //管理员接口
