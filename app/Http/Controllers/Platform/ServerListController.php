@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Http\Controllers\Admin\Platform;
+namespace App\Http\Controllers\Platform;
 
 use App\Models\Platform\ClientVersion;
 use App\Models\Platform\ReviewWhiteList;

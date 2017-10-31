@@ -29,8 +29,8 @@ Route::prefix('api')->group(function () {
     Route::get('info', 'InfoController@info');  //网站的管理员和代理商后台的公共接口
 
     //platform接口
-    Route::get('server/lists', 'Admin\Platform\ServerListController@show');
-    Route::get('api/func_switch_version', 'Admin\Platform\VersionController@showFuncSwitchVersion');
+    Route::get('server/lists', 'Platform\ServerListController@show');
+    Route::get('api/func_switch_version', 'Platform\VersionController@showFuncSwitchVersion');
 });
 
 //管理员接口

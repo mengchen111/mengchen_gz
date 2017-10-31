@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Http\Controllers\Admin\Platform;
+namespace App\Http\Controllers\Platform;
 
 use App\Models\Platform\ClientVersion;
 use App\Models\Platform\FuncSwitch;
@@ -56,5 +56,10 @@ class VersionController extends Controller
         $result['code'] = 0;
 
         return $result;
+    }
+
+    public function versionUpdate()
+    {
+        //TODO 完成版本更新信息接口迁移
     }
 }
