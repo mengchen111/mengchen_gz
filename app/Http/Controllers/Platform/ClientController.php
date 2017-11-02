@@ -2,13 +2,16 @@
 
 namespace App\Http\Controllers\Platform;
 
+use App\Exceptions\PlatformException;
 use App\Models\Platform\ClientFeedback;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Storage;
+use Illuminate\Validation\ValidationException;
 
 class ClientController extends Controller
 {
+    //客户端错误日志
     public function collectClientErrorLog(Request $request)
     {
         //TODO
@@ -51,11 +54,15 @@ class ClientController extends Controller
 
     protected function filterFeedbackForm($request)
     {
-        $this->validate($request, [
-            'rid' => 'required|integer',
-            'type' => 'required|integer',
-            'content' => 'string|max:255',
-            'img' => 'mimes:jpeg,jpg,bmp,png,gif|max:2048',
-        ]);
+        try {
+            $this->validate($request, [
+                'rid' => 'required|integer',
+                'type' => 'required|integer',
+                'content' => 'string|max:255',
+                'img' => 'mimes:jpeg,jpg,bmp,png,gif|max:2048',
+            ]);
+        } catch (ValidationException $exception) {
+            throw new PlatformException($exception->getMessage());
+        }
     }
 }

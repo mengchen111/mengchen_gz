@@ -32,6 +32,7 @@ Route::prefix('api')->group(function () {
     Route::get('server/lists', 'Platform\ServerListController@show');
     Route::get('api/func_switch_version', 'Platform\VersionController@showFuncSwitchVersion');
     Route::post('api/client_feedback', 'Platform\ClientController@collectClientFeedback');
+    Route::post('api/client_error_log', 'Platform\ClientController@collectClientErrorLog');
 });
 
 //管理员接口

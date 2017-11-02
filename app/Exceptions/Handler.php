@@ -58,6 +58,13 @@ class Handler extends ExceptionHandler
                 'error' => $exception->getMessage()
             ], 200, [], JSON_UNESCAPED_UNICODE);
         }
+
+        //捕获platform移植过来的接口的异常，返回源平台相同的错误返回码10000
+        if ($exception instanceof PlatformException) {
+            return response()->json([
+                'code' => $exception->getCode(),
+            ], 200, [], JSON_UNESCAPED_UNICODE);
+        }
         return parent::render($request, $exception);
     }
 
