@@ -3,7 +3,9 @@
 namespace App\Http\Controllers\Platform;
 
 use App\Exceptions\PlatformException;
+use App\Models\Platform\ClientErrorLog;
 use App\Models\Platform\ClientFeedback;
+use Carbon\Carbon;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Storage;
@@ -14,7 +16,14 @@ class ClientController extends Controller
     //客户端错误日志
     public function collectClientErrorLog(Request $request)
     {
-        //TODO
+        $this->filterErrorLogForm($request);
+        $data = $this->buildErrorLogData($request);
+
+        ClientErrorLog::create($data);
+
+        return [
+            'code' => 0,
+        ];
     }
 
     public function collectClientFeedback(Request $request)
@@ -64,5 +73,41 @@ class ClientController extends Controller
         } catch (ValidationException $exception) {
             throw new PlatformException($exception->getMessage());
         }
+    }
+
+    protected function filterErrorLogForm($request)
+    {
+        try {
+            $this->validate($request, [
+                'sid' => 'integer',
+                'platform' => 'string',
+                'cid' => 'integer',
+                'device_type' => 'string',
+                'version' => 'string',
+                'error_type' => 'integer',
+                'match_id' => 'string',
+                'msg' => 'required|string',
+            ]);
+        } catch (ValidationException $exception) {
+            throw new PlatformException($exception->getMessage());
+        }
+    }
+
+    protected function buildErrorLogData($request)
+    {
+        $data = [];
+        $data['num'] = 1;
+        $data['update_time'] = Carbon::now()->toDateTimeString();
+        $data['rid'] = $request->input('cid', 0);
+        $data['server_id'] = $request->input('sid', 0);
+        $data['platform'] = $request->input('platform', '');
+        $data['device'] = $request->input('device_type', '');
+        $data['version'] = $request->input('version', '');
+        $data['err_type'] = $request->input('error_type', 0);
+        $data['match_id'] = $request->input('match_id', 0);
+        $data['mid'] = md5($request->input('msg'));
+        $data['msg'] = $request->input('msg');
+
+        return $data;
     }
 }
