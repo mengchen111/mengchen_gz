@@ -136,13 +136,9 @@ class AiController extends Controller
     {
         $map = [];
         $map['game_type'] = collect($this->gameTypeMap)
-            ->only([
-                '14', '15', '16', '17', '18',     //只返回使用到的几种游戏类型
-            ]);
+            ->only($this->neededGameType);  //只返回使用到的几种游戏类型
         $map['room_type'] = collect($this->roomTypeMap)
-            ->only([
-                1, 2, 3, 4                  //"未分配"不返回
-            ]);
+            ->only($this->neededRoomType);   //"未分配"不返回
         $map['status_type'] = $this->statusMap;
 
         OperationLogs::add($request->user()->id, $request->path(), $request->method(),

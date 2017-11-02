@@ -27,6 +27,11 @@ trait NpcDataMap
         16 => '牛牛',
         17 => '十三水',
         18 => '双王跑胡子',
+        19 => '上庄牛牛',
+    ];
+
+    protected $neededGameType = [   //需要返回给前端显示的游戏类型
+        '14', '15', '16', '17', '18', '19',
     ];
 
     protected $roomTypeMap = [
@@ -35,6 +40,10 @@ trait NpcDataMap
         2 => '高级房',
         3 => '房间类型3',
         4 => '房间类型4',
+    ];
+
+    protected $neededRoomType = [   //需要返回给前端选择的游戏类型
+        1, 2, 3, 4,
     ];
 
     protected $statusMap = [
