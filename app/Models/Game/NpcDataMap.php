@@ -28,6 +28,7 @@ trait NpcDataMap
         17 => '十三水',
         18 => '双王跑胡子',
         19 => '上庄牛牛',
+        21 => '明牌牛牛',
     ];
 
     protected $neededGameType = [   //需要返回给前端显示的游戏类型

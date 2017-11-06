@@ -191,3 +191,7 @@ cd $codeDir
 | /Npc/add | POST | 添加AI(单个或多个) |
 | /Npc/dispatch | POST | 编辑(添加)AI调度 |
 | /Npc/changes | POST | 启用停用AI调度 |
+| /whitelist/getwhitelist | GET | 获取白名单列表 |
+| /whitelist/addwhitelist | POST | 添加玩家到白名单 |
+| /whitelist/editwhitelist | POST | 编辑玩家白名单 |
+| /whitelist/deletewhitelist | POST | 删除玩家白名单 |
