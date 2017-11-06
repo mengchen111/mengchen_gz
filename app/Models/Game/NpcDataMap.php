@@ -32,7 +32,7 @@ trait NpcDataMap
     ];
 
     protected $neededGameType = [   //需要返回给前端显示的游戏类型
-        '14', '15', '16', '17', '18', '19',
+        '14', '15', '16', '17', '18', '19', '21',
     ];
 
     protected $roomTypeMap = [
