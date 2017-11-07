@@ -46,14 +46,14 @@ class WhitelistController extends Controller
 
     protected function filterWhitelistForm($request)
     {
-        $params = [];
         $this->validate($request, [
-            'player_id' => 'required|integer|exists:mysql-game.role,rid',
-            'winning_percentage' => 'required|integer|between:0,100',
+            'playerid' => 'required|integer|exists:mysql-game.role,rid',
+            'winrate' => 'required|integer|between:1,100',
         ]);
-        $params['playerid'] = $request->input('player_id');
-        $params['winrate'] = $request->input('winning_percentage');
-        return $params;
+
+        return $request->intersect([
+            'playerid', 'winrate',
+        ]);
     }
 
     public function editWhiteList(AdminRequest $request)
@@ -107,9 +107,9 @@ class WhitelistController extends Controller
     {
         $params = [];
         $this->validate($request, [
-            'player_id' => 'required|integer|exists:mysql-game.role,rid',
+            'playerid' => 'required|integer|exists:mysql-game.role,rid',
         ]);
-        $params['playerid'] = $request->input('player_id');
+        $params['playerid'] = $request->input('playerid');
         return $params;
     }
 }
