@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Admin\Game;
 
 use App\Http\Requests\AdminRequest;
+use App\Services\Paginator;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 use App\Services\GameServer;
@@ -75,8 +76,15 @@ class WhitelistController extends Controller
     {
         $api = $this->backendServerApi . $this->listWhitelistUri;
         $gameServer = new GameServer($api);
-        $res = $gameServer->request('GET');
-        return $res;
+        $list = $gameServer->request('GET')['data'];
+
+        if ($request->has('filter')) {
+            $filter = $request->filter;
+            $list = collect($list)->filter(function ($value, $key) use ($filter) {
+                return preg_match("/${filter}/", $value['playerid']);
+            })->toArray();
+        }
+        return Paginator::paginate($list);
     }
 
     public function deleteWhitelist(AdminRequest $request)
