@@ -16,7 +16,7 @@ class WhitelistController extends Controller
     protected $backendServerApi;
     protected $addWhitelistUri = '/whitelist/addWhiteList';
     protected $listWhitelistUri = '/whitelist/getWhiteList';
-    protected $editWhitelistUri = '/whitelist/editWhitelist';
+    protected $editWhitelistUri = '/whitelist/editWhiteList';
     protected $deleteWhitelistUri = '/whitelist/deleteWhiteList';
 
     public function __construct(Request $request)

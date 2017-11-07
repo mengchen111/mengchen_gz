@@ -48,7 +48,7 @@ class GameServer
                 ->getBody()
                 ->getContents();
         } catch (\Exception $exception) {
-            throw new GameServerException('调用游戏服接口失败：' . $exception->getMessage(), $exception);
+            throw new GameServerException('调用游戏后端接口失败：' . $exception->getMessage(), $exception);
         }
 
         $result = $this->decodeResponse($res);
@@ -67,7 +67,7 @@ class GameServer
                 ->getBody()
                 ->getContents();
         } catch (\Exception $exception) {
-            throw new GameServerException('调用游戏服接口失败：' . $exception->getMessage(), $exception);
+            throw new GameServerException('调用游戏后端接口失败：' . $exception->getMessage(), $exception);
         }
 
         $result = $this->decodeResponse($res);
@@ -80,7 +80,7 @@ class GameServer
     protected function checkResult($result)
     {
         if (empty($result['result'])) {
-            throw new GameServerException('调用游戏服接口成功，但是游戏服返回的结果错误：' . json_encode($result, JSON_UNESCAPED_UNICODE));
+            throw new GameServerException('调用游戏后端接口成功，但是返回的结果错误：' . json_encode($result, JSON_UNESCAPED_UNICODE));
         }
         return true;
     }
