@@ -82,6 +82,11 @@ Route::group([
     Route::post('game/ai-dispatch', 'Game\AiController@addDispatch');
     Route::put('game/ai-dispatch/switch/{id}/{switch}', 'Game\AiController@switchAiDispatch')->where('id', '[0-9]+')->where('switch', '[01]');
 
+    Route::get('game/whitelist', 'Game\WhitelistController@listWhitelist');
+    Route::post('game/whitelist', 'Game\WhitelistController@addWhitelist');
+    Route::put('game/whitelist', 'Game\WhitelistController@editWhiteList');
+    Route::delete('game/whitelist', 'Game\WhitelistController@deleteWhitelist');
+
     Route::get('game/server', 'Platform\ServerController@show');
 
     Route::post('stock', 'StockController@apply');

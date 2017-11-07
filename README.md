@@ -123,6 +123,10 @@ cd $codeDir
 | game/ai-dispatch | PUT | 编辑AI调度 |
 | game/ai-dispatch | POST | 添加AI调度 |
 | game/ai-dispatch/switch/{id}/{switch} | PUT | AI调度启用停用 |
+| game/whitelist | GET | 查看白名单 |
+| game/whitelist | POST | 添加白名单 |
+| game/whitelist | PUT | 更新白名单 |
+| game/whitelist | DELETE | 删除白名单 |
 | game/server | GET | 获取游戏后端服务器列表 |
 | stock | POST | 申请库存 |
 | stock/list | GET | 库存申请列表 |
@@ -191,7 +195,7 @@ cd $codeDir
 | /Npc/add | POST | 添加AI(单个或多个) |
 | /Npc/dispatch | POST | 编辑(添加)AI调度 |
 | /Npc/changes | POST | 启用停用AI调度 |
-| /whitelist/getwhitelist | GET | 获取白名单列表 |
-| /whitelist/addwhitelist | POST | 添加玩家到白名单 |
-| /whitelist/editwhitelist | POST | 编辑玩家白名单 |
-| /whitelist/deletewhitelist | POST | 删除玩家白名单 |
+| /whitelist/getWhiteList | GET | 获取白名单列表 |
+| /whitelist/addWhiteList | POST | 添加玩家到白名单 |
+| /whitelist/editWhitelist | POST | 编辑玩家白名单 |
+| /whitelist/deleteWhiteList | POST | 删除玩家白名单 |
