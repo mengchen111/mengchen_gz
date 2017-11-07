@@ -52,6 +52,12 @@ new Vue({
             isActive: false,
           },
         },
+        whitelist: {
+          isActive: false,
+          list: {
+            isActive: false,
+          },
+        },
       },
       stock: {
         isActive: false,

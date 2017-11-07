@@ -54,6 +54,13 @@
                             <li :class="{ active: uri.gm.ai.list.isActive }"><a href="/admin/gm/ai/list"><i class="fa fa-circle-o"></i>AI列表</a></li>
                         </ul>
                     </li>
+                    <li :class="{ active: uri.gm.whitelist.isActive }"><a href="#"><i class="fa fa-user-secret"></i>黑白名单管理
+                        <span class="pull-right-container"><i class="fa fa-angle-left pull-right"></i></span>
+                    </a>
+                        <ul class="treeview-menu">
+                            <li :class="{ active: uri.gm.whitelist.list.isActive }"><a href="/admin/gm/whitelist/list"><i class="fa fa-circle-o"></i>白名单列表</a></li>
+                        </ul>
+                    </li>
                 </ul>
             </li>
             <li class="treeview" :class="{ active: uri.stock.isActive }">

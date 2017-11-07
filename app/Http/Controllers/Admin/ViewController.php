@@ -63,6 +63,11 @@ class ViewController extends Controller
         return view('admin.gm.ai.list');
     }
 
+    public function gmWhitelistList(Request $request)
+    {
+        return view('admin.gm.whitelist.list');
+    }
+
     public function stockApplyRequest(Request $request)
     {
         return view('admin.stock.apply-request');
