@@ -5,7 +5,7 @@
 import '../../common.js'
 import MyVuetable from '../../../../components/MyVuetable.vue'
 import MyToastr from '../../../../components/MyToastr.vue'
-import FilterBar from '../../../../components/FilterBar.vue'
+import FilterBar from '../../../../components/MyFilterBar.vue'
 
 Vue.component('custom-actions', {
   template: `
