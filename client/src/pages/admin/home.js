@@ -3,7 +3,7 @@
  */
 
 import './common.js'
-import MyChart from '../../components/LineChart.vue'
+import MyChart from '../../components/MyLineChart.vue'
 
 new Vue({
   el: '#app',
@@ -89,7 +89,7 @@ new Vue({
 
         //触发事件，更新图表数据
         window.setTimeout(() => {
-          _self.$root.eventHub.$emit('EChartMergeOptions', _self.chartOptions)
+          _self.$root.eventHub.$emit('MyLineChart:mergeOptions', _self.chartOptions)
         }, 1000)
       })
   },
