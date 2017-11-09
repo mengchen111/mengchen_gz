@@ -96,7 +96,7 @@ new Vue({
         + `&status=${this.searchAiFormData.status}`
 
       this.aiSelectedTo = []  //清空选择框
-      this.$root.eventHub.$emit('vuetableFlushSelectedTo')
+      this.$root.eventHub.$emit('MyVuetable:flushSelectedTo')
     },
 
     editAi () {
@@ -268,7 +268,7 @@ new Vue({
         status: '',
       }
       this.aiSelectedTo = []  //清空选择框
-      this.$root.eventHub.$emit('vuetableFlushSelectedTo')
+      this.$root.eventHub.$emit('MyVuetable:flushSelectedTo')
     },
 
     aiDispatchListButtonAction () {
@@ -279,7 +279,7 @@ new Vue({
         status: '',
       }
       this.aiSelectedTo = []  //清空选择框
-      this.$root.eventHub.$emit('vuetableFlushSelectedTo')
+      this.$root.eventHub.$emit('MyVuetable:flushSelectedTo')
     },
 
     searchAiDispatchList () {
@@ -289,7 +289,7 @@ new Vue({
         + `&is_open=${this.searchAiFormData.status}`
 
       this.aiSelectedTo = []  //清空选择框
-      this.$root.eventHub.$emit('vuetableFlushSelectedTo')
+      this.$root.eventHub.$emit('MyVuetable:flushSelectedTo')
     },
 
     enableAiDispatch (data) {
@@ -332,7 +332,7 @@ new Vue({
         this.aiSelectedTo = data
       } else {
         this.aiSelectedTo = []
-        this.$root.eventHub.$emit('vuetableFlushSelectedTo')
+        this.$root.eventHub.$emit('MyVuetable:flushSelectedTo')
       }
     },
   },
@@ -358,7 +358,7 @@ new Vue({
 
     this.$root.eventHub.$on('enableAiDispatchEvent', (data) => this.enableAiDispatch(data))
     this.$root.eventHub.$on('disableAiDispatchEvent', (data) => this.disableAiDispatch(data))
-    this.$root.eventHub.$on('vuetableCheckboxToggled', (isChecked, data) => this.onVuetableCheckboxToggled(isChecked, data))
-    this.$root.eventHub.$on('vuetableCheckboxToggledAll', (isChecked, data) => this.onVuetableCheckboxToggledAll(isChecked, data))
+    this.$root.eventHub.$on('MyVuetable:checkboxToggled', (isChecked, data) => this.onVuetableCheckboxToggled(isChecked, data))
+    this.$root.eventHub.$on('MyVuetable:checkboxToggledAll', (isChecked, data) => this.onVuetableCheckboxToggledAll(isChecked, data))
   },
 })

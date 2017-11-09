@@ -66,7 +66,7 @@ new Vue({
         .then(function (response) {
           _self.resolveResponse(response, toastr)
           _self.createWhitelistData = {}
-          _self.$root.eventHub.$emit('vuetableRefresh')
+          _self.$root.eventHub.$emit('MyVuetable:refresh')
         })
         .catch((error) => toastr.message(error, 'error'))
     },
@@ -106,7 +106,7 @@ new Vue({
       })
         .then(function (response) {
           _self.resolveResponse(response, toastr)
-          _self.$root.eventHub.$emit('vuetableRefresh')
+          _self.$root.eventHub.$emit('MyVuetable:refresh')
         })
         .catch((error) => toastr.message(error, 'error'))
     },

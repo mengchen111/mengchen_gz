@@ -76,6 +76,6 @@ new Vue({
   },
 
   mounted: function () {
-    this.$root.eventHub.$on('vuetableDataError', (data) => alert(data.error))
+    this.$root.eventHub.$on('MyVuetable:error', (data) => alert(data.error))
   },
 })

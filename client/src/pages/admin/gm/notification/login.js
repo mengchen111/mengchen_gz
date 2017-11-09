@@ -162,7 +162,7 @@ new Vue({
             }
 
             //添加成功，刷新表格
-            return _self.$root.eventHub.$emit('vuetableRefresh')
+            return _self.$root.eventHub.$emit('MyVuetable:refresh')
           }
         })
         .catch(function (err) {
@@ -198,7 +198,7 @@ new Vue({
             }
 
             //编辑成功，刷新表格
-            return _self.$root.eventHub.$emit('vuetableRefresh')
+            return _self.$root.eventHub.$emit('MyVuetable:refresh')
           }
         })
         .catch(function (err) {
@@ -218,7 +218,7 @@ new Vue({
       let uri = `${_self.backendApi}/${data.id}`
       axios.delete(uri, {})
         .then(function (response) {
-          _self.$root.eventHub.$emit('vuetableRefresh')
+          _self.$root.eventHub.$emit('MyVuetable:refresh')
           return response.data.error
             ? toastr.message(response.data.error, 'error')
             : toastr.message(response.data.message)
@@ -232,7 +232,7 @@ new Vue({
 
       axios.put(uri, {})
         .then(function (response) {
-          _self.$root.eventHub.$emit('vuetableRefresh')
+          _self.$root.eventHub.$emit('MyVuetable:refresh')
           return response.data.error
             ? toastr.message(response.data.error, 'error')
             : toastr.message(response.data.message)
@@ -245,7 +245,7 @@ new Vue({
       let uri = `${_self.disableApi}/${data.id}`
       axios.put(uri, {})
         .then(function (response) {
-          _self.$root.eventHub.$emit('vuetableRefresh')
+          _self.$root.eventHub.$emit('MyVuetable:refresh')
           return response.data.error
             ? toastr.message(response.data.error, 'error')
             : toastr.message(response.data.message)
