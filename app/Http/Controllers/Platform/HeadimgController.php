@@ -7,6 +7,7 @@ use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Validation\ValidationException;
 use App\Exceptions\PlatformException;
+use App\Models\OperationLogs;
 
 class HeadimgController extends Controller
 {
@@ -15,8 +16,11 @@ class HeadimgController extends Controller
     public function upload(Request $request)
     {
         $this->filterUploadFrom($request);
-        $fileName = $request->input('rid') . '.' . $request->file('img')->extension();;
+        $fileName = $request->input('img_name') . '.' . $request->file('img')->extension();;
         $res = Storage::disk($this->disk)->putFileAs('', $request->file('img'), $fileName);
+
+        OperationLogs::add($request->user()->id, $request->path(), $request->method(),
+            '上传头像', $request->header('User-Agent'), json_encode($request->all()));
 
         return [
             'code' => 0
@@ -27,7 +31,7 @@ class HeadimgController extends Controller
     {
         try {
             $this->validate($request, [
-                'rid' => 'required|integer',
+                'img_name' => 'required',
                 'img' => 'required|mimes:jpeg,jpg,bmp,png,gif|max:5120',
             ]);
         } catch (ValidationException $exception) {
