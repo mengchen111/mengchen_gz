@@ -20,7 +20,7 @@ class HeadimgController extends Controller
         $res = Storage::disk($this->disk)->putFileAs('', $request->file('img'), $fileName);
 
         OperationLogs::add($request->user()->id, $request->path(), $request->method(),
-            '上传头像', $request->header('User-Agent'), json_encode($request->all()));
+            '[platform]上传头像', $request->header('User-Agent'), json_encode($request->all()));
 
         return [
             'code' => 0

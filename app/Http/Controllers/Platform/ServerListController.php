@@ -9,6 +9,7 @@ use App\Models\Platform\Server;
 use App\Models\Platform\WhiteList;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
+use App\Models\OperationLogs;
 
 class ServerListController extends Controller
 {
@@ -30,7 +31,7 @@ class ServerListController extends Controller
 
     public function __construct(Request $request)
     {
-        $this->filterRequest($request);
+        //$this->filterRequest($request);
         $this->clientIp = $request->getClientIp();
         $this->getServerRoles($request);
         $this->checkIsWhite($request);
@@ -40,6 +41,9 @@ class ServerListController extends Controller
 
     public function show(Request $request)
     {
+        OperationLogs::add($request->user()->id, $request->path(), $request->method(),
+            '[platform]查看服务器列表', $request->header('User-Agent'), json_encode($request->all()));
+
         return [
             'code' => 0,
             'is_white' => $this->isWhite,
