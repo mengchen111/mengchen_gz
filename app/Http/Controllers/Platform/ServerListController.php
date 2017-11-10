@@ -41,7 +41,7 @@ class ServerListController extends Controller
 
     public function show(Request $request)
     {
-        OperationLogs::add($request->user()->id, $request->path(), $request->method(),
+        OperationLogs::add(1, $request->path(), $request->method(),
             '[platform]查看服务器列表', $request->header('User-Agent'), json_encode($request->all()));
 
         return [
