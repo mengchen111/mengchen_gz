@@ -16,7 +16,7 @@ class HeadimgController extends Controller
     public function upload(Request $request)
     {
         $this->filterUploadFrom($request);
-        $fileName = $request->input('img_name') . '.' . $request->file('img')->extension();;
+        $fileName = $request->input('img_name');
         $res = Storage::disk($this->disk)->putFileAs('', $request->file('img'), $fileName);
 
         OperationLogs::add(1, $request->path(), $request->method(),
