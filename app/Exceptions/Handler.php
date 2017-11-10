@@ -63,6 +63,7 @@ class Handler extends ExceptionHandler
         if ($exception instanceof PlatformException) {
             return response()->json([
                 'code' => $exception->getCode(),
+                'message' => $exception->getMessage(),
             ], 200, [], JSON_UNESCAPED_UNICODE);
         }
         return parent::render($request, $exception);
