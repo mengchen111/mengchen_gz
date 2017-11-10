@@ -23,7 +23,7 @@ class HeadimgController extends Controller
             '[platform]上传头像', $request->header('User-Agent'), json_encode($request->all()));
 
         return [
-            'code' => 0
+            'errno' => (int) 1,
         ];
     }
 
