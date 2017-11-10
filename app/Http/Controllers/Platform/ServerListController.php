@@ -49,7 +49,7 @@ class ServerListController extends Controller
             'is_white' => $this->isWhite,
             'rate_sid' => strval($this->rateSid),
             'last_login_rid' => $this->lastLoginRid,
-            'last_login_sid' => $this->lastLoginSid,
+            'last_login_sid' => (string) $this->lastLoginSid,
             'server_list' => $this->serverList,
         ];
     }
@@ -174,12 +174,12 @@ class ServerListController extends Controller
                 $result = [
                     'area_name' => $server['area_name'],
                     'name' => $server['name'],
-                    'id' => $server['id'],
+                    'id' => (string) $server['id'],
                     'host' => $server['host'],
-                    'port' => $server['port'],
-                    'status' => $server['status'],
-                    'rate' => $server['rate'],
-                    'server_type' => $server['type'],
+                    'port' => (string) $server['port'],
+                    'status' => (string) $server['status'],
+                    'rate' => (string) $server['rate'],
+                    'server_type' => (string) $server['type'],
                     'roles' => [],
                 ];
 
