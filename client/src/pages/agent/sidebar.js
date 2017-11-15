@@ -51,7 +51,7 @@ new Vue({
   created: function () {
     let _self = this
     let agentTypeApi = '/agent/api/self/agent-type'
-    let accessedUri = location.href.match(/http:\/\/[\w.-]+\/agent\/([\w/-]+)/)[1]
+    let currentUri = location.href.match(/http:\/\/[\w.-]+\/agent\/([\w/-]+)/)[1]
       .split('/')
 
     //不同的代理商级别显示不同的菜单
@@ -62,7 +62,7 @@ new Vue({
       })
 
     //被访问的页面的菜单项会被设置为active
-    accessedUri.reduce(function (lastValue, currentValue) {
+    currentUri.reduce(function (lastValue, currentValue) {
       lastValue[currentValue].isActive = true
       return lastValue[currentValue]
     }, _self.uri)
