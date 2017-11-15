@@ -22,7 +22,7 @@ new Vue({
         list: {
           isActive: false,
         },
-        top_up: {
+        'top-up': {
           isActive: false,
         },
       },
@@ -61,13 +61,13 @@ new Vue({
       },
       stock: {
         isActive: false,
-        apply_request: {
+        'apply-request': {
           isActive: false,
         },
-        apply_list: {
+        'apply-list': {
           isActive: false,
         },
-        apply_history: {
+        'apply-history': {
           isActive: false,
         },
       },
@@ -80,7 +80,7 @@ new Vue({
           isActive: false,
         },
       },
-      top_up: {
+      'top-up': {
         isActive: false,
         admin: {
           isActive: false,
@@ -106,7 +106,6 @@ new Vue({
   created: function () {
     let _self = this
     let accessedUri = location.href.match(/http:\/\/[\w.-]+\/admin\/([\w/-]+)/)[1]
-      .replace('-', '_')
       .split('/')
 
     //被访问的页面的菜单项会被设置为active
