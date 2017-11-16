@@ -11,6 +11,7 @@ namespace App\Http\Controllers\Admin;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\AdminRequest;
 use App\Models\Group;
+use App\Models\GroupIdMap;
 use App\Models\OperationLogs;
 use App\Models\TopUpAdmin;
 use App\Models\User;
@@ -22,13 +23,13 @@ use Illuminate\Support\Facades\Auth;
 
 class StatementController extends Controller
 {
+    use GroupIdMap;
     protected $cardTypeId = 1;
     protected $coinTypeId = 2;
     protected $cardPurchasedKey = 'card_purchased';     //获取汇总数据时使用的key(代理商购买的)
     protected $coinPurchasedKey = 'coin_purchased';
     protected $cardConsumedKey = 'card_consumed';       //给玩家充值消耗的
     protected $coinConsumedKey = 'coin_consumed';
-    protected $adminId = 1;
 
     protected $per_page = 15;   //每页数据
     protected $page = 1;        //当前页
@@ -122,7 +123,7 @@ class StatementController extends Controller
             ->filter(function ($value, $key) {
                 //过滤管理员自己给自己充值的。有可能用户被删除了，但是充值记录还在，此情况也得判断
                 if ($value->receiver_id && User::find($value->receiver_id)) {
-                    return User::find($value->receiver_id)->group->id != $this->adminId;
+                    return (string) User::find($value->receiver_id)->group->id !== $this->adminGid;
                 }
                 return $value;
             })
