@@ -110,6 +110,10 @@ new Vue({
         })
         .catch((error) => toastr.message(error, 'error'))
     },
+
+    onMyVuetableError (data) {
+      this.$refs.toastr.message(data.error, 'error')
+    },
   },
 
   mounted () {
@@ -117,5 +121,6 @@ new Vue({
 
     this.$root.eventHub.$on('editWhitelistEvent', (data) => _self.activatedRow = data)
     this.$root.eventHub.$on('deleteWhitelistEvent', (data) => _self.activatedRow = data)
+    this.$root.eventHub.$on('MyVuetable:error', this.onMyVuetableError)
   },
 })
