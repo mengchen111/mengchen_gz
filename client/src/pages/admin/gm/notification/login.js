@@ -157,7 +157,7 @@ new Vue({
             toastr.message(response.data.message)
 
             //清空表单数据
-            for (let index of Object.keys(_self.formData)) {
+            for (let index of _.keys(_self.formData)) {
               _self.formData[index] = null
             }
 
@@ -193,7 +193,7 @@ new Vue({
             toastr.message(response.data.message)
 
             //清空表单数据
-            for (let index of Object.keys(_self.activatedRow)) {
+            for (let index of _.keys(_self.activatedRow)) {
               _self.activatedRow[index] = null
             }
 

@@ -49,7 +49,7 @@ new Vue({
       }
 
       //生成x轴的数据，填充series每个数据列的数据
-      this.chartOptions.xAxis.data = Object.keys(data)
+      this.chartOptions.xAxis.data = _.keys(data)
       for (let key in chartSeriesData) {
         chartSeriesData[key] = _.map(Object.values(data), key)
       }
