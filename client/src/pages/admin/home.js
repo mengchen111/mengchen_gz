@@ -43,7 +43,7 @@ new Vue({
       let chartSeriesData = {}
 
       //生成legend数据，series data的空数组
-      for (let [key, value] of Object.entries(this.keyMap)) {
+      for (let [key, value] of _.entries(this.keyMap)) {
         chartSeriesData[key] = []
         this.chartOptions.legend.data.push(value)
       }

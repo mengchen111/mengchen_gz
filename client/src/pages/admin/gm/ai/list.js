@@ -128,7 +128,7 @@ new Vue({
       }
 
       this.loading = true
-      Object.assign(this.massEditAiFormData, {
+      _.assign(this.massEditAiFormData, {
         id: this.selectedAiIds,
       })
       axios({
@@ -180,12 +180,12 @@ new Vue({
 
       //构建后端接口需要的参数
       this.addAiDispatchFormData.isAllDay = this.addAiDispatchFormData.isAllDay ? 1 : 0
-      Object.assign(this.addAiDispatchFormData, {
+      _.assign(this.addAiDispatchFormData, {
         serverId: this.searchAiFormData.db,
       })
 
       this.loading = true
-      Object.assign(this.addAiDispatchFormData, {
+      _.assign(this.addAiDispatchFormData, {
         id: this.selectedAiIds,
       })
       axios({
