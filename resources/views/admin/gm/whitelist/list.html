@@ -68,11 +68,11 @@
                         <form role="form" class="form-group" @submit.prevent="createWhitelist">
                             <div class="form-group">
                                 <label>玩家id</label>
-                                <input type="number" required class="form-control" v-model="createWhitelistData.playerid">
+                                <input type="number" required class="form-control" v-model="createWhitelistData.playerid" placeholder="输入玩家id">
                             </div>
                             <div class="form-group">
                                 <label>胜率</label>
-                                <input type="number" required min="1" class="form-control" v-model="createWhitelistData.winrate">
+                                <input type="number" required min="1" class="form-control" v-model="createWhitelistData.winrate" placeholder="输入1-100的整数">
                             </div>
                             <div class="form-group">
                                 <button class="btn btn-primary btn-block btn-flat" type="submit">提交</button>
