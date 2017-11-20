@@ -79,7 +79,7 @@ class GameServer
 
     protected function checkResult($result)
     {
-        if (empty($result['result'])) {
+        if (empty($result['result'])) {     //result为0或者返回空
             throw new GameServerException('调用游戏后端接口成功，但是返回的结果错误：' . json_encode($result, JSON_UNESCAPED_UNICODE));
         }
         return true;

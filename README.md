@@ -201,3 +201,5 @@ cd $codeDir
 | /whitelist/addWhiteList | POST | 添加玩家到白名单 |
 | /whitelist/editWhiteList | POST | 编辑玩家白名单 |
 | /whitelist/deleteWhiteList | POST | 删除玩家白名单 |
+| /role/addItem | POST | 充值道具 |
+| /role/subItem | POST | 减少道具 |

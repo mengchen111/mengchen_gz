@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Admin;
 
 use App\Exceptions\CustomException;
 use App\Http\Controllers\Controller;
+use App\Services\GameServer;
 use Illuminate\Http\Request;
 use App\Http\Requests\AdminRequest;
 use App\Models\User;
@@ -22,11 +23,19 @@ class TopUpController extends Controller
     protected $per_page = 15;
     protected $order = ['id', 'desc'];
     protected $cardItemId = 1030005;    //房卡在游戏库中的id号
+    protected $backendServerApi;
+    protected $topUpItemApi = '/role/addItem';
+    protected $subItemApi = '/role/subItem';
+    protected $itemIdMap = [        //后台与游戏后端的道具id的映射关系
+        1 => 1030005,   //后台房卡id 1对应游戏数据库房卡id 1030005
+        2 => 1,
+    ];
 
     public function __construct(Request $request)
     {
         $this->per_page = $request->per_page ?: $this->per_page;
         $this->order = $request->sort ? explode('|', $request->sort) : $this->order;
+        $this->backendServerApi = config('custom.game_server_api_address');
     }
 
     //给代理商充值（自己的下级）
@@ -188,23 +197,12 @@ class TopUpController extends Controller
         $provider = User::with(['inventory' => function ($query) use ($type) {
             $query->where('item_id', $type);
         }])->find($request->user()->id);
-        $playerModel = Player::with(['card'])->where('rid', $player)->firstOrFail();
-        $itemType = ItemType::find($type);
 
         if (! $this->checkStock($provider, $amount)) {
             throw new CustomException('库存不足，无法充值');
         }
 
-        switch ($itemType->name) {
-            case '房卡':
-                $this->topUpCard4Player($request, $provider, $playerModel, $type, $amount);
-                break;
-            case '金币':
-                $this->topUpGold4Player($request, $provider, $playerModel, $type, $amount);
-                break;
-            default:
-                throw new CustomException('只能充值房卡和金币');
-        }
+        $this->topUp4Player($request, $provider, $player, $type, $amount);
 
         OperationLogs::add($request->user()->id, $request->path(), $request->method(),
             '管理员给玩家充值', $request->header('User-Agent'), json_encode($request->route()->parameters));
@@ -220,21 +218,17 @@ class TopUpController extends Controller
      * @param $type     道具id
      * @param $amount   道具数量
      */
-    protected function topUpGold4Player($request, $provider, $player, $type, $amount)
+    protected function topUp4Player($request, $provider, $player, $type, $amount)
     {
-        return DB::transaction(function () use ($request, $provider, $player, $type, $amount){
-            //记录充值流水
-            TopUpPlayer::create([
-                'provider_id' => $request->user()->id,
-                'player' => $player->rid,
-                'type' => $type,
-                'amount' => $amount,
-            ]);
+        $api = $this->backendServerApi . $this->topUpItemApi;
+        $gameServer = new GameServer($api);
 
-            //更新库存
-            $totalStock = $amount + $player->gold;
-            $player->update([
-                'gold' => $totalStock,
+        return DB::transaction(function () use ($request, $provider, $player, $type, $amount, $gameServer, $api) {
+            //更新库存（调用充值接口）
+            $gameServer->request('POST', [
+                'playerid' => $player,
+                'id' => $this->itemIdMap[$type],
+                'count' => $amount,
             ]);
 
             //减管理员的库存
@@ -242,41 +236,13 @@ class TopUpController extends Controller
             $provider->inventory->update([
                 'stock' => $leftStock,
             ]);
-        });
-    }
 
-    protected function topUpCard4Player($request, $provider, $player, $type, $amount)
-    {
-        return DB::transaction(function () use ($request, $provider, $player, $type, $amount){
             //记录充值流水
             TopUpPlayer::create([
                 'provider_id' => $request->user()->id,
-                'player' => $player->rid,
+                'player' => $player,
                 'type' => $type,
                 'amount' => $amount,
-            ]);
-
-            //更新库存
-            if (empty($player->card)) {
-                $player->card()->create([
-                    'rid' => $player->rid,
-                    'item_id' => $this->cardItemId,
-                    'expire' => 0,
-                    'count' => $amount,
-                    'sort' => 1,
-                    'state' => 1,
-                ]);
-            } else {
-                $totalStock = $amount + $player->card->count;
-                $player->card->update([
-                    'count' => $totalStock,
-                ]);
-            }
-
-            //减管理员的库存
-            $leftStock = $provider->inventory->stock - $amount;
-            $provider->inventory->update([
-                'stock' => $leftStock,
             ]);
         });
     }
