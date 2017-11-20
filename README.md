@@ -176,6 +176,7 @@ cd $codeDir
 | /api/api/func_switch_version | GET | 获取版本模式控制信息 |
 | /api/api/client_feedback | POST | 收集客户端反馈 |
 | /api/api/client_error_log | POST | 收集客户端错误日志 |
+| /api/api/cnotice | GET | 获取登录公告 |
 | /api/headimg | POST | 上传玩家头像 |
 
 ## 游戏服接口

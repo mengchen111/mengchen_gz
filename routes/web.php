@@ -33,6 +33,7 @@ Route::prefix('api')->group(function () {
     Route::get('api/func_switch_version', 'Platform\VersionController@showFuncSwitchVersion');
     Route::post('api/client_feedback', 'Platform\ClientController@collectClientFeedback');
     Route::post('api/client_error_log', 'Platform\ClientController@collectClientErrorLog');
+    Route::get('api/cnotice', 'Platform\NoticeController@showLoginNotice');
     Route::post('headimg', 'Platform\HeadimgController@upload');
 });
 
