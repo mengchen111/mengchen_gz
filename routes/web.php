@@ -132,6 +132,7 @@ Route::group([
     Route::get('gm/room/coin', 'ViewController@gmRoomCoin');
     Route::get('gm/ai/list', 'ViewController@gmAiList');
     Route::get('gm/whitelist/list', 'ViewController@gmWhitelistList');
+    Route::get('gm/server/list', 'ViewController@gmServerList');
 
     Route::get('stock/apply-request', 'ViewController@stockApplyRequest');
     Route::get('stock/apply-list', 'ViewController@stockApplyList');

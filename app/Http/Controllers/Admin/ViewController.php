@@ -68,6 +68,11 @@ class ViewController extends Controller
         return view('admin.gm.whitelist.list');
     }
 
+    public function gmServerList(Request $request)
+    {
+        return view('admin.gm.server.list');
+    }
+
     public function stockApplyRequest(Request $request)
     {
         return view('admin.stock.apply-request');

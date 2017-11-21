@@ -58,6 +58,12 @@ new Vue({
             isActive: false,
           },
         },
+        server: {
+          isActive: false,
+          list: {
+            isActive: false,
+          },
+        },
       },
       stock: {
         isActive: false,

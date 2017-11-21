@@ -31,7 +31,7 @@
                     <span class="pull-right-container"><i class="fa fa-angle-left pull-right"></i></span>
                 </a>
                 <ul class="treeview-menu">
-                    <li :class="{ active: uri.gm.notification.isActive }"><a href="#"><i class="fa fa-bell"></i>公告管理
+                    <li :class="{ active: uri.gm.notification.isActive }"><a href="#"><i class="fa fa-share"></i>公告管理
                             <span class="pull-right-container"><i class="fa fa-angle-left pull-right"></i></span>
                         </a>
                         <ul class="treeview-menu">
@@ -39,7 +39,7 @@
                             <li :class="{ active: uri.gm.notification.login.isActive }"><a href="/admin/gm/notification/login"><i class="fa fa-circle-o"></i>登录公告</a></li>
                         </ul>
                     </li>
-                    <li :class="{ active: uri.gm.room.isActive }"><a href="#"><i class="fa fa-home"></i>房间管理
+                    <li :class="{ active: uri.gm.room.isActive }"><a href="#"><i class="fa fa-share"></i>房间管理
                         <span class="pull-right-container"><i class="fa fa-angle-left pull-right"></i></span>
                         </a>
                         <ul class="treeview-menu">
@@ -47,18 +47,25 @@
                             <li :class="{ active: uri.gm.room.coin.isActive }"><a href="/admin/gm/room/coin"><i class="fa fa-circle-o"></i>解散金币房</a></li>
                         </ul>
                     </li>
-                    <li :class="{ active: uri.gm.ai.isActive }"><a href="#"><i class="fa fa-gears"></i>AI管理
+                    <li :class="{ active: uri.gm.ai.isActive }"><a href="#"><i class="fa fa-share"></i>AI管理
                         <span class="pull-right-container"><i class="fa fa-angle-left pull-right"></i></span>
                     </a>
                         <ul class="treeview-menu">
                             <li :class="{ active: uri.gm.ai.list.isActive }"><a href="/admin/gm/ai/list"><i class="fa fa-circle-o"></i>AI列表</a></li>
                         </ul>
                     </li>
-                    <li :class="{ active: uri.gm.whitelist.isActive }"><a href="#"><i class="fa fa-user-secret"></i>黑白名单管理
+                    <li :class="{ active: uri.gm.whitelist.isActive }"><a href="#"><i class="fa fa-share"></i>黑白名单管理
                         <span class="pull-right-container"><i class="fa fa-angle-left pull-right"></i></span>
                     </a>
                         <ul class="treeview-menu">
                             <li :class="{ active: uri.gm.whitelist.list.isActive }"><a href="/admin/gm/whitelist/list"><i class="fa fa-circle-o"></i>白名单列表</a></li>
+                        </ul>
+                    </li>
+                    <li :class="{ active: uri.gm.server.isActive }"><a href="#"><i class="fa fa-share"></i>游戏服管理
+                        <span class="pull-right-container"><i class="fa fa-angle-left pull-right"></i></span>
+                    </a>
+                        <ul class="treeview-menu">
+                            <li :class="{ active: uri.gm.server.list.isActive }"><a href="/admin/gm/server/list"><i class="fa fa-circle-o"></i>游戏服列表</a></li>
                         </ul>
                     </li>
                 </ul>
