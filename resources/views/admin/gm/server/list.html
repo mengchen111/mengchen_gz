@@ -33,7 +33,53 @@
                 </div>
 
                 <div class="box-body">
-                    游戏服列表
+                    <div class="row">
+                        <div class="col-md-2">
+                            <button class="btn btn-primary btn-block btn-flat" data-toggle="modal"
+                                    data-target="#create-server-modal">添加游戏服</button>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-12 phone-scrollable">
+                            <my-vuetable
+                                    :table-url="serverListApi"
+                                    :table-fields="tableFields"
+                                    :callbacks="tableCallbacks"
+                            ></my-vuetable>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div id="edit-server-modal" class="modal fade" tabindex="-1">
+                <div class="modal-dialog">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h4 class="text-center">编辑游戏服</h4>
+                        </div>
+
+                        <form role="form" class="from" method="POST" action="#" @submit.prevent="editServer">
+                            <div class="modal-body">
+                                modal-body edit
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+
+            <div id="create-server-modal" class="modal fade" tabindex="-1">
+                <div class="modal-dialog">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h4 class="text-center">添加游戏服</h4>
+                        </div>
+
+                        <form role="form" class="from" method="POST" action="#" @submit.prevent="editServer">
+                            <div class="modal-body">
+                                modal-body add
+                            </div>
+                        </form>
+                    </div>
                 </div>
             </div>
 

@@ -89,7 +89,8 @@ Route::group([
     Route::put('game/whitelist', 'Game\WhitelistController@editWhiteList');
     Route::delete('game/whitelist', 'Game\WhitelistController@deleteWhitelist');
 
-    Route::get('game/server', 'Platform\ServerController@show');
+    Route::get('platform/server', 'Platform\ServerController@show');
+    Route::get('platform/server/list', 'Platform\ServerController@serverList');
 
     Route::post('stock', 'StockController@apply');
     Route::get('stock/list', 'StockController@applyList');

@@ -42,7 +42,7 @@ new Vue({
     statusType: {},
     roomType: {},
 
-    serverListApi: '/admin/api/game/server',
+    serverListApi: '/admin/api/platform/server',
     typeApi: '/admin/api/game/ai/type-map',
     editAiApi: '/admin/api/game/ai',
     massEditAiApi: '/admin/api/game/ai/mass',

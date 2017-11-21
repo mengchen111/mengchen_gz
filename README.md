@@ -127,7 +127,8 @@ cd $codeDir
 | game/whitelist | POST | 添加白名单 |
 | game/whitelist | PUT | 更新白名单 |
 | game/whitelist | DELETE | 删除白名单 |
-| game/server | GET | 获取游戏后端服务器列表 |
+| platform/server | GET | 获取游戏后端服务器列表 |
+| platform/server/list | GET | 获取游戏后端服务器列表(带分页) |
 | stock | POST | 申请库存 |
 | stock/list | GET | 库存申请列表 |
 | stock/history | GET | 库存审批记录 |
