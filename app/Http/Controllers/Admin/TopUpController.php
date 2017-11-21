@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Admin;
 
 use App\Exceptions\CustomException;
 use App\Http\Controllers\Controller;
+use App\Models\GroupIdMap;
 use App\Services\GameServer;
 use Illuminate\Http\Request;
 use App\Http\Requests\AdminRequest;
@@ -20,6 +21,8 @@ use Illuminate\Support\Facades\Auth;
 
 class TopUpController extends Controller
 {
+    use GroupIdMap;
+
     protected $per_page = 15;
     protected $order = ['id', 'desc'];
     protected $cardItemId = 1030005;    //房卡在游戏库中的id号
@@ -202,10 +205,19 @@ class TopUpController extends Controller
             throw new CustomException('库存不足，无法充值');
         }
 
-        $this->topUp4Player($request, $provider, $player, $type, $amount);
-
         OperationLogs::add($request->user()->id, $request->path(), $request->method(),
-            '管理员给玩家充值', $request->header('User-Agent'), json_encode($request->route()->parameters));
+            '管理员给玩家充值[减值]', $request->header('User-Agent'), json_encode($request->route()->parameters));
+
+        //减玩家道具
+        if (preg_match('/-/', $amount)) {
+            $amount = (int) trim($amount, '-');
+            $this->cutStock4Player($request, $player, $type, $amount);
+            return [
+                'message' => '减库存成功',
+            ];
+        }
+
+        $this->topUp4Player($request, $provider, $player, $type, $amount);
 
         return [
             'message' => '充值成功',
@@ -243,6 +255,52 @@ class TopUpController extends Controller
                 'player' => $player,
                 'type' => $type,
                 'amount' => $amount,
+            ]);
+        });
+    }
+
+    protected function cutStock4Player($request, $player, $type, $amount)
+    {
+        $api = $this->backendServerApi . $this->subItemApi;
+        $gameServer = new GameServer($api);
+
+        if ((int)$type === 1) {
+            $playerModel = Player::with('card')->find($player);
+            if (empty($playerModel)) {
+                throw new CustomException('库存不足，无法减少');
+            }
+            $stock = $playerModel->card->count;
+        } else {
+            $playerModel = Player::find($player);
+            $stock = $playerModel->gold;
+        }
+
+        if ($stock < $amount) {
+            throw new CustomException('库存不足，无法减少');
+        }
+
+        $admin = User::with(['inventory' => function ($query) use ($type) {
+            $query->where('item_id', $type);
+        }])->find($this->adminId);
+
+        return DB::transaction(function () use ($request, $admin, $player, $type, $amount, $gameServer, $api) {
+            //更新库存（调用减库存接口）
+            $gameServer->request('POST', [
+                'playerid' => $player,
+                'id' => $this->itemIdMap[$type],
+                'count' => $amount,
+            ]);
+
+            //加管理员的库存
+            $admin->inventory->stock += $amount;
+            $admin->inventory->save();
+
+            //记录充值流水
+            TopUpPlayer::create([
+                'provider_id' => $this->adminId,
+                'player' => $player,
+                'type' => $type,
+                'amount' => '-' . $amount,
             ]);
         });
     }
