@@ -64,4 +64,14 @@ class EncryptionService
         }
         throw new Exception('私钥解密失败');
     }
+
+    public static function encryptDbPass($pass)
+    {
+        return base64_encode(self::privateEncrypt($pass));
+    }
+
+    public static function decryptDbPass($encryptPass)
+    {
+        return self::publicDecrypt(base64_decode($encryptPass));
+    }
 }

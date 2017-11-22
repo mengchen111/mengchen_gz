@@ -91,6 +91,9 @@ Route::group([
 
     Route::get('platform/server', 'Platform\ServerController@show');
     Route::get('platform/server/list', 'Platform\ServerController@serverList');
+    Route::get('platform/server/map', 'Platform\ServerController@getServerDataMap');
+    Route::put('platform/server/{server}', 'Platform\ServerController@editServer')->where('server', '[0-9]+');
+    Route::post('platform/server', 'Platform\ServerController@createServer');
 
     Route::post('stock', 'StockController@apply');
     Route::get('stock/list', 'StockController@applyList');

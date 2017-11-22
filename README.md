@@ -129,6 +129,9 @@ cd $codeDir
 | game/whitelist | DELETE | 删除白名单 |
 | platform/server | GET | 获取游戏后端服务器列表 |
 | platform/server/list | GET | 获取游戏后端服务器列表(带分页) |
+| platform/server/map | GET | 获取游戏服的映射数据（给js select用） |
+| platform/server/{server} | PUT | 更新游戏服 |
+| platform/server | POST | 创建游戏服 |
 | stock | POST | 申请库存 |
 | stock/list | GET | 库存申请列表 |
 | stock/history | GET | 库存审批记录 |

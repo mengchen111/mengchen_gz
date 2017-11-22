@@ -23,7 +23,7 @@ class DynamicGameDbServiceProvider extends ServiceProvider
 
         $dbServer = Server::findOrFail($request->db);
 
-        $dbPass = EncryptionService::publicDecrypt(base64_decode($dbServer->mysql_passwd));
+        $dbPass = EncryptionService::decryptDbPass($dbServer->mysql_passwd);
         Config::set('database.connections.mysql-game', [	//更改配置项
             'driver' => 'mysql',
             'host' => $dbServer->mysql_host,

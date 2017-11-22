@@ -58,11 +58,166 @@
                             <h4 class="text-center">编辑游戏服</h4>
                         </div>
 
-                        <form role="form" class="from" method="POST" action="#" @submit.prevent="editServer">
-                            <div class="modal-body">
-                                modal-body edit
-                            </div>
-                        </form>
+                        <div class="modal-body">
+                            <form class="form-horizontal" @submit.prevent="editServer">
+                                <div class="form-group">
+                                    <label class="col-md-3 control-label">游戏id</label>
+                                    <div class="col-md-9">
+                                        <input type="text" class="form-control" disabled v-model="activatedRow.id">
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <label class="col-md-3 control-label">地区</label>
+                                    <div class="col-md-9">
+                                        <v-select v-model="activatedRow.area" :searchable="false" :noDrop="true" :options="_.values(areaList)"></v-select>
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <label class="col-md-3 control-label">区服名</label>
+                                    <div class="col-md-9">
+                                        <input type="text" class="form-control" required v-model.trim="activatedRow.area_name">
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <label class="col-md-3 control-label">游戏服名</label>
+                                    <div class="col-md-9">
+                                        <input type="text" class="form-control" required v-model.trim="activatedRow.name">
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <label class="col-md-3 control-label">游戏服地址列表</label>
+                                    <div class="col-md-9">
+                                        <textarea class="form-control" v-model.trim="activatedRow.address_list"></textarea>
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <label class="col-md-3 control-label">游戏服默认地址</label>
+                                    <div class="col-md-9">
+                                        <input type="text" class="form-control" required v-model.trim="activatedRow.host">
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <label class="col-md-3 control-label">游戏服端口</label>
+                                    <div class="col-md-9">
+                                        <input type="number" class="form-control" required v-model.trim="activatedRow.port">
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <label class="col-md-3 control-label">http端口</label>
+                                    <div class="col-md-9">
+                                        <input type="number" class="form-control" required v-model.trim="activatedRow.http_port">
+                                    </div>
+                                </div>
+                                <div class="form-group has-feedback">
+                                    <label class="col-md-3 control-label">开服时间</label>
+                                    <div class="col-md-9">
+                                        <my-date-picker required v-model="activatedRow.open_time"></my-date-picker>
+                                        <span class="glyphicon glyphicon-calendar form-control-feedback"></span>
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <label class="col-md-3 control-label">导量权重</label>
+                                    <div class="col-md-9">
+                                        <input type="number" class="form-control" required v-model.trim="activatedRow.rate">
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <label class="col-md-3 control-label">游戏服状态</label>
+                                    <div class="col-md-9">
+                                        <v-select v-model="activatedRow.server_status" :searchable="false" :options="serverStatusMap"></v-select>
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <label class="col-md-3 control-label">游戏服状态消息</label>
+                                    <div class="col-md-9">
+                                        <textarea class="form-control" v-model.trim="activatedRow.status_msg"></textarea>
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <label class="col-md-3 control-label">mysql主库主机</label>
+                                    <div class="col-md-9">
+                                        <input type="text" class="form-control" v-model.trim="activatedRow.h_mysql_host" placeholder="选填">
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <label class="col-md-3 control-label">mysql主库端口</label>
+                                    <div class="col-md-9">
+                                        <input type="number" class="form-control" v-model.trim="activatedRow.h_mysql_port" placeholder="选填">
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <label class="col-md-3 control-label">mysql主库用户名</label>
+                                    <div class="col-md-9">
+                                        <input type="text" class="form-control" v-model.trim="activatedRow.h_mysql_user" placeholder="选填">
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <label class="col-md-3 control-label">mysql主库密码</label>
+                                    <div class="col-md-9">
+                                        <input type="password" class="form-control" v-model.trim="activatedRow.h_mysql_passwd" placeholder="选填">
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <label class="col-md-3 control-label">mysql从库主机</label>
+                                    <div class="col-md-9">
+                                        <input type="text" class="form-control" required v-model.trim="activatedRow.mysql_host" placeholder="必填">
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <label class="col-md-3 control-label">mysql从库端口</label>
+                                    <div class="col-md-9">
+                                        <input type="number" class="form-control" required v-model.trim="activatedRow.mysql_port" placeholder="必填">
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <label class="col-md-3 control-label">mysql从库用户名</label>
+                                    <div class="col-md-9">
+                                        <input type="text" class="form-control" required v-model.trim="activatedRow.mysql_user" placeholder="必填">
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <label class="col-md-3 control-label">mysql从库密码</label>
+                                    <div class="col-md-9">
+                                        <input type="password" class="form-control" v-model.trim="activatedRow.mysql_passwd" placeholder="如不修改请留空">
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <label class="col-md-3 control-label">游戏服数据库名</label>
+                                    <div class="col-md-9">
+                                        <input type="text" class="form-control" required v-model.trim="activatedRow.mysql_data_name">
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <label class="col-md-3 control-label">游戏服日志库名</label>
+                                    <div class="col-md-9">
+                                        <input type="text" class="form-control" required v-model.trim="activatedRow.mysql_log_name">
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <label class="col-md-3 control-label">服务器类型</label>
+                                    <div class="col-md-9">
+                                        <v-select v-model="activatedRow.server_type" :searchable="false" :options="serverTypeMap"></v-select>
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <label class="col-md-3 control-label">是否展示</label>
+                                    <div class="col-md-9">
+                                        <v-select v-model="activatedRow.can_see_value" :searchable="false" :options="yesOrNoOptions"></v-select>
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <label class="col-md-3 control-label">是否执行统计脚本</label>
+                                    <div class="col-md-9">
+                                        <v-select v-model="activatedRow.is_cron_value" :searchable="false" :options="yesOrNoOptions"></v-select>
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <div class="col-md-12">
+                                        <button class="btn btn-primary btn-block btn-flat" type="submit">提交</button>
+                                    </div>
+                                </div>
+                            </form>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -83,6 +238,7 @@
                 </div>
             </div>
 
+            <my-toastr ref="toastr"></my-toastr>
         </section>
         <!-- /.content -->
 

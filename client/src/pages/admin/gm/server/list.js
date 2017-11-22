@@ -2,6 +2,8 @@ import '../../common.js'
 import MyVuetable from '../../../../components/MyVuetable.vue'
 import MyToastr from '../../../../components/MyToastr.vue'
 import TableActions from './components/TableActions.vue'
+import MyDatePicker from '../../../../components/MyDatePicker.vue'
+import vSelect from 'vue-select'
 
 Vue.component('table-actions', TableActions)
 
@@ -10,10 +12,22 @@ new Vue({
   components: {
     MyVuetable,
     MyToastr,
+    vSelect,
+    MyDatePicker,
   },
   data: {
     eventHub: new Vue(),
     activatedRow: {},
+    yesOrNoOptions: [
+      '否',
+      '是',
+    ],
+    areaList: {},
+    serverStatusMap: [],
+    serverTypeMap: [],
+
+    serverDataMapApi: '/admin/api/platform/server/map',
+    serverApiPrefix: '/admin/api/platform/server',
 
     serverListApi: '/admin/api/platform/server/list',
     tableFields: [
@@ -82,10 +96,50 @@ new Vue({
   },
 
   methods: {
+    onEditServer (data) {
+      this.activatedRow = data
+      this.activatedRow.can_see_value = this.yesOrNoOptions[this.activatedRow.can_see]
+      this.activatedRow.is_cron_value = this.yesOrNoOptions[this.activatedRow.is_cron]
+    },
+
+    editServer () {
+      let _self = this
+      let toastr = this.$refs.toastr
+
+      this.activatedRow.area = _.findKey(this.areaList, function (value) {
+        return value === _self.activatedRow.area
+      })
+
+      axios({
+        method: 'PUT',
+        url: `${_self.serverApiPrefix}/${_self.activatedRow.id}`,
+        data: _self.activatedRow,
+        validateStatus: function (status) {
+          return status === 200 || status === 422
+        },
+      })
+        .then(function (response) {
+          if (response.status === 422) {
+            return toastr.message(JSON.stringify(response.data), 'error')
+          }
+          return toastr.message(response.data.message)
+        })
+    },
 
   },
 
+  created: function () {
+    let _self = this
+
+    axios.get(this.serverDataMapApi)
+      .then(function (res) {
+        _self.serverStatusMap = res.data.server_status_map
+        _self.serverTypeMap = res.data.server_type_map
+        _self.areaList = res.data.area_list
+      })
+  },
+
   mounted: function () {
-    this.$root.eventHub.$on('editServerEvent', (data) => this.activatedRow = data)
+    this.$root.eventHub.$on('editServerEvent', this.onEditServer)
   },
 })
