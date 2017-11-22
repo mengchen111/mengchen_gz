@@ -50,6 +50,17 @@ class ServerController extends Controller
 
     public function editServer(AdminRequest $request, Server $server)
     {
+        $data = $this->buildData($request, $server);
+
+        $server->update($data);
+
+        return [
+            'message' => '编辑游戏服成功'
+        ];
+    }
+
+    protected function buildData($request, $server)
+    {
         $data = $request->intersect($this->column);
 
         if (isset($data['h_mysql_passwd'])) {
@@ -74,11 +85,8 @@ class ServerController extends Controller
             $data['is_cron'] = array_search($data['is_cron_value'], $server->yesOrNoMap);
             unset($data['is_cron_value']);
         }
-
-        $server->update($data);
-        return [
-            'message' => '编辑游戏服成功'
-        ];
+        
+        return $data;
     }
 
     public function getServerDataMap(AdminRequest $request)
