@@ -2,7 +2,7 @@
  * Created by liudian on 9/14/17.
  */
 
-import './common.js'
+import './index.js'
 import MyChart from '../../components/MyLineChart.vue'
 
 new Vue({

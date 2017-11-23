@@ -2,7 +2,7 @@
  * Created by liudian on 9/15/17.
  */
 
-import '../../common.js'
+import '../../index.js'
 import MyDatePicker from '../../../../components/MyDatePicker.vue'
 import MyVuetable from '../../../../components/MyVuetable.vue'
 import MyToastr from '../../../../components/MyToastr.vue'
