@@ -133,20 +133,10 @@ new Vue({
       let _self = this
       let toastr = this.$refs.toastr
 
-      axios({
-        method: 'POST',
-        url: _self.serverApiPrefix,
-        data: _self.createServerData,
-        validateStatus: function (status) {
-          return status === 200 || status === 422
-        },
-      })
+      this.httpClient.post(_self.serverApiPrefix, _self.createServerData)
         .then(function (response) {
-          if (response.status === 422) {
-            return toastr.message(JSON.stringify(response.data), 'error')
-          }
+          _self.msgResolver(response, toastr)
           _self.$root.eventHub.$emit('MyVuetable:refresh')
-          return toastr.message(response.data.message)
         })
         .catch(function (err) {
           alert(err)
@@ -156,23 +146,12 @@ new Vue({
     deleteServer () {
       let _self = this
       let toastr = this.$refs.toastr
+      let url = `${_self.serverApiPrefix}/${_self.activatedRow.id}`
 
-      axios({
-        method: 'DELETE',
-        url: `${_self.serverApiPrefix}/${_self.activatedRow.id}`,
-        validateStatus: function (status) {
-          return status === 200 || status === 422
-        },
-      })
+      this.httpClient.delete(url)
         .then(function (response) {
-          if (response.status === 422) {
-            return toastr.message(JSON.stringify(response.data), 'error')
-          }
-          if (response.data.error) {
-            return toastr.message(response.data.error, 'error')
-          }
+          _self.msgResolver(response, toastr)
           _self.$root.eventHub.$emit('MyVuetable:refresh')
-          return toastr.message(response.data.message)
         })
         .catch(function (err) {
           alert(err)
