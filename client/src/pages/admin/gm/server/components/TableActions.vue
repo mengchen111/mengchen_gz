@@ -4,6 +4,10 @@
                 @click="editServerAction(rowData)">
             编辑
         </button>
+        <button class="btn btn-danger btn-flat" data-toggle="modal" data-target="#delete-server-modal"
+                @click="deleteServerAction(rowData)">
+            删除
+        </button>
     </div>
 </template>
 
@@ -21,6 +25,9 @@
     methods: {
       editServerAction (data) {
         this.$root.eventHub.$emit('editServerEvent', data)
+      },
+      deleteServerAction (data) {
+        this.$root.eventHub.$emit('deleteServerEvent', data)
       },
     },
   }

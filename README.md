@@ -132,6 +132,7 @@ cd $codeDir
 | platform/server/map | GET | 获取游戏服的映射数据（给js select用） |
 | platform/server/{server} | PUT | 更新游戏服 |
 | platform/server | POST | 创建游戏服 |
+| platform/server/{server} | DELETE | 删除游戏服 |
 | stock | POST | 申请库存 |
 | stock/list | GET | 库存申请列表 |
 | stock/history | GET | 库存审批记录 |

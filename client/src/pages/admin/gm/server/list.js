@@ -1,4 +1,4 @@
-import '../../common.js'
+import { myTools } from '../../common.js'
 import MyVuetable from '../../../../components/MyVuetable.vue'
 import MyToastr from '../../../../components/MyToastr.vue'
 import TableActions from './components/TableActions.vue'
@@ -18,6 +18,8 @@ new Vue({
   data: {
     eventHub: new Vue(),
     activatedRow: {},
+    httpClient: myTools.axiosInstance,
+    msgResolver: myTools.msgResolver,
     yesOrNoOptions: [
       '否',
       '是',
@@ -25,6 +27,15 @@ new Vue({
     areaList: {},
     serverStatusMap: [],
     serverTypeMap: [],
+    createServerData: {
+      area_value: 'default-默认',
+      server_status: '未生效',
+      mysql_data_name: 'qipai_data',
+      mysql_log_name: 'qipai_log',
+      server_type: '正常',
+      can_see_value: '是',
+      is_cron_value: '是',
+    },
 
     serverDataMapApi: '/admin/api/platform/server/map',
     serverApiPrefix: '/admin/api/platform/server',
@@ -100,20 +111,32 @@ new Vue({
       this.activatedRow = data
       this.activatedRow.can_see_value = this.yesOrNoOptions[this.activatedRow.can_see]
       this.activatedRow.is_cron_value = this.yesOrNoOptions[this.activatedRow.is_cron]
+      this.activatedRow.area_value = this.areaList[this.activatedRow.area]
     },
 
     editServer () {
       let _self = this
       let toastr = this.$refs.toastr
+      let url = `${_self.serverApiPrefix}/${_self.activatedRow.id}`
 
-      this.activatedRow.area = _.findKey(this.areaList, function (value) {
-        return value === _self.activatedRow.area
-      })
+      this.httpClient.put(url, _self.activatedRow)
+        .then(function (response) {
+          _self.msgResolver(response, toastr)
+          _self.$root.eventHub.$emit('MyVuetable:refresh')
+        })
+        .catch(function (err) {
+          alert(err)
+        })
+    },
+
+    createServer () {
+      let _self = this
+      let toastr = this.$refs.toastr
 
       axios({
-        method: 'PUT',
-        url: `${_self.serverApiPrefix}/${_self.activatedRow.id}`,
-        data: _self.activatedRow,
+        method: 'POST',
+        url: _self.serverApiPrefix,
+        data: _self.createServerData,
         validateStatus: function (status) {
           return status === 200 || status === 422
         },
@@ -122,10 +145,39 @@ new Vue({
           if (response.status === 422) {
             return toastr.message(JSON.stringify(response.data), 'error')
           }
+          _self.$root.eventHub.$emit('MyVuetable:refresh')
           return toastr.message(response.data.message)
+        })
+        .catch(function (err) {
+          alert(err)
         })
     },
 
+    deleteServer () {
+      let _self = this
+      let toastr = this.$refs.toastr
+
+      axios({
+        method: 'DELETE',
+        url: `${_self.serverApiPrefix}/${_self.activatedRow.id}`,
+        validateStatus: function (status) {
+          return status === 200 || status === 422
+        },
+      })
+        .then(function (response) {
+          if (response.status === 422) {
+            return toastr.message(JSON.stringify(response.data), 'error')
+          }
+          if (response.data.error) {
+            return toastr.message(response.data.error, 'error')
+          }
+          _self.$root.eventHub.$emit('MyVuetable:refresh')
+          return toastr.message(response.data.message)
+        })
+        .catch(function (err) {
+          alert(err)
+        })
+    },
   },
 
   created: function () {
@@ -140,6 +192,8 @@ new Vue({
   },
 
   mounted: function () {
+    let _self = this
     this.$root.eventHub.$on('editServerEvent', this.onEditServer)
+    this.$root.eventHub.$on('deleteServerEvent', (data) => _self.activatedRow = data)
   },
 })
