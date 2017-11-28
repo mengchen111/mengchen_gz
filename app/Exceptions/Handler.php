@@ -36,7 +36,7 @@ class Handler extends ExceptionHandler
     public function report(Exception $exception)
     {
         //发送异常报告到Sentry
-        if (app()->bound('sentry') && $this->shouldReport($exception)) {
+        if (app()->bound('sentry') && $this->shouldReport($exception) && !config('app.debug')) {
             app('sentry')->captureException($exception);
         }
 
