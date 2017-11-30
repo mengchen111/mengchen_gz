@@ -27,6 +27,7 @@ Route::prefix('dev')->group(function () {
 
 Route::prefix('api')->group(function () {
     Route::get('info', 'InfoController@info');  //网站的管理员和代理商后台的公共接口
+    Route::get('content-header-h1', 'InfoController@getContentHeaderH1');
 
     //platform接口
     Route::get('server/lists', 'Platform\ServerListController@show');
