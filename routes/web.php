@@ -29,6 +29,10 @@ Route::prefix('api')->group(function () {
     Route::get('info', 'InfoController@info');  //网站的管理员和代理商后台的公共接口
     Route::get('content-header-h1', 'InfoController@getContentHeaderH1');
 
+    //微信支付相关
+    Route::post('wechat/order', 'WeChatPaymentController@createOrder');
+    Route::any('wechat/order/notification', 'WeChatPaymentController@getNotification');
+
     //platform接口
     Route::get('server/lists', 'Platform\ServerListController@show');
     Route::get('api/func_switch_version', 'Platform\VersionController@showFuncSwitchVersion');

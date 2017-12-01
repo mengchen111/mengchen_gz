@@ -11,10 +11,12 @@ class CreateItemTypeTable extends Migration
         [
             'id' => 1,
             'name' => '房卡',
+            'price' => 100,
         ],
         [
             'id' => 2,
             'name' => '金币',
+            'price' => 100,
         ]
     ];
 
@@ -28,6 +30,7 @@ class CreateItemTypeTable extends Migration
         Schema::create('item_type', function (Blueprint $table) {
             $table->increments('id');
             $table->string('name')->comment('道具类型');
+            $table->integer('price')->nullable()->comment('单价(分)');
         });
 
         DB::table('item_type')->insert($this->defaultData);

@@ -55,6 +55,7 @@ class Handler extends ExceptionHandler
         //自定义异常类，输出错误信息给前端
         if ($exception instanceof CustomException) {
             return response()->json([
+                'code' => $exception->getCode(),
                 'error' => $exception->getMessage()
             ], 200, [], JSON_UNESCAPED_UNICODE);
         }
@@ -62,6 +63,7 @@ class Handler extends ExceptionHandler
         //捕获游戏服接口调用服务的异常
         if ($exception instanceof GameServerException) {
             return response()->json([
+                'code' => $exception->getCode(),
                 'error' => $exception->getMessage()
             ], 200, [], JSON_UNESCAPED_UNICODE);
         }
@@ -71,6 +73,13 @@ class Handler extends ExceptionHandler
             return response()->json([
                 'code' => $exception->getCode(),
                 'message' => $exception->getMessage(),
+            ], 200, [], JSON_UNESCAPED_UNICODE);
+        }
+
+        if ($exception instanceof WeChatPaymentException) {
+            return response()->json([
+                'code' => $exception->getCode(),
+                'error' => $exception->getMessage(),
             ], 200, [], JSON_UNESCAPED_UNICODE);
         }
 

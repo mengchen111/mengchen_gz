@@ -11,4 +11,5 @@ return [
     'CustomException' => 1000,
     'GameServerException' => 1001,
     'PlatformException' => 10000,
+    'WeChatPaymentException' => 20000,
 ];
