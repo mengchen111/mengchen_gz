@@ -12,4 +12,9 @@ trait WeChatPaymentTrait
         5 => '支付失败',
         6 => '已关闭',
     ];
+
+    protected $orderCreatorTypeMap = [
+        1 => 'player',  //玩家充值
+        2 => 'user',    //代理商充值
+    ];
 }

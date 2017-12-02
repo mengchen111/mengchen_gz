@@ -31,10 +31,10 @@ Route::prefix('api')->group(function () {
 
     //微信支付相关
     Route::post('wechat/order', 'WeChatPaymentController@createOrder');
-    Route::any('wechat/order/notification', 'WeChatPaymentController@getNotification');
     Route::delete('wechat/order/{order}', 'WeChatPaymentController@closeOrder');
     Route::get('wechat/order/{orderId?}', 'WeChatPaymentController@getOrder');
     Route::get('wechat/order/status/{outTradeNo}', 'WeChatPaymentController@checkOrderStatus');
+    Route::any('wechat/order/notification', 'WeChatPaymentController@getNotification');
 
     //platform接口
     Route::get('server/lists', 'Platform\ServerListController@show');

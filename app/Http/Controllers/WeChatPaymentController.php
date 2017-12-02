@@ -4,10 +4,12 @@ namespace App\Http\Controllers;
 
 use App\Exceptions\WeChatPaymentException;
 use App\Models\ItemType;
+use App\Services\InventoryService;
 use App\Traits\WeChatPaymentTrait;
 use Illuminate\Http\Request;
 use EasyWeChat\Foundation\Application;
 use EasyWeChat\Payment\Order;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 use App\Models\WechatOrder;
 use Exception;
@@ -171,23 +173,26 @@ class WeChatPaymentController extends Controller
     //微信支付结果通知回调函数
     public function getNotification(Request $request)
     {
-        Log::info('wechat', $request->getMethod() . 'content: ' . $request->getContent());
+        Log::info('wechat ' . $request->getMethod() . 'content: ' . $request->getContent());
 
         $response = $this->orderApp->payment->handleNotify(function ($notify, $successful) {
             $order = WechatOrder::where('out_trade_no', $notify->out_trade_no)->first();
 
             if (empty($order)) {
+                Log::info('wechat not exist ' . $notify->toJson());
                 return 'Order not exist.';
             }
 
             if ($order->isPaid()) {
-                Log::info('wechat '. $notify->toArray());
+                Log::info('wechat ispaid '. $notify->toArray());
                 return true;
             }
 
             if ($successful) {
+                Log::info('wechat success '. $notify->toArray());
                 $this->orderPaymentSucceed($order, $notify);
             } else {
+                Log::info('wechat failed '. $notify->toArray());
                 $this->orderPaymentFailed($order, $notify);
             }
 
@@ -197,9 +202,33 @@ class WeChatPaymentController extends Controller
         return $response;
     }
 
-    public function orderPaymentSucceed(WechatOrder $order, $notify)
+    protected function orderPaymentSucceed(WechatOrder $order, $notify)
     {
+        $order->order_status = 4;
+        $order->openid = $notify->openid;
+        $order->transaction_id = $notify->transaction_id;
+        $order->paid_at = $notify->time_end;
+        $order->save();
 
+        $this->deliveryItem($order);    //发货
+    }
+
+    protected function orderPaymentFailed(WechatOrder $order, $notify)
+    {
+        $errMsg = $errMsg = $notify->err_code . '|' . $notify->err_code_des;
+        $order->order_status = 5;
+        $order->order_err_msg = $errMsg;
+        $order->save();
+    }
+
+    protected function deliveryItem(WechatOrder $order)
+    {
+        DB::transaction(function () use ($order) {
+            $recipientType = $this->orderCreatorTypeMap[$order->order_creator_type]; //玩家 or 代理商角色
+            InventoryService::addStock($recipientType, $order->order_creator_id,
+                $order->item_type_id, $order->item_amount);
+            $order->item_delivery_status = 1;
+        });
     }
 
     //获取订单数据

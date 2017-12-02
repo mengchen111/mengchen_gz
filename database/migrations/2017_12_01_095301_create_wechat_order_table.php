@@ -29,11 +29,11 @@ class CreateWechatOrderTable extends Migration
             $table->unsignedTinyInteger('order_status')->default(1)
                 ->comment('订单状态(1-内部订单创建成功,2-预支付订单创建成功,3-预支付订单创建失败,4-支付成功,5-支付失败,6-已关闭)');
             $table->string('order_err_msg')->nullable()->comment('订单创建和支付过程中微信返回的错误消息');
-            $table->string('openid', 128)->nullable()->comment('用户标识	');
             $table->string('prepay_id', 64)->nullable()->comment('预支付交易会话标识');
             $table->string('code_url', 64)->nullable()->comment('扫码支付时的二维码链接');
-            $table->timestamp('paid_at')->nullable()->comment('支付完成时间');
+            $table->string('openid', 128)->nullable()->comment('微信用户标识');
             $table->string('transaction_id', 32)->nullable()->comment('微信支付订单号');
+            $table->timestamp('paid_at')->nullable()->comment('支付完成时间');
             $table->timestamps();
         });
     }

@@ -9,7 +9,7 @@ class WechatOrder extends Model
     protected $table = 'wechat_order';
     protected $primaryKey = 'id';
 
-    protected $orderPayedStatusId = 6;
+    protected $orderPayedStatusId = 4;
 
     protected $hidden = [
         //

@@ -185,6 +185,15 @@ cd $codeDir
 | /api/api/cnotice | GET | 获取登录公告 |
 | /api/headimg | POST | 上传玩家头像 |
 
+### 微信支付接口
+| URI   | Method  | Description |     
+| ----  | :-----: | ----------: |
+| /api/wechat/order | POST | 创建订单 |
+| /api/wechat/order/{order} | DELETE | 删除订单 |
+| /api/wechat/order/{orderId} | GET | 查询订单(所有或单个) |
+| /api/wechat/order/status/{outTradeNo} | GET | 查询订单状态 |
+| /api/wechat/order/notification | ANY | 支付结果回调函数 |
+
 ## 游戏服接口
 > **前缀: ?action={Action}**
 
