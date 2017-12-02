@@ -184,6 +184,7 @@ return [
         Barryvdh\LaravelIdeHelper\IdeHelperServiceProvider::class,
         Sentry\SentryLaravel\SentryLaravelServiceProvider::class,
         Overtrue\LaravelWechat\ServiceProvider::class,
+        SimpleSoftwareIO\QrCode\QrCodeServiceProvider::class,
 
         /*
          * 自定义 Service Provider
@@ -239,6 +240,7 @@ return [
         'View' => Illuminate\Support\Facades\View::class,
         'EasyWeChat' => Overtrue\LaravelWechat\Facade::class,
 
+        'QrCode' => SimpleSoftwareIO\QrCode\Facades\QrCode::class,
         'Sentry' => Sentry\SentryLaravel\SentryFacade::class,
     ],
 
