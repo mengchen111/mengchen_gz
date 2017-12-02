@@ -15,6 +15,7 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Validator;
 use App\Models\OperationLogs;
 use Illuminate\Support\Facades\DB;
+use App\Services\InventoryService;
 
 class TopUpController extends Controller
 {
@@ -37,22 +38,18 @@ class TopUpController extends Controller
             'amount' => 'required|integer|not_in:0',
         ])->validate();
 
-        $provider = User::with(['inventory' => function ($query) use ($type) {
-            $query->where('item_id', $type);
-        }])->find($request->user()->id);
-        $receiverModel = User::with(['inventory' => function ($query) use ($type) {
-            $query->where('item_id', $type);
-        }])->where('account', $receiver)->firstOrFail();
+        $provider = $request->user();
+        $receiverModel = User::where('account', $receiver)->firstOrFail();
 
-        if (! $receiverModel->isChild(Auth::id())) {
+        if (! $receiverModel->isChild($provider->id)) {
             throw new CustomException('只能给您的下级代理商充值');
         }
 
-        if (! $this->checkStock($provider, $amount)) {
+        if (! $provider->hasEnoughStock($type, $amount)) {
             throw new CustomException('库存不足，无法充值');
         }
 
-        $this->topUp4Child($request, $provider, $receiverModel, $type, $amount);
+        $this->topUp4Child($provider, $receiverModel, $type, $amount);
 
         OperationLogs::add($request->user()->id, $request->path(), $request->method(),
             '代理商给子代理商充值', $request->header('User-Agent'), json_encode($request->route()->parameters));
@@ -67,36 +64,22 @@ class TopUpController extends Controller
         return (! empty($provider->inventory)) and $provider->inventory->stock >= $amount;
     }
 
-    protected function topUp4Child($request, $provider, $receiver, $type, $amount)
+    protected function topUp4Child($provider, $receiver, $type, $amount)
     {
-        return DB::transaction(function () use ($request, $provider, $receiver, $type, $amount){
+        return DB::transaction(function () use ($provider, $receiver, $type, $amount){
             //记录充值流水
             TopUpAgent::create([
-                'provider_id' => $request->user()->id,
+                'provider_id' => $provider->id,
                 'receiver_id' => $receiver->id,
                 'type' => $type,
                 'amount' => $amount,
             ]);
 
-            //更新下级代理库存
-            if (empty($receiver->inventory)) {
-                $receiver->inventory()->create([
-                    'user_id' => $receiver->id,
-                    'item_id' => $type,
-                    'stock' => $amount,
-                ]);
-            } else {
-                $totalStock = $amount + $receiver->inventory->stock;
-                $receiver->inventory->update([
-                    'stock' => $totalStock,
-                ]);
-            }
+            //添加库存
+            InventoryService::addStock('user', $receiver->id, $type, $amount);
 
-            //更新自己的库存
-            $leftStock = $provider->inventory->stock - $amount;
-            $provider->inventory->update([
-                'stock' => $leftStock,
-            ]);
+            //减自己的库存
+            InventoryService::subStock('user', $provider->id, $type, $amount);
         });
     }
 
@@ -159,26 +142,13 @@ class TopUpController extends Controller
             'amount' => 'required|integer|not_in:0',
         ])->validate();
 
-        $provider = User::with(['inventory' => function ($query) use ($type) {
-            $query->where('item_id', $type);
-        }])->find($request->user()->id);
-        $playerModel = Player::with(['card'])->where('rid', $player)->firstOrFail();
-        $itemType = ItemType::find($type);
+        $provider = $request->user();
 
-        if (! $this->checkStock($provider, $amount)) {
+        if (! $provider->hasEnoughStock($type, $amount)) {
             throw new CustomException('库存不足，无法充值');
         }
 
-        switch ($itemType->name) {
-            case '房卡':
-                $this->topUpCard4Player($request, $provider, $playerModel, $type, $amount);
-                break;
-            case '金币':
-                $this->topUpGold4Player($request, $provider, $playerModel, $type, $amount);
-                break;
-            default:
-                throw new CustomException('只能充值房卡和金币');
-        }
+        $this->topUp4Player($provider, $player, $type, $amount);
 
         OperationLogs::add($request->user()->id, $request->path(), $request->method(),
             '代理商给玩家充值', $request->header('User-Agent'), json_encode($request->route()->parameters));
@@ -188,70 +158,22 @@ class TopUpController extends Controller
         ];
     }
 
-    /**
-     * @param $provider 管理员模型
-     * @param $player   玩家模型
-     * @param $type     道具id
-     * @param $amount   道具数量
-     */
-    protected function topUpGold4Player($request, $provider, $player, $type, $amount)
+    protected function topUp4Player($provider, $player, $type, $amount)
     {
-        return DB::transaction(function () use ($request, $provider, $player, $type, $amount){
+        return DB::transaction(function () use ($provider, $player, $type, $amount){
             //记录充值流水
             TopUpPlayer::create([
-                'provider_id' => $request->user()->id,
-                'player' => $player->rid,
+                'provider_id' => $provider->id,
+                'player' => $player,
                 'type' => $type,
                 'amount' => $amount,
             ]);
 
-            //更新库存
-            $totalStock = $amount + $player->gold;
-            $player->update([
-                'gold' => $totalStock,
-            ]);
+            //给玩家充值
+            InventoryService::addStock('player', $player, $type, $amount);
 
-            //减库存
-            $leftStock = $provider->inventory->stock - $amount;
-            $provider->inventory->update([
-                'stock' => $leftStock,
-            ]);
-        });
-    }
-
-    protected function topUpCard4Player($request, $provider, $player, $type, $amount)
-    {
-        return DB::transaction(function () use ($request, $provider, $player, $type, $amount){
-            //记录充值流水
-            TopUpPlayer::create([
-                'provider_id' => $request->user()->id,
-                'player' => $player->rid,
-                'type' => $type,
-                'amount' => $amount,
-            ]);
-
-            //更新库存
-            if (empty($player->card)) {
-                $player->card()->create([
-                    'rid' => $player->rid,
-                    'item_id' => $this->cardItemId,
-                    'expire' => 0,
-                    'count' => $amount,
-                    'sort' => 1,
-                    'state' => 1,
-                ]);
-            } else {
-                $totalStock = $amount + $player->card->count;
-                $player->card->update([
-                    'count' => $totalStock,
-                ]);
-            }
-
-            //减库存
-            $leftStock = $provider->inventory->stock - $amount;
-            $provider->inventory->update([
-                'stock' => $leftStock,
-            ]);
+            //减代理商的库存
+            InventoryService::subStock('user', $provider->id, $type, $amount);
         });
     }
 }
