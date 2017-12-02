@@ -27,7 +27,7 @@ class FriendRoomController extends Controller
 
     public function __construct(Request $request)
     {
-        $this->apiAddress = config('custom.game_server_api_address') . '?action=FriendRoom.forceClearRoom';
+        $this->apiAddress = '?action=FriendRoom.forceClearRoom';
         $this->per_page = $request->per_page ?: $this->per_page;
         $this->order = $request->sort ? explode('|', $request->sort) : $this->order;
     }
@@ -47,13 +47,7 @@ class FriendRoomController extends Controller
     //解散好友房
     public function dismiss(AdminRequest $request, $ownerId)
     {
-        $gameServer = new GameServer("{$this->apiAddress}&id={$ownerId}");
-
-        try {
-            $data = $gameServer->request('GET');
-        } catch (\Exception $exception) {
-            throw new CustomException($exception->getMessage());
-        }
+        GameServer::request('GET', "{$this->apiAddress}&id={$ownerId}");
 
         OperationLogs::add(Auth::id(), $request->path(), $request->method(), '解散好友房',
             $request->header('User-Agent'), $ownerId);

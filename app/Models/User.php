@@ -99,4 +99,13 @@ class User extends Authenticatable
     {
         return User::where('parent_id', $this->id)->get()->count();
     }
+
+    public function hasEnoughStock($itemType, $amount)
+    {
+        $inventory = Inventory::where('user_id', $this->id)
+            ->where('item_id', $itemType)
+            ->first();
+
+        return (! empty($inventory)) and $inventory->stock >= $amount;
+    }
 }

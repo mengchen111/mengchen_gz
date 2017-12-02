@@ -14,27 +14,23 @@ class WhitelistController extends Controller
     protected $per_page = 15;
     protected $page = 1;
     protected $order = ['rid', 'desc'];
-    protected $backendServerApi;
-    protected $addWhitelistUri = '/whitelist/addWhiteList';
-    protected $listWhitelistUri = '/whitelist/getWhiteList';
-    protected $editWhitelistUri = '/whitelist/editWhiteList';
-    protected $deleteWhitelistUri = '/whitelist/deleteWhiteList';
+    protected $addWhitelistUri = 'whitelist/addWhiteList';
+    protected $listWhitelistUri = 'whitelist/getWhiteList';
+    protected $editWhitelistUri = 'whitelist/editWhiteList';
+    protected $deleteWhitelistUri = 'whitelist/deleteWhiteList';
 
     public function __construct(Request $request)
     {
         $this->per_page = $request->per_page ?: $this->per_page;
         $this->page = $request->page ?: $this->page;
         $this->order = $request->sort ? explode('|', $request->sort) : $this->order;
-        $this->backendServerApi = config('custom.game_server_api_address');
     }
 
     public function addWhitelist(AdminRequest $request)
     {
         $formData = $this->filterWhitelistForm($request);
-        $api = $this->backendServerApi . $this->addWhitelistUri;
 
-        $gameServer = new GameServer($api);
-        $gameServer->request('POST', $formData);    //发送添加白名单请求
+        GameServer::request('POST', $this->addWhitelistUri, $formData);
 
         OperationLogs::add($request->user()->id, $request->path(), $request->method(),
             '添加白名单', $request->header('User-Agent'), json_encode($request->all()));
@@ -59,10 +55,8 @@ class WhitelistController extends Controller
     public function editWhiteList(AdminRequest $request)
     {
         $formData = $this->filterWhitelistForm($request);
-        $api = $this->backendServerApi . $this->editWhitelistUri;
 
-        $gameServer = new GameServer($api);
-        $gameServer->request('POST', $formData);
+        GameServer::request('POST', $this->editWhitelistUri, $formData);
 
         OperationLogs::add($request->user()->id, $request->path(), $request->method(),
             '编辑白名单', $request->header('User-Agent'), json_encode($request->all()));
@@ -74,9 +68,7 @@ class WhitelistController extends Controller
 
     public function listWhitelist(AdminRequest $request)
     {
-        $api = $this->backendServerApi . $this->listWhitelistUri;
-        $gameServer = new GameServer($api);
-        $list = $gameServer->request('GET')['data'];
+        $list = GameServer::request('GET', $this->listWhitelistUri)['data'];
 
         if ($request->has('filter')) {
             $filter = $request->filter;
@@ -90,10 +82,8 @@ class WhitelistController extends Controller
     public function deleteWhitelist(AdminRequest $request)
     {
         $formData = $this->filterDelWhitelistForm($request);
-        $api = $this->backendServerApi . $this->deleteWhitelistUri;
 
-        $gameServer = new GameServer($api);
-        $gameServer->request('POST', $formData);
+        GameServer::request('POST', $this->deleteWhitelistUri, $formData);
 
         OperationLogs::add($request->user()->id, $request->path(), $request->method(),
             '删除白名单', $request->header('User-Agent'), json_encode($request->all()));

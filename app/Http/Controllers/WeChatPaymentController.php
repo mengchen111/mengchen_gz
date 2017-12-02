@@ -46,6 +46,7 @@ class WeChatPaymentController extends Controller
             throw $exception;
         }
 
+        //如果支付类型为扫码支付，那么额外返回二维码图片的base64编码字符串
         if ($request->trade_type === 'NATIVE') {
             return [
                 'prepay_id' => $result->prepay_id,
@@ -170,10 +171,35 @@ class WeChatPaymentController extends Controller
     //微信支付结果通知回调函数
     public function getNotification(Request $request)
     {
-        Log::info('wechat', $request->toArray());
-        return [
-            'return_code' => 'SUCCESS',
-        ];
+        Log::info('wechat', $request->getMethod() . 'content: ' . $request->getContent());
+
+        $response = $this->orderApp->payment->handleNotify(function ($notify, $successful) {
+            $order = WechatOrder::where('out_trade_no', $notify->out_trade_no)->first();
+
+            if (empty($order)) {
+                return 'Order not exist.';
+            }
+
+            if ($order->isPaid()) {
+                Log::info('wechat '. $notify->toArray());
+                return true;
+            }
+
+            if ($successful) {
+                $this->orderPaymentSucceed($order, $notify);
+            } else {
+                $this->orderPaymentFailed($order, $notify);
+            }
+
+            return true;
+        });
+
+        return $response;
+    }
+
+    public function orderPaymentSucceed(WechatOrder $order, $notify)
+    {
+
     }
 
     //获取订单数据

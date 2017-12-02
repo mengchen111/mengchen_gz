@@ -9,6 +9,8 @@ class WechatOrder extends Model
     protected $table = 'wechat_order';
     protected $primaryKey = 'id';
 
+    protected $orderPayedStatusId = 6;
+
     protected $hidden = [
         //
     ];
@@ -16,4 +18,9 @@ class WechatOrder extends Model
     protected $guarded = [
         //
     ];
+
+    public function isPaid()
+    {
+        return (int) $this->order_status === $this->orderPayedStatusId;
+    }
 }

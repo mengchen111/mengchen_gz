@@ -27,8 +27,8 @@ class CoinRoomController extends Controller
 
     public function __construct(Request $request)
     {
-        $this->coinRoomListApi = config('custom.game_server_api_address') . '?action=Room.getRooms';
-        $this->coinRoomDismissApi = config('custom.game_server_api_address') . '?action=Room.dismissRoomById';
+        $this->coinRoomListApi = '?action=Room.getRooms';
+        $this->coinRoomDismissApi = '?action=Room.dismissRoomById';
         $this->per_page = $request->per_page ?: $this->per_page;
         $this->page = $request->page ?: $this->page;
     }
@@ -46,15 +46,9 @@ class CoinRoomController extends Controller
 
     protected function getCoinRoomList($apiAddress)
     {
-        $gameServer = new GameServer($apiAddress);
+        $res = GameServer::request('GET', $apiAddress);
 
-        try {
-            $data = $gameServer->request('GET');
-        } catch (\Exception $exception) {
-            throw new CustomException($exception->getMessage());
-        }
-
-        return $data['data'];
+        return $res['data'];
     }
 
     //解散金币房
@@ -76,15 +70,9 @@ class CoinRoomController extends Controller
 
     protected function sendDismissRequest($apiAddress, $params)
     {
-        $gameServer = new GameServer($apiAddress);
+        $res = GameServer::request('POST', $apiAddress, $params);
 
-        try {
-            $data = $gameServer->request('POST', $params);
-        } catch (\Exception $exception) {
-            throw new CustomException($exception->getMessage());
-        }
-
-        return $data['resultMsg'];
+        return $res['resultMsg'];
     }
 
     protected function paginateData($data)

@@ -22,19 +22,17 @@ class AiController extends Controller
     protected $per_page = 15;
     protected $page = 1;
     protected $order = ['rid', 'desc'];
-    protected $backendServerApi;
-    protected $editAiUri = '/Npc/edit';
-    protected $editAiDispatchUri = '/Npc/dispatch';
-    protected $addAiDispatchUri = '/Npc/dispatch';
-    protected $switchAiDispatchUri = '/Npc/change';     //停用启用
-    protected $addAiUri = '/Npc/add';
+    protected $editAiUri = 'Npc/edit';
+    protected $editAiDispatchUri = 'Npc/dispatch';
+    protected $addAiDispatchUri = 'Npc/dispatch';
+    protected $switchAiDispatchUri = 'Npc/change';     //停用启用
+    protected $addAiUri = 'Npc/add';
 
     public function __construct(Request $request)
     {
         $this->per_page = $request->per_page ?: $this->per_page;
         $this->page = $request->page ?: $this->page;
         $this->order = $request->sort ? explode('|', $request->sort) : $this->order;
-        $this->backendServerApi = config('custom.game_server_api_address');
     }
 
     public function show(AdminRequest $request)
@@ -74,10 +72,8 @@ class AiController extends Controller
     public function addSingleAi(AdminRequest $request)
     {
         $formData = $this->filterAddAiFrom($request);
-        $api = $this->backendServerApi . $this->addAiUri;
 
-        $gameServer = new GameServer($api);
-        $gameServer->request('POST', $formData);    //发送AI添加请求
+        GameServer::request('POST', $this->addAiUri, $formData); //发送AI添加请求
 
         OperationLogs::add($request->user()->id, $request->path(), $request->method(),
             '添加单个AI', $request->header('User-Agent'), json_encode($request->all()));
@@ -90,10 +86,8 @@ class AiController extends Controller
     public function addMassAi(AdminRequest $request)
     {
         $formData = $this->filterAddAiFrom($request);
-        $api = $this->backendServerApi . $this->addAiUri;
 
-        $gameServer = new GameServer($api);
-        $gameServer->request('POST', $formData);    //发送AI添加请求
+        GameServer::request('POST', $this->addAiUri, $formData);
 
         OperationLogs::add($request->user()->id, $request->path(), $request->method(),
             '批量添加AI', $request->header('User-Agent'), json_encode($request->all()));
@@ -114,9 +108,7 @@ class AiController extends Controller
             array_push($nicks, strtolower(Faker::create()->firstName));
         }
 
-        $api = $this->backendServerApi . $this->addAiUri;
-        $gameServer = new GameServer($api);
-        $gameServer->request('POST', [
+        GameServer::request('POST', $this->addAiUri, [
             'nick' => implode(',', $nicks),
             'diamond' => $request->diamond,
             'lottery' => $request->lottery,
@@ -150,10 +142,8 @@ class AiController extends Controller
     public function edit(AdminRequest $request)
     {
         $formData = $this->filterEditForm($request);
-        $api = $this->backendServerApi . $this->editAiUri;
 
-        $gameServer = new GameServer($api);
-        $gameServer->request('POST', $formData);    //发送编辑请求
+        GameServer::request('POST', $this->editAiUri, $formData);
 
         OperationLogs::add($request->user()->id, $request->path(), $request->method(),
             '编辑AI', $request->header('User-Agent'), json_encode($request->all()));
@@ -166,10 +156,8 @@ class AiController extends Controller
     public function massEdit(AdminRequest $request)
     {
         $formData = $this->filterMassEditForm($request);
-        $api = $this->backendServerApi . $this->editAiUri;
 
-        $gameServer = new GameServer($api);
-        $gameServer->request('POST', $formData);    //发送批量编辑请求
+        GameServer::request('POST', $this->editAiUri, $formData);
 
         OperationLogs::add($request->user()->id, $request->path(), $request->method(),
             '批量编辑AI', $request->header('User-Agent'), json_encode($request->all()));
@@ -182,10 +170,8 @@ class AiController extends Controller
     public function editDispatch(AdminRequest $request)
     {
         $formData = $this->filterEditDispatchForm($request);
-        $api = $this->backendServerApi . $this->editAiDispatchUri;
 
-        $gameServer = new GameServer($api);
-        $gameServer->request('POST', $formData);    //发送编辑请求
+        GameServer::request('POST', $this->editAiDispatchUri, $formData);
 
         OperationLogs::add($request->user()->id, $request->path(), $request->method(),
             '编辑AI调度', $request->header('User-Agent'), json_encode($request->all()));
@@ -198,10 +184,8 @@ class AiController extends Controller
     public function addDispatch(AdminRequest $request)
     {
         $formData = $this->filterAddDispatchForm($request);
-        $api = $this->backendServerApi . $this->addAiDispatchUri;
 
-        $gameServer = new GameServer($api);
-        $gameServer->request('POST', $formData);    //发送编辑请求
+        GameServer::request('POST', $this->addAiDispatchUri, $formData);
 
         OperationLogs::add($request->user()->id, $request->path(), $request->method(),
             '添加AI调度', $request->header('User-Agent'), json_encode($request->all()));
@@ -213,10 +197,7 @@ class AiController extends Controller
 
     public function switchAiDispatch(AdminRequest $request, $id, $switch)
     {
-        $api = $this->backendServerApi . $this->switchAiDispatchUri;
-
-        $gameServer = new GameServer($api);
-        $gameServer->request('POST', [
+        GameServer::request('POST', $this->switchAiDispatchUri, [
             'logId' => $id,
             'id' => $request->ids,
             'isOpen' => $switch

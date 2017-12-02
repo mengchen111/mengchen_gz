@@ -2,13 +2,13 @@
 
 namespace App\Jobs;
 
+use App\Services\GameServer;
 use Illuminate\Bus\Queueable;
 use Illuminate\Queue\SerializesModels;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
 use App\Models\GameNotificationMarquee;
-use GuzzleHttp\Client;
 use App\Models\OperationLogs;
 use Illuminate\Support\Facades\Log;
 
@@ -42,33 +42,14 @@ class SendGameNotification implements ShouldQueue
      */
     public function handle()
     {
-        $httpClient = new Client([
-            'connect_timeout' => 6,    //设置超时时间
-        ]);
+        GameServer::request('POST', $this->apiAddress, $this->formData);
 
-        $response = $httpClient->request('POST', $this->apiAddress, [
-            'form_params' => $this->formData,   //发送 application/x-www-form-urlencoded POST请求
-        ]);
+        $this->notificationModel->sync_state = 3;
+        $this->notificationModel->failed_description = '';
+        $this->notificationModel->save();
 
-        if (200 == $response->getStatusCode()) {
-            if (1 == json_decode($response->getBody()->getContents())->result) {
-                $this->notificationModel->sync_state = 3;
-                $this->notificationModel->failed_description = '';
-                $this->notificationModel->save();
-
-                OperationLogs::add(1, $this->apiAddress, 'POST', '后台队列同步公告成功',
-                    'Guzzle', json_encode($this->formData));
-
-                //Log::info("后台队列同步跑马灯公告到游戏服成功 同步数据：" . json_encode($this->formData));
-
-                return true;
-            }
-
-            throw new \Exception('请求发送成功，但同步失败');
-        }
-
-        //抛出异常，继续重试，return false 不会继续重试
-        throw new \Exception('状态返回码非200，同步失败');
+        OperationLogs::add(1, $this->apiAddress, 'POST', '后台队列同步公告成功',
+            'Guzzle', json_encode($this->formData));
     }
 
     //如果请求过程中Guzzle抛出异常，则记录在notificationModel模型表中

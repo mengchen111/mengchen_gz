@@ -26,7 +26,6 @@ class TopUpController extends Controller
     protected $per_page = 15;
     protected $order = ['id', 'desc'];
     protected $cardItemId = 1030005;    //房卡在游戏库中的id号
-    protected $backendServerApi;
     protected $topUpItemApi = '/role/addItem';
     protected $subItemApi = '/role/subItem';
     protected $itemIdMap = [        //后台与游戏后端的道具id的映射关系
@@ -38,7 +37,6 @@ class TopUpController extends Controller
     {
         $this->per_page = $request->per_page ?: $this->per_page;
         $this->order = $request->sort ? explode('|', $request->sort) : $this->order;
-        $this->backendServerApi = config('custom.game_server_api_address');
     }
 
     //给代理商充值（自己的下级）
@@ -232,12 +230,9 @@ class TopUpController extends Controller
      */
     protected function topUp4Player($request, $provider, $player, $type, $amount)
     {
-        $api = $this->backendServerApi . $this->topUpItemApi;
-        $gameServer = new GameServer($api);
-
-        return DB::transaction(function () use ($request, $provider, $player, $type, $amount, $gameServer, $api) {
+        return DB::transaction(function () use ($request, $provider, $player, $type, $amount) {
             //更新库存（调用充值接口）
-            $gameServer->request('POST', [
+            GameServer::request('POST', $this->topUpItemApi, [
                 'playerid' => $player,
                 'id' => $this->itemIdMap[$type],
                 'count' => $amount,
@@ -261,9 +256,6 @@ class TopUpController extends Controller
 
     protected function cutStock4Player($request, $player, $type, $amount)
     {
-        $api = $this->backendServerApi . $this->subItemApi;
-        $gameServer = new GameServer($api);
-
         if ((int)$type === 1) {
             $playerModel = Player::with('card')->find($player);
             if (empty($playerModel)) {
@@ -283,9 +275,9 @@ class TopUpController extends Controller
             $query->where('item_id', $type);
         }])->find($this->adminId);
 
-        return DB::transaction(function () use ($request, $admin, $player, $type, $amount, $gameServer, $api) {
+        return DB::transaction(function () use ($request, $admin, $player, $type, $amount) {
             //更新库存（调用减库存接口）
-            $gameServer->request('POST', [
+            GameServer::request('POST', $this->subItemApi, [
                 'playerid' => $player,
                 'id' => $this->itemIdMap[$type],
                 'count' => $amount,

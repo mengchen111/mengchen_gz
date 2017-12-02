@@ -10,39 +10,47 @@ namespace App\Services;
 
 use GuzzleHttp;
 use App\Exceptions\GameServerException;
+use BadMethodCallException;
 
 class GameServer
 {
-    protected $apiAddress;
-    protected $guzzle;      //guzzle client
-
-    public function __construct($apiAddress, $guzzleHandler = null)
+    public static function __callStatic($name, $arguments)
     {
-        $this->apiAddress = $apiAddress;
-        $this->guzzle = new GuzzleHttp\Client([
+        switch ($name) {
+            case 'gameServerApiAddress':
+                return config('custom.game_server_api_address');
+                break;
+            default:
+                throw new BadMethodCallException('Call to undefined method ' . self::class . "::${name}()");
+        }
+    }
+
+    public static function httpClient()
+    {
+        return new GuzzleHttp\Client([
+            'base_uri' => self::gameServerApiAddress(),
             'connect_timeout' => 5,
-            'handler' => $guzzleHandler,
         ]);
     }
 
-    public function request($method, Array $params = null)
+    public static function request($method, $uri, Array $params = null)
     {
         switch ($method) {
             case 'GET':
-                return $this->getData($params);
+                return self::getData($uri, $params);
                 break;
             case 'POST':
-                return $this->postData($params);
+                return self::postData($uri, $params);
                 break;
             default:
                 throw new GameServerException('method无效');
         }
     }
 
-    protected function getData($params = null)
+    protected static function getData($uri, $params = null)
     {
         try {
-            $res = $this->guzzle->request('GET', $this->apiAddress, [
+            $res = self::httpClient()->request('GET', $uri, [
                 'query' => $params,
             ])
                 ->getBody()
@@ -51,17 +59,17 @@ class GameServer
             throw new GameServerException('调用游戏后端接口失败：' . $exception->getMessage(), $exception);
         }
 
-        $result = $this->decodeResponse($res);
+        $result = self::decodeResponse($res);
 
-        $this->checkResult($result);
+        self::checkResult($result);
 
         return $result;
     }
 
-    protected function postData($params = null)
+    protected static function postData($uri, $params = null)
     {
         try {
-            $res = $this->guzzle->request('POST', $this->apiAddress, [
+            $res = self::httpClient()->request('POST', $uri, [
                 'form_params' => $params,
             ])
                 ->getBody()
@@ -70,14 +78,14 @@ class GameServer
             throw new GameServerException('调用游戏后端接口失败：' . $exception->getMessage(), $exception);
         }
 
-        $result = $this->decodeResponse($res);
+        $result = self::decodeResponse($res);
 
-        $this->checkResult($result);
+        self::checkResult($result);
 
         return $result;
     }
 
-    protected function checkResult($result)
+    protected static function checkResult($result)
     {
         if (empty($result['result'])) {     //result为0或者返回空
             throw new GameServerException('调用游戏后端接口成功，但是返回的结果错误：' . json_encode($result, JSON_UNESCAPED_UNICODE));
@@ -85,7 +93,7 @@ class GameServer
         return true;
     }
 
-    protected function decodeResponse($res)
+    protected static function decodeResponse($res)
     {
         return json_decode($res, true);
     }
