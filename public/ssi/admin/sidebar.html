@@ -99,6 +99,14 @@
                     <li :class="{ active: uri['top-up'].player.isActive }"><a href="/admin/top-up/player"><i class="fa fa-circle-o"></i>玩家充值记录</a></li>
                 </ul>
             </li>
+            <li class="treeview" :class="{ active: uri.order.isActive }">
+                <a href="#"><i class="fa fa-wechat "></i> <span>订单管理</span>
+                    <span class="pull-right-container"><i class="fa fa-angle-left pull-right"></i></span>
+                </a>
+                <ul class="treeview-menu">
+                    <li :class="{ active: uri.order.wechat.isActive }"><a href="/admin/order/wechat"><i class="fa fa-circle-o"></i>微信订单列表</a></li>
+                </ul>
+            </li>
             <li class="treeview" :class="{ active: uri.system.isActive }">
                 <a href="#"><i class="fa fa-gear"></i> <span>系统管理</span>
                     <span class="pull-right-container"><i class="fa fa-angle-left pull-right"></i></span>

@@ -158,6 +158,8 @@ Route::group([
     Route::get('top-up/agent', 'ViewController@topUpAgent');
     Route::get('top-up/player', 'ViewController@topUpPlayer');
 
+    Route::get('order/wechat', 'ViewController@orderWechat');
+
     Route::get('system/log', 'ViewController@systemLog');
 });
 

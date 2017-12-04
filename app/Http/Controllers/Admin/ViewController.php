@@ -113,6 +113,11 @@ class ViewController extends Controller
         return view('admin.top-up.player');
     }
 
+    public function orderWechat(Request $request)
+    {
+        return view('admin.order.wechat');
+    }
+
     public function systemLog(Request $request)
     {
         return view('admin.system.log');
