@@ -193,6 +193,7 @@ cd $codeDir
 | /api/wechat/order/{orderId} | GET | 查询订单(所有或单个) |
 | /api/wechat/order/status/{outTradeNo} | GET | 查询订单状态 |
 | /api/wechat/order/notification | ANY | 支付结果回调函数 |
+| /api/order/item | GET | 获取道具类型和单价 |
 
 ## 游戏服接口
 > **前缀: ?action={Action}**

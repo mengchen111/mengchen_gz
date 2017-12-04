@@ -35,6 +35,7 @@ Route::prefix('api')->group(function () {
     Route::get('wechat/order/{orderId?}', 'WeChatPaymentController@getOrder');
     Route::get('wechat/order/status/{outTradeNo}', 'WeChatPaymentController@checkOrderStatus');
     Route::any('wechat/order/notification', 'WeChatPaymentController@getNotification');
+    Route::get('order/item', 'WeChatPaymentController@getItemPrice');
 
     //platform接口
     Route::get('server/lists', 'Platform\ServerListController@show');

@@ -49,12 +49,14 @@ class WeChatPaymentController extends Controller
         //如果支付类型为扫码支付，那么额外返回二维码图片的base64编码字符串
         if ($request->trade_type === 'NATIVE') {
             return [
+                'message' => '订单创建成功',
                 'prepay_id' => $result->prepay_id,
                 'qr_code' => $this->generateQrCodeStr($result->code_url),
             ];
         }
 
         return [
+            'message' => '订单创建成功',
             'prepay_id' => $result->prepay_id,
         ];
     }
@@ -231,9 +233,10 @@ class WeChatPaymentController extends Controller
     public function getOrder(Request $request, $orderId = null)
     {
         if (empty($orderId)) {
-            return WechatOrder::paginate($this->per_page);
+            return WechatOrder::orderBy($this->order[0], $this->order[1])
+            ->paginate($this->per_page);
         }
-        return WechatOrder::where('id', $orderId)->first();
+        return WechatOrder::where('id', $orderId)->firstOrFail()->append('order_qr_code');
     }
 
     //查询订单状态
@@ -295,5 +298,10 @@ class WeChatPaymentController extends Controller
         $order->save();
 
         throw new WeChatPaymentException($msg);
+    }
+
+    public function getItemPrice(Request $request)
+    {
+        return ItemType::all();
     }
 }

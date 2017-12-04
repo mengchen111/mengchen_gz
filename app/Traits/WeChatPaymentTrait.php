@@ -10,7 +10,8 @@ trait WeChatPaymentTrait
         3 => '预支付订单创建失败',
         4 => '支付成功',
         5 => '支付失败',
-        6 => '已关闭',
+        6 => '取消订单成功',
+        7 => '取消订单失败',
     ];
 
     protected $orderCreatorTypeMap = [
@@ -21,5 +22,15 @@ trait WeChatPaymentTrait
     protected $tradeTypes = [       //可选的trade_type
         'NATIVE',   //扫码支付
         'APP',      //app支付
+    ];
+
+    protected $itemDeliveryStatusMap = [
+        0 => '未发货',
+        1 => '已发货',
+    ];
+
+    protected $tradeTypeMap = [
+        'NATIVE' => '扫码',
+        'APP' => 'app',
     ];
 }
