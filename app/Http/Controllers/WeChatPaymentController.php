@@ -10,7 +10,6 @@ use Illuminate\Http\Request;
 use EasyWeChat\Foundation\Application;
 use EasyWeChat\Payment\Order;
 use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Facades\Log;
 use App\Models\WechatOrder;
 use Exception;
 use SimpleSoftwareIO\QrCode\Facades\QrCode;
@@ -21,12 +20,12 @@ class WeChatPaymentController extends Controller
 
     protected $orderApp;
     protected $notifyUrl;
+    protected $orderBodyPrefix = '梦晨网络';
 
     public function __construct(Request $request)
     {
         $this->orderApp = new Application(config('wechat'));
-        //$this->notifyUrl = env('APP_URL') . '/api/wechat/order/notification';
-        $this->notifyUrl = 'http://admin-new.11majiang.com/api/wechat/order/notification';
+        $this->notifyUrl = config('wechat.notify_url');
 
         parent::__construct($request);
     }
@@ -45,7 +44,6 @@ class WeChatPaymentController extends Controller
         } catch (Exception $exception) {
             //更新订单状态，将异常重新抛出
             $this->orderPreparationFailed($order, $exception->getMessage());
-            throw $exception;
         }
 
         //如果支付类型为扫码支付，那么额外返回二维码图片的base64编码字符串
@@ -73,7 +71,7 @@ class WeChatPaymentController extends Controller
             'order_creator_id' => 'required|integer',
             'item_type_id' => 'required|exists:item_type,id',
             'item_amount' => 'required|integer|min:1',
-            'trade_type' => 'required|string',
+            'trade_type' => 'required|string|in:' . implode(',', $this->tradeTypes),
         ]);
         return $request->intersect([
             'order_creator_type', 'order_creator_id', 'item_type_id', 'item_amount', 'trade_type'
@@ -87,7 +85,7 @@ class WeChatPaymentController extends Controller
 
         $item = ItemType::find($data['item_type_id']);
         $data['out_trade_no'] = $this->createOutTradeNumber();
-        $data['body'] = '梦晨网络-' . $item->name . '充值';
+        $data['body'] = $this->orderBodyPrefix . '-' . $item->name . '充值';
         $data['total_fee'] = $item->price * $data['item_amount'];
         $data['spbill_create_ip'] = $request->getClientIp();
         $data['order_status'] = 1;
@@ -117,18 +115,16 @@ class WeChatPaymentController extends Controller
                 return $result;
             }
             if ($result->result_code === 'FAIL') {
-                $errMsg = $result->err_code . '|' . $result->err_code_des;
+                $errMsg = $result->err_code . '-' . $result->err_code_des;
                 $this->orderPreparationFailed($order, $errMsg);
-                throw new WeChatPaymentException($errMsg);
             }
         }
 
         if ($result->return_code === 'FAIL') {
             $this->orderPreparationFailed($order, $result->return_msg);
-            throw new WeChatPaymentException($result->return_msg);
         }
 
-        throw new WeChatPaymentException('未知错误: ' . $result->toJson());
+        $this->orderPreparationFailed($order, '发送预支付请求失败');
     }
 
     //更改订单状态为预支付失败
@@ -137,6 +133,8 @@ class WeChatPaymentController extends Controller
         $order->order_status = 3;
         $order->order_err_msg = $msg;
         $order->save();
+
+        throw new WeChatPaymentException($msg);
     }
 
     protected function orderPreparationSucceed($order, $result)
@@ -151,17 +149,17 @@ class WeChatPaymentController extends Controller
         $order->save();
     }
 
-    protected function checkUnfinishedOrder($creatorType, $creatorId)
-    {
-        $orders = WechatOrder::where('order_creator_type', $creatorType)
-            ->where('order_creator_id', $creatorId)
-            ->whereIn('order_status', [1, 2])   //订单状态为已创建或未支付状态的订单
-            ->get();
-        if (!$orders->isEmpty()) {
-            throw new WeChatPaymentException('存在未完成的订单，请支付或取消之前的订单之后再次尝试');
-        }
-        return true;
-    }
+//    protected function checkUnfinishedOrder($creatorType, $creatorId)
+//    {
+//        $orders = WechatOrder::where('order_creator_type', $creatorType)
+//            ->where('order_creator_id', $creatorId)
+//            ->whereIn('order_status', [1, 2])   //订单状态为已创建或未支付状态的订单
+//            ->get();
+//        if (!$orders->isEmpty()) {
+//            throw new WeChatPaymentException('存在未完成的订单，请支付或取消之前的订单之后再次尝试');
+//        }
+//        return true;
+//    }
 
     //创建订单号（内部订单号，非微信返回的交易id号）
     protected function createOutTradeNumber()
@@ -173,26 +171,20 @@ class WeChatPaymentController extends Controller
     //微信支付结果通知回调函数
     public function getNotification(Request $request)
     {
-        Log::info('wechat ' . $request->getMethod() . 'content: ' . $request->getContent());
-
         $response = $this->orderApp->payment->handleNotify(function ($notify, $successful) {
             $order = WechatOrder::where('out_trade_no', $notify->out_trade_no)->first();
 
             if (empty($order)) {
-                Log::info('wechat not exist ' . $notify->toJson());
                 return 'Order not exist.';
             }
 
             if ($order->isPaid()) {
-                Log::info('wechat ispaid '. $notify->toArray());
                 return true;
             }
 
             if ($successful) {
-                Log::info('wechat success '. $notify->toArray());
                 $this->orderPaymentSucceed($order, $notify);
             } else {
-                Log::info('wechat failed '. $notify->toArray());
                 $this->orderPaymentFailed($order, $notify);
             }
 
@@ -215,7 +207,7 @@ class WeChatPaymentController extends Controller
 
     protected function orderPaymentFailed(WechatOrder $order, $notify)
     {
-        $errMsg = $errMsg = $notify->err_code . '|' . $notify->err_code_des;
+        $errMsg = $errMsg = $notify->err_code . '-' . $notify->err_code_des;
         $order->order_status = 5;
         $order->order_err_msg = $errMsg;
         $order->save();
@@ -224,10 +216,14 @@ class WeChatPaymentController extends Controller
     protected function deliveryItem(WechatOrder $order)
     {
         DB::transaction(function () use ($order) {
+            //充值
             $recipientType = $this->orderCreatorTypeMap[$order->order_creator_type]; //玩家 or 代理商角色
             InventoryService::addStock($recipientType, $order->order_creator_id,
                 $order->item_type_id, $order->item_amount);
+
+            //更新发货状态
             $order->item_delivery_status = 1;
+            $order->save();
         });
     }
 
@@ -250,7 +246,7 @@ class WeChatPaymentController extends Controller
         ];
     }
 
-    //公开的关单接口
+    //关单接口
     public function closeOrder(Request $request, WechatOrder $order)
     {
         if (in_array($order->order_status, [2, 5])) {
@@ -269,20 +265,35 @@ class WeChatPaymentController extends Controller
 
         if ($result->return_code === 'SUCCESS') {
             if ($result->result_code === 'SUCCESS') {
-                $order->order_status = 6;
-                $order->save();
+                $this->orderCancellationSucceed($order);
                 return true;
             }
 
             if ($result->result_code === 'FAIL') {
-                throw new WeChatPaymentException($result->err_code . '|' . $result->err_code_des);
+                $errMsg = $result->err_code . '-' . $result->err_code_des;
+                $this->orderCancellationFailed($order, $errMsg);
             }
         }
 
         if ($result->return_code === 'FAIL') {
-            throw new WeChatPaymentException($result->return_msg);
+            $this->orderCancellationFailed($order, $result->return_msg);
         }
 
-        throw new WeChatPaymentException('未知错误: ' . $result->toJson());
+        $this->orderCancellationFailed($order, '发送取消订单请求失败');
+    }
+
+    protected function orderCancellationSucceed($order)
+    {
+        $order->order_status = 6;
+        $order->save();
+    }
+
+    protected function orderCancellationFailed($order, $msg)
+    {
+        $order->order_status = 7;
+        $order->order_err_msg = $msg;
+        $order->save();
+
+        throw new WeChatPaymentException($msg);
     }
 }

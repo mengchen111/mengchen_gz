@@ -17,4 +17,9 @@ trait WeChatPaymentTrait
         1 => 'player',  //玩家充值
         2 => 'user',    //代理商充值
     ];
+
+    protected $tradeTypes = [       //可选的trade_type
+        'NATIVE',   //扫码支付
+        'APP',      //app支付
+    ];
 }

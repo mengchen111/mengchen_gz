@@ -2,6 +2,7 @@
 
 namespace App\Services;
 
+use App\Exceptions\InventoryServiceException;
 use App\Models\User;
 
 class InventoryService
@@ -48,6 +49,8 @@ class InventoryService
             $query->where('item_id', $itemType);
         }])->find($userId);
 
+        self::checkUserExists($user);
+
         if (empty($user->inventory)) {
             $user->inventory()->create([
                 'user_id' => $user->id,
@@ -57,6 +60,13 @@ class InventoryService
         } else {
             $user->inventory->stock += $amount;
             $user->inventory->save();
+        }
+    }
+
+    protected static function checkUserExists($user)
+    {
+        if (empty($user)) {
+            throw new InventoryServiceException('用户不存在');
         }
     }
 
@@ -74,6 +84,9 @@ class InventoryService
         $user = User::with(['inventory' => function ($query) use ($itemType) {
             $query->where('item_id', $itemType);
         }])->find($userId);
+
+        self::checkUserExists($user);
+
         $user->inventory->stock -= $amount;
         $user->inventory->save();
     }

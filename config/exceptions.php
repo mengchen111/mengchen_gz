@@ -9,7 +9,11 @@
 return [
     //exception code
     'CustomException' => 1000,
+
+    //service exception
     'GameServerException' => 1001,
+    'InventoryServiceException' => 1002,
+
     'PlatformException' => 10000,
     'WeChatPaymentException' => 20000,
 ];

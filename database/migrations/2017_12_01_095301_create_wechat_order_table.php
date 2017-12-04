@@ -27,7 +27,7 @@ class CreateWechatOrderTable extends Migration
             $table->unsignedInteger('total_fee')->comment('订单总金额(分)');
             $table->string('spbill_create_ip', 16)->comment('终端IP');
             $table->unsignedTinyInteger('order_status')->default(1)
-                ->comment('订单状态(1-内部订单创建成功,2-预支付订单创建成功,3-预支付订单创建失败,4-支付成功,5-支付失败,6-已关闭)');
+                ->comment('订单状态(1-内部订单创建成功,2-预支付订单创建成功,3-预支付订单创建失败,4-支付成功,5-支付失败,6-取消订单成功,7-取消订单失败)');
             $table->string('order_err_msg')->nullable()->comment('订单创建和支付过程中微信返回的错误消息');
             $table->string('prepay_id', 64)->nullable()->comment('预支付交易会话标识');
             $table->string('code_url', 64)->nullable()->comment('扫码支付时的二维码链接');
