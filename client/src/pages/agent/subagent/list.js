@@ -1,8 +1,9 @@
-import '../index.js'
+import {myTools} from '../index.js'
 import MyVuetable from '../../../components/MyVuetable.vue'
 import FilterBar from '../../../components/MyFilterBar.vue'
 import TableActions from './components/TableActions.vue'
 import DetailRow from './components/DetailRow.vue'
+import MyToastr from '../../../components/MyToastr.vue'
 
 Vue.component('table-actions', TableActions)
 Vue.component('detail-row', DetailRow)
@@ -12,6 +13,7 @@ new Vue({
   components: {
     FilterBar,
     MyVuetable,
+    MyToastr,
   },
   data: {
     eventHub: new Vue(),
@@ -107,63 +109,50 @@ new Vue({
   methods: {
     topUpChild () {
       let _self = this
+      let toastr = this.$refs.toastr
+      let api = `${_self.topUpApiPrefix}/${_self.activatedRow.account}/${_self.topUpData.typeId}/${_self.topUpData.amount}`
 
-      axios({
-        method: 'POST',
-        url: `${_self.topUpApiPrefix}/${_self.activatedRow.account}/${_self.topUpData.typeId}/${_self.topUpData.amount}`,
-        validateStatus: function (status) {
-          return status === 200 || status === 422 //定义哪些http状态返回码会被promise resolve
-        },
-      })
-        .then(function (response) {
-          if (response.status === 422) {
-            alert(JSON.stringify(response.data))
-          } else {
-            response.data.error ? alert(response.data.error) : alert(response.data.message)
-            _self.topUpData.amount = null
-          }
+      myTools.axiosInstance.post(api)
+        .then(function (res) {
+          myTools.msgResolver(res, toastr)
+          _self.topUpData.amount = null
+        })
+        .catch(function (err) {
+          alert(err)
         })
     },
 
     editChildInfo () {
       let _self = this
-
+      let api = `${_self.editInfoApiPrefix}/${_self.activatedRow.id}`
+      let toastr = this.$refs.toastr
       let data = _self.activatedRow.password ? _self.activatedRow
         : _.omit(_self.activatedRow, 'password')
 
-      axios({
-        method: 'PUT',
-        url: `${_self.editInfoApiPrefix}/${_self.activatedRow.id}`,
-        data: data,
-        validateStatus: function (status) {
-          return status === 200 || status === 422
-        },
-      })
-        .then(function (response) {
-          if (response.status === 422) {
-            _self.activatedRow.password = false
-            return alert(JSON.stringify(response.data))
-          }
-          _self.activatedRow.password = false
-          return alert(JSON.stringify(response.data.message))
+      myTools.axiosInstance.put(api, data)
+        .then(function (res) {
+          myTools.msgResolver(res, toastr)
+
+        })
+        .catch(function (err) {
+          alert(err)
         })
     },
 
     deleteAgent () {
       let _self = this
+      let toastr = this.$refs.toastr
+      let api = `${_self.deleteApiPrefix}/${_self.activatedRow.id}`
 
-      axios({
-        method: 'DELETE',
-        url: `${_self.deleteApiPrefix}/${_self.activatedRow.id}`,
-      })
-        .then(function (response) {
-          if (response.data.error) {
-            return alert(response.data.error)
-          }
-          alert(response.data.message)
+      myTools.axiosInstance.delete(api)
+        .then(function (res) {
+          myTools.msgResolver(res, toastr)
 
           //删除完成用户之后重新刷新表格数据，避免被删除用户继续留存在表格中
           _self.$root.eventHub.$emit('MyVuetable:refresh')
+        })
+        .catch(function (err) {
+          alert(err)
         })
     },
   },

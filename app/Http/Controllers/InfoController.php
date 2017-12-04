@@ -36,6 +36,6 @@ class InfoController extends Controller
 
     public function getContentHeaderH1(Request $request)
     {
-        return '梦晨';  //面包屑导航左边的标题文字
+        return '';  //面包屑导航左边的标题文字
     }
 }

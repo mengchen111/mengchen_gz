@@ -11,12 +11,11 @@
     <!--#include virtual="/ssi/admin/sidebar.html"-->
 
     <!-- Content Wrapper. Contains page content -->
-    <div class="content-wrapper" id="app">
+    <div class="content-wrapper">
         <!-- Content Header (Page header) -->
         <section class="content-header">
-            <h1>
-                梦晨
-            </h1>
+            <!--#include virtual="/ssi/content-header-h1.html"-->
+
             <ol class="breadcrumb">
                 <li><a href="#"><i class="fa fa-dashboard"></i>首页</a></li>
                 <li>GM功能</li>
@@ -26,7 +25,7 @@
         </section>
 
         <!-- Main content -->
-        <section class="content">
+        <section class="content" id="app">
             <div class="box box-primary">
                 <div class="box-header with-border">
                     <h3 class="box-title">白名单列表</h3>
@@ -52,88 +51,89 @@
                         </div>
                     </div>
                 </div>
-
             </div>
+
+            <div id="create-whitelist-modal" class="modal fade" tabindex="-1">
+                <div class="modal-dialog">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <button class="close" type="button" data-dismiss="modal">x</button>
+                            <h3 class="text-center">添加白名单</h3>
+                        </div>
+                        <div class="modal-body">
+                            <form role="form" class="form-group" @submit.prevent="createWhitelist">
+                                <div class="form-group">
+                                    <label>玩家id</label>
+                                    <input type="number" required class="form-control" v-model="createWhitelistData.playerid" placeholder="输入玩家id">
+                                </div>
+                                <div class="form-group">
+                                    <label>胜率</label>
+                                    <input type="number" required min="1" class="form-control" v-model="createWhitelistData.winrate" placeholder="输入1-100的整数">
+                                </div>
+                                <div class="form-group">
+                                    <button class="btn btn-primary btn-block btn-flat" type="submit">提交</button>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div id="edit-whitelist-modal" class="modal fade" tabindex="-1">
+                <div class="modal-dialog">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <button class="close" type="button" data-dismiss="modal">x</button>
+                            <h3 class="text-center">编辑白名单</h3>
+                        </div>
+                        <div class="modal-body">
+                            <form role="form" class="form-group" @submit.prevent="editWhitelist">
+                                <div class="form-group">
+                                    <label>玩家id</label>
+                                    <input type="number" class="form-control" v-model="activatedRow.playerid" disabled>
+                                </div>
+                                <div class="form-group">
+                                    <label>玩家昵称</label>
+                                    <input type="text" class="form-control" v-model="activatedRow.nickname" disabled>
+                                </div>
+                                <div class="form-group">
+                                    <label>胜率</label>
+                                    <input type="number" required min="0" class="form-control" v-model="activatedRow.winrate">
+                                </div>
+                                <div class="form-group">
+                                    <button class="btn btn-primary btn-block btn-flat" type="submit">提交</button>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div id="delete-whitelist-modal" class="modal fade" tabindex="-1">
+                <div class="modal-dialog">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <button class="close" type="button" data-dismiss="modal">x</button>
+                            <h3 class="text-center text-danger">确定删除此条记录？</h3>
+                        </div>
+
+                        <div class="modal-footer">
+                            <button class="btn btn-flat btn-danger btn-lg pull-left" @click="deleteWhitelist">
+                                删除
+                            </button>
+                            <button class="btn btn-flat btn-success btn-lg" data-dismiss="modal">
+                                取消
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <my-toastr ref="toastr"></my-toastr>
         </section>
         <!-- /.content -->
 
-        <div id="create-whitelist-modal" class="modal fade" tabindex="-1">
-            <div class="modal-dialog">
-                <div class="modal-content">
-                    <div class="modal-header">
-                        <button class="close" type="button" data-dismiss="modal">x</button>
-                        <h3 class="text-center">添加白名单</h3>
-                    </div>
-                    <div class="modal-body">
-                        <form role="form" class="form-group" @submit.prevent="createWhitelist">
-                            <div class="form-group">
-                                <label>玩家id</label>
-                                <input type="number" required class="form-control" v-model="createWhitelistData.playerid" placeholder="输入玩家id">
-                            </div>
-                            <div class="form-group">
-                                <label>胜率</label>
-                                <input type="number" required min="1" class="form-control" v-model="createWhitelistData.winrate" placeholder="输入1-100的整数">
-                            </div>
-                            <div class="form-group">
-                                <button class="btn btn-primary btn-block btn-flat" type="submit">提交</button>
-                            </div>
-                        </form>
-                    </div>
-                </div>
-            </div>
-        </div>
 
-        <div id="edit-whitelist-modal" class="modal fade" tabindex="-1">
-            <div class="modal-dialog">
-                <div class="modal-content">
-                    <div class="modal-header">
-                        <button class="close" type="button" data-dismiss="modal">x</button>
-                        <h3 class="text-center">编辑白名单</h3>
-                    </div>
-                    <div class="modal-body">
-                        <form role="form" class="form-group" @submit.prevent="editWhitelist">
-                            <div class="form-group">
-                                <label>玩家id</label>
-                                <input type="number" class="form-control" v-model="activatedRow.playerid" disabled>
-                            </div>
-                            <div class="form-group">
-                                <label>玩家昵称</label>
-                                <input type="text" class="form-control" v-model="activatedRow.nickname" disabled>
-                            </div>
-                            <div class="form-group">
-                                <label>胜率</label>
-                                <input type="number" required min="0" class="form-control" v-model="activatedRow.winrate">
-                            </div>
-                            <div class="form-group">
-                                <button class="btn btn-primary btn-block btn-flat" type="submit">提交</button>
-                            </div>
-                        </form>
-                    </div>
-                </div>
-            </div>
-        </div>
-
-        <div id="delete-whitelist-modal" class="modal fade" tabindex="-1">
-            <div class="modal-dialog">
-                <div class="modal-content">
-                    <div class="modal-header">
-                        <button class="close" type="button" data-dismiss="modal">x</button>
-                        <h3 class="text-center text-danger">确定删除此条记录？</h3>
-                    </div>
-
-                    <div class="modal-footer">
-                        <button class="btn btn-flat btn-danger btn-lg pull-left" @click="deleteWhitelist">
-                            删除
-                        </button>
-                        <button class="btn btn-flat btn-success btn-lg" data-dismiss="modal">
-                            取消
-                        </button>
-                    </div>
-                </div>
-            </div>
-        </div>
-
-        <my-toastr ref="toastr"></my-toastr>
     </div>
     <!-- /.content-wrapper -->
 

@@ -4,10 +4,12 @@
 
 import './index.js'
 import MyChart from '../../components/MyLineChart.vue'
+import MyToastr from '../../components/MyToastr.vue'
 
 new Vue({
   el: '#app',
   components: {
+    MyToastr,
     MyChart,
   },
   data: {
