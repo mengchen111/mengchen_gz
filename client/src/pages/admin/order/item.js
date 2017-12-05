@@ -28,7 +28,7 @@ new Vue({
       },
       {
         name: 'price',
-        title: '道具价格',
+        title: '道具价格(分)',
       },
       {
         name: '__component:table-actions',

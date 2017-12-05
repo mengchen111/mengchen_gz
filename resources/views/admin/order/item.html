@@ -54,7 +54,7 @@
                                 </div>
                                 <div class="form-group">
                                     <label>单价(分)</label>
-                                    <input class="form-control" type="number" min="1" v-if="activatedRow" v-model.trim="activatedRow.price">
+                                    <input class="form-control" type="number" min="1" required v-if="activatedRow" v-model.trim="activatedRow.price">
                                 </div>
                                 <div class="form-group">
                                     <button class="btn btn-primary btn-block btn-flat" type="submit">提交</button>
