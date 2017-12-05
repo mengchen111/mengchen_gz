@@ -14,6 +14,7 @@ use App\Models\WechatOrder;
 use Exception;
 use SimpleSoftwareIO\QrCode\Facades\QrCode;
 use App\Models\OperationLogs;
+use App\Models\User;
 
 class WeChatPaymentController extends Controller
 {
@@ -240,8 +241,16 @@ class WeChatPaymentController extends Controller
             '查看微信支付订单', $request->header('User-Agent'));
 
         if (empty($orderId)) {
-            return WechatOrder::orderBy($this->order[0], $this->order[1])
-            ->paginate($this->per_page);
+            $filter = $request->input('filter');
+            return WechatOrder::when($filter, function ($query) use ($filter) {
+                    $user = User::where('account', $filter)->first();
+                    if (empty($user)) {
+                        return $query->where('order_creator_id', $filter);
+                    }
+                    return $query->where('order_creator_id', $user->id);
+                })
+                ->orderBy($this->order[0], $this->order[1])
+                ->paginate($this->per_page);
         }
         return WechatOrder::where('id', $orderId)->firstOrFail()->append('order_qr_code');
     }
