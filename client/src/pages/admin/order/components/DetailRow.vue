@@ -6,7 +6,7 @@
         </div>
         <div class="">
             <label>订单错误消息:&nbsp;&nbsp;</label>
-            <span>{{rowData.order_err_msg}}</span>
+            <span class="text-danger">{{rowData.order_err_msg}}</span>
         </div>
         <div class="">
             <label>微信预支付id:&nbsp;&nbsp;</label>

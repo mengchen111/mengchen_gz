@@ -19,7 +19,7 @@ new Vue({
   },
   data: {
     eventHub: new Vue(),
-    activatedRow: {},
+    activatedRow: null,
     agentInfo: {},
     itemTypeData: [],
     itemTypeOptions: {
@@ -112,7 +112,26 @@ new Vue({
     },
 
     cancelOrder () {
-      console.log('cancel')
+      let _self = this
+      let toastr = this.$refs.toastr
+
+      myTools.axiosInstance.delete(this.tableUrl + '/' + this.activatedRow.id)
+        .then(function (res) {
+          myTools.msgResolver(res, toastr)
+          _self.$root.eventHub.$emit('MyVuetable:refresh')
+        })
+        .catch(err => alert(err))
+    },
+
+    onOrderPaymentEvent (data) {
+      let _self = this
+
+      //请求单个订单数据（含有支付二维码）
+      myTools.axiosInstance.get(this.tableUrl + '/' + data.id)
+        .then(function (res) {
+          _self.activatedRow = res.data
+          jQuery('#order-payment-modal-button').click()   //弹出支付框
+        })
     },
   },
 
@@ -153,7 +172,7 @@ new Vue({
   },
 
   mounted: function () {
-    this.$root.eventHub.$on('orderPaymentEvent', (data) => this.activatedRow = data)
+    this.$root.eventHub.$on('orderPaymentEvent', this.onOrderPaymentEvent)
     this.$root.eventHub.$on('orderCancellationEvent', (data) => this.activatedRow = data)
   },
 })

@@ -252,7 +252,7 @@ class WeChatPaymentController extends Controller
     //关单接口
     public function closeOrder(Request $request, WechatOrder $order)
     {
-        if (in_array($order->order_status, [2, 5])) {
+        if (in_array($order->order_status, [2, 5])) {   //预支付订单成功与支付失败的订单
             $this->cancelOrder($order);
             return [
                 'message' => '关单成功',
