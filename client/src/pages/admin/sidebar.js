@@ -103,6 +103,9 @@ new Vue({
         wechat: {
           isActive: false,
         },
+        item: {
+          isActive: false,
+        },
       },
       system: {
         isActive: false,

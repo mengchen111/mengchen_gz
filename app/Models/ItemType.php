@@ -14,6 +14,7 @@ class ItemType extends Model
 {
     protected $table = 'item_type';
     protected $primaryKey = 'id';
+    public $timestamps = false;
 
     protected $fillable = [
         'name'

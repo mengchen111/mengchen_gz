@@ -77,7 +77,7 @@ new Vue({
       },
       {
         name: 'item_delivery_status_name',
-        title: '订单发送状态',
+        title: '发货状态',
       },
       {
         name: 'created_at',

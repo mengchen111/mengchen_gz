@@ -123,6 +123,9 @@ Route::group([
     Route::post('top-up/agent/{receiver}/{type}/{amount}', 'TopUpController@topUp2Agent')->where('amount', '[0-9]+');
     Route::post('top-up/player/{player}/{type}/{amount}', 'TopUpController@topUp2Player')->where('amount', '-?[0-9]+');
 
+    Route::get('order/item', 'ItemController@show');
+    Route::put('order/item/{item}', 'ItemController@editPrice')->where('item', '[0-9]+');
+
     Route::get('system/log', 'SystemController@showLog');
 });
 
@@ -160,6 +163,7 @@ Route::group([
     Route::get('top-up/player', 'ViewController@topUpPlayer');
 
     Route::get('order/wechat', 'ViewController@orderWechat');
+    Route::get('order/item', 'ViewController@orderItem');
 
     Route::get('system/log', 'ViewController@systemLog');
 });

@@ -13,6 +13,7 @@ use Illuminate\Support\Facades\DB;
 use App\Models\WechatOrder;
 use Exception;
 use SimpleSoftwareIO\QrCode\Facades\QrCode;
+use App\Models\OperationLogs;
 
 class WeChatPaymentController extends Controller
 {
@@ -45,6 +46,9 @@ class WeChatPaymentController extends Controller
             //更新订单状态，将异常重新抛出
             $this->orderPreparationFailed($order, $exception->getMessage());
         }
+
+        OperationLogs::add($request->user()->id, $request->path(), $request->method(),
+            '创建微信支付订单', $request->header('User-Agent'));
 
         //如果支付类型为扫码支付，那么额外返回二维码图片的base64编码字符串
         if ($request->trade_type === 'NATIVE') {
@@ -232,6 +236,9 @@ class WeChatPaymentController extends Controller
     //获取订单数据
     public function getOrder(Request $request, $orderId = null)
     {
+        OperationLogs::add($request->user()->id, $request->path(), $request->method(),
+            '查看微信支付订单', $request->header('User-Agent'));
+
         if (empty($orderId)) {
             return WechatOrder::orderBy($this->order[0], $this->order[1])
             ->paginate($this->per_page);
@@ -242,6 +249,9 @@ class WeChatPaymentController extends Controller
     //查询订单状态
     public function checkOrderStatus(Request $request, $outTradeNo)
     {
+        OperationLogs::add($request->user()->id, $request->path(), $request->method(),
+            '查看微信支付状态', $request->header('User-Agent'));
+
         $order = WechatOrder::where('out_trade_no', $outTradeNo)->firstOrFail();
         return [
             'status_code' => $order->order_status,
@@ -252,6 +262,9 @@ class WeChatPaymentController extends Controller
     //关单接口
     public function closeOrder(Request $request, WechatOrder $order)
     {
+        OperationLogs::add($request->user()->id, $request->path(), $request->method(),
+            '关闭微信支付订单', $request->header('User-Agent'));
+
         if (in_array($order->order_status, [2, 5])) {   //预支付订单成功与支付失败的订单
             $this->cancelOrder($order);
             return [
@@ -302,6 +315,9 @@ class WeChatPaymentController extends Controller
 
     public function getItemPrice(Request $request)
     {
+        OperationLogs::add($request->user()->id, $request->path(), $request->method(),
+            '获取道具价格', $request->header('User-Agent'));
+
         return ItemType::all();
     }
 }
