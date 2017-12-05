@@ -48,7 +48,8 @@ class WeChatPaymentController extends Controller
             $this->orderPreparationFailed($order, $exception->getMessage());
         }
 
-        OperationLogs::add($request->user()->id, $request->path(), $request->method(),
+        //用户id存0，如果是app订单那么获取不到用户id的
+        OperationLogs::add(0, $request->path(), $request->method(),
             '创建微信支付订单', $request->header('User-Agent'));
 
         //如果支付类型为扫码支付，那么额外返回二维码图片的base64编码字符串
@@ -178,6 +179,9 @@ class WeChatPaymentController extends Controller
     //微信支付结果通知回调函数
     public function getNotification(Request $request)
     {
+        OperationLogs::add(0, $request->path(), $request->method(),
+            '查看微信支付订单', $request->header('User-Agent'), $request->getContent());
+
         $response = $this->orderApp->payment->handleNotify(function ($notify, $successful) {
             $order = WechatOrder::where('out_trade_no', $notify->out_trade_no)->first();
 
@@ -237,7 +241,7 @@ class WeChatPaymentController extends Controller
     //获取订单数据
     public function getOrder(Request $request, $orderId = null)
     {
-        OperationLogs::add($request->user()->id, $request->path(), $request->method(),
+        OperationLogs::add(0, $request->path(), $request->method(),
             '查看微信支付订单', $request->header('User-Agent'));
 
         if (empty($orderId)) {
@@ -258,7 +262,7 @@ class WeChatPaymentController extends Controller
     //查询订单状态
     public function checkOrderStatus(Request $request, $outTradeNo)
     {
-        OperationLogs::add($request->user()->id, $request->path(), $request->method(),
+        OperationLogs::add(0, $request->path(), $request->method(),
             '查看微信支付状态', $request->header('User-Agent'));
 
         $order = WechatOrder::where('out_trade_no', $outTradeNo)->firstOrFail();
@@ -271,7 +275,7 @@ class WeChatPaymentController extends Controller
     //关单接口
     public function closeOrder(Request $request, WechatOrder $order)
     {
-        OperationLogs::add($request->user()->id, $request->path(), $request->method(),
+        OperationLogs::add(0, $request->path(), $request->method(),
             '关闭微信支付订单', $request->header('User-Agent'));
 
         if (in_array($order->order_status, [2, 5])) {   //预支付订单成功与支付失败的订单
@@ -324,7 +328,7 @@ class WeChatPaymentController extends Controller
 
     public function getItemPrice(Request $request)
     {
-        OperationLogs::add($request->user()->id, $request->path(), $request->method(),
+        OperationLogs::add(0, $request->path(), $request->method(),
             '获取道具价格', $request->header('User-Agent'));
 
         return ItemType::all();
