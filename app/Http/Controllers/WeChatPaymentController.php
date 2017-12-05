@@ -180,7 +180,7 @@ class WeChatPaymentController extends Controller
     public function getNotification(Request $request)
     {
         OperationLogs::add(0, $request->path(), $request->method(),
-            '查看微信支付订单', $request->header('User-Agent'), $request->getContent());
+            '微信支付订单回调接口', $request->header('User-Agent'), $request->getContent());
 
         $response = $this->orderApp->payment->handleNotify(function ($notify, $successful) {
             $order = WechatOrder::where('out_trade_no', $notify->out_trade_no)->first();
@@ -263,7 +263,7 @@ class WeChatPaymentController extends Controller
     public function checkOrderStatus(Request $request, $outTradeNo)
     {
         OperationLogs::add(0, $request->path(), $request->method(),
-            '查看微信支付状态', $request->header('User-Agent'));
+            '查看微信支付订单状态', $request->header('User-Agent'));
 
         $order = WechatOrder::where('out_trade_no', $outTradeNo)->firstOrFail();
         return [
