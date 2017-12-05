@@ -95,7 +95,8 @@
                         </div>
                         <div class="modal-body">
                             <div class="text-center">
-                                <img v-if="activatedRow" :src="'data:image/png;base64,' + activatedRow.order_qr_code">
+                                <img v-if="activatedRow && activatedRow.order_qr_code"
+                                     :src="'data:image/png;base64,' + activatedRow.order_qr_code">
                             </div>
                         </div>
                     </div>
