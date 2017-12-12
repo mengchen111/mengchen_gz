@@ -38,7 +38,6 @@ class WeChatPaymentController extends Controller
 
         //创建内部订单
         $order = $this->initializeOrder($data, $request);
-        //return $order;
 
         //发起预支付请求
         try {
@@ -56,8 +55,15 @@ class WeChatPaymentController extends Controller
         if ($request->trade_type === 'NATIVE') {
             return [
                 'message' => '订单创建成功',
-                'prepay_id' => $result->prepay_id,
+                //'prepay_id' => $result->prepay_id,
                 'qr_code' => $this->generateQrCodeStr($result->code_url),
+            ];
+        }
+
+        if ($request->trade_type === 'APP') {
+            return [
+                'message' => '订单创建成功',
+                'app_config' => $this->orderApp->payment->configForAppPayment($result->prepay_id),
             ];
         }
 
