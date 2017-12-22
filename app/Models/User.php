@@ -108,4 +108,10 @@ class User extends Authenticatable
 
         return (! empty($inventory)) and $inventory->stock >= $amount;
     }
+
+    //下级代理商
+    public function children()
+    {
+        return $this->hasMany('App\Models\User', 'parent_id', 'id');
+    }
 }
