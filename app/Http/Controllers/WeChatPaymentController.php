@@ -60,12 +60,12 @@ class WeChatPaymentController extends Controller
             $temp = [
                 'message' => '订单创建成功',
                 //'prepay_id' => $result->prepay_id,
-                'code_url_base64' => base64_encode($result->code_url),     //防止游戏端lua解析json失败
-                'code_url_pr_value' => $codeUrlPrValue,
+                'code_url' => $result->code_url,
+                //'code_url_pr_value' => $codeUrlPrValue,
                 'qr_code' => $this->generateQrCodeStr($result->code_url),
             ];
 
-            return json_encode($temp, JSON_UNESCAPED_UNICODE);
+            return json_encode($temp, JSON_UNESCAPED_SLASHES);
         }
 
         if ($request->trade_type === 'APP') {
