@@ -57,13 +57,15 @@ class WeChatPaymentController extends Controller
             //获取二维码地址的pr参数的值
             $codeUrlPrValue = $this->getQrCodePrValue($result->code_url);
 
-            return [
+            $temp = [
                 'message' => '订单创建成功',
                 //'prepay_id' => $result->prepay_id,
                 'code_url_base64' => base64_encode($result->code_url),     //防止游戏端lua解析json失败
                 'code_url_pr_value' => $codeUrlPrValue,
                 'qr_code' => $this->generateQrCodeStr($result->code_url),
             ];
+
+            return json_encode($temp, JSON_UNESCAPED_UNICODE);
         }
 
         if ($request->trade_type === 'APP') {
