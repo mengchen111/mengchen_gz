@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Exceptions\CustomException;
 use App\Exceptions\WeChatPaymentException;
 use App\Models\ItemType;
 use App\Services\InventoryService;
@@ -53,10 +54,14 @@ class WeChatPaymentController extends Controller
 
         //如果支付类型为扫码支付，那么额外返回二维码图片的base64编码字符串
         if ($request->trade_type === 'NATIVE') {
+            //获取二维码地址的pr参数的值
+            $codeUrlPrValue = $this->getQrCodePrValue($result->code_url);
+
             return [
                 'message' => '订单创建成功',
                 //'prepay_id' => $result->prepay_id,
                 'code_url' => $result->code_url,
+                'code_url_pr_value' => $codeUrlPrValue,
                 'qr_code' => $this->generateQrCodeStr($result->code_url),
             ];
         }
@@ -72,6 +77,15 @@ class WeChatPaymentController extends Controller
             'message' => '订单创建成功',
             'prepay_id' => $result->prepay_id,
         ];
+    }
+
+    public function getQrCodePrValue($codeUrl)
+    {
+        $match = [];
+        if (! preg_match('/pr=(.*)$/', $codeUrl, $match)) {
+            throw new CustomException('获取pr参数的value失败');
+        }
+        return $match[1];
     }
 
     protected function generateQrCodeStr($content)
