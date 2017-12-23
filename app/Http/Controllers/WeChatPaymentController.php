@@ -54,31 +54,21 @@ class WeChatPaymentController extends Controller
 
         //如果支付类型为扫码支付，那么额外返回二维码图片的base64编码字符串
         if ($request->trade_type === 'NATIVE') {
-            //获取二维码地址的pr参数的值
-            $codeUrlPrValue = $this->getQrCodePrValue($result->code_url);
-
-            $temp = [
+            $returnResult = [
                 'message' => '订单创建成功',
                 //'prepay_id' => $result->prepay_id,
                 'code_url' => $result->code_url,
-                //'code_url_pr_value' => $codeUrlPrValue,
                 'qr_code' => $this->generateQrCodeStr($result->code_url),
             ];
-
-            return json_encode($temp, JSON_UNESCAPED_SLASHES);
         }
-
         if ($request->trade_type === 'APP') {
-            return [
+            $returnResult = [
                 'message' => '订单创建成功',
                 'app_config' => $this->orderApp->payment->configForAppPayment($result->prepay_id),
             ];
         }
 
-        return [
-            'message' => '订单创建成功',
-            'prepay_id' => $result->prepay_id,
-        ];
+        return json_encode($returnResult, JSON_UNESCAPED_SLASHES);
     }
 
     public function getQrCodePrValue($codeUrl)
