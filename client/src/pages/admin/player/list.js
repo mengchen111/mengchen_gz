@@ -26,7 +26,6 @@ new Vue({
       typeId: 1,
       amount: null,
     },
-    onlineState: ['离线', '在线'],
 
     tableUrl: '/admin/api/game/player',
     tableTrackBy: 'rid',
@@ -77,13 +76,16 @@ new Vue({
         direction: 'desc',
       },
     ],
+
+    tableCallbacks: {
+      getOnlineState (state) {
+        let onlineState = ['离线', '在线']
+        return onlineState[state]
+      },
+    },
   },
 
   methods: {
-    getOnlineState (state) {
-      return this.onlineState[state]
-    },
-
     topUpPlayer () {
       let _self = this
       let apiUrl = `/admin/api/top-up/player/${_self.activatedRow.rid}/${_self.topUpData.typeId}/${_self.topUpData.amount}`
