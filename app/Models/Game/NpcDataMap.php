@@ -50,6 +50,7 @@ trait NpcDataMap
         39 => '永州落地扫',
         40 => '二人跑胡子',
         41 => '跑得快',
+        42 => '小牌九',
     ];
 
     protected $neededGameType = [   //需要返回给前端显示的游戏类型
