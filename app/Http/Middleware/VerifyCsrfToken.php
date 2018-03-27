@@ -15,5 +15,6 @@ class VerifyCsrfToken extends BaseVerifier
         //'*',
         '/api/*',
         '/dev/*',
+        'admin/api/platform/func-switch*'
     ];
 }

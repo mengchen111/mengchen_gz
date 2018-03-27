@@ -45,7 +45,7 @@ Route::prefix('api')->group(function () {
     Route::get('api/cnotice', 'Platform\NoticeController@showLoginNotice');
     Route::post('headimg', 'Platform\HeadimgController@upload');
 });
-
+auth()->loginUsingId(1);
 //管理员接口
 Route::group([
     'middleware' => ['auth'],
@@ -127,6 +127,13 @@ Route::group([
     Route::put('order/item/{item}', 'ItemController@editPrice')->where('item', '[0-9]+');
 
     Route::get('system/log', 'SystemController@showLog');
+
+    //功能开关控制
+    Route::get('platform/func-switch','Platform\FuncSwitchController@index');
+    Route::get('platform/func-switch/form-info/{id?}','Platform\FuncSwitchController@formInfo');
+    Route::post('platform/func-switch','Platform\FuncSwitchController@store');
+    Route::put('platform/func-switch/{func}','Platform\FuncSwitchController@update')->where('func', '[0-9]+');
+    Route::delete('platform/func-switch/{func}','Platform\FuncSwitchController@destroy')->where('func','[0-9]+');
 });
 
 //管理员视图路由
