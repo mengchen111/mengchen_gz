@@ -45,7 +45,6 @@ Route::prefix('api')->group(function () {
     Route::get('api/cnotice', 'Platform\NoticeController@showLoginNotice');
     Route::post('headimg', 'Platform\HeadimgController@upload');
 });
-auth()->loginUsingId(1);
 //管理员接口
 Route::group([
     'middleware' => ['auth'],
