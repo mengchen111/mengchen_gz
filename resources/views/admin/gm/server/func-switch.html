@@ -1,0 +1,223 @@
+<!DOCTYPE html>
+<html lang="en">
+<!--#include virtual="/ssi/header.html"-->
+
+<body class="hold-transition skin-blue sidebar-mini">
+<div class="wrapper">
+  <!-- Main Header -->
+  <!--#include virtual="/ssi/main-header.html"-->
+
+  <!-- Main sidebar -->
+  <!--#include virtual="/ssi/admin/sidebar.html"-->
+
+  <!-- Content Wrapper. Contains page content -->
+  <div class="content-wrapper">
+    <!-- Content Header (Page header) -->
+    <section class="content-header">
+      <!--#include virtual="/ssi/content-header-h1.html"-->
+
+      <ol class="breadcrumb">
+        <li><a href="#"><i class="fa fa-dashboard"></i>首页</a></li>
+        <li>GM功能</li>
+        <li>游戏服管理</li>
+        <li class="active">功能开关控制</li>
+      </ol>
+    </section>
+
+    <!-- Main content -->
+    <section class="content" id="app">
+      <div class="box box-primary">
+        <div class="box-header with-border">
+          <h3 class="box-title">功能开关列表</h3>
+        </div>
+
+        <div class="box-body">
+          <div class="row">
+            <div class="col-md-2">
+              <button class="btn btn-primary btn-block btn-flat" data-toggle="modal"
+                      data-target="#create-server-modal">添加功能开关</button>
+            </div>
+          </div>
+          <div class="row">
+            <div class="col-md-12 phone-scrollable">
+              <my-vuetable
+                      :table-url="serverListApi"
+                      :table-fields="tableFields"
+                      :callbacks="tableCallbacks"
+              ></my-vuetable>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div id="edit-server-modal" class="modal fade" tabindex="-1">
+        <div class="modal-dialog">
+          <div class="modal-content">
+            <div class="modal-header">
+              <button class="close" type="button" data-dismiss="modal">x</button>
+              <h4 class="text-center">编辑功能开关</h4>
+            </div>
+
+            <div class="modal-body">
+              <form class="form-horizontal" @submit.prevent="editServer">
+                <div class="form-group">
+                  <label class="col-md-3 control-label">游戏服id</label>
+                  <div class="col-md-9">
+                    <input type="number" min="0" class="form-control" disabled  required v-model="activatedRow.id">
+                  </div>
+                </div>
+                <div class="form-group">
+                  <label class="col-md-3 control-label">功能标识</label>
+                  <div class="col-md-9">
+                    <v-select multiple required v-model="activatedRow.func_mark" :searchable="false" :options="_.values(funcMarks)"></v-select>
+                  </div>
+                </div>
+                <div class="form-group">
+                  <label class="col-md-3 control-label">渠道标识</label>
+                  <div class="col-md-9">
+                    <v-select required v-model="activatedRow.platform" :searchable="true" :options="_.values(platformList)"></v-select>
+                  </div>
+                </div>
+                <div class="form-group">
+                  <label class="col-md-3 control-label">选择版本</label>
+                  <div class="col-md-9">
+                    <v-select required v-model="activatedRow.ver_switch" :searchable="false" :options="_.values(verSwitch)"></v-select>
+                  </div>
+                </div>
+                <div class="form-group">
+                  <label class="col-md-3 control-label">版本号</label>
+                  <div class="col-md-9">
+                    <input type="text" class="form-control" required v-model.trim="activatedRow.client_version">
+                  </div>
+                </div>
+                <div class="form-group">
+                  <label class="col-md-3 control-label">地区</label>
+                  <div class="col-md-9">
+                    <v-select required v-model="activatedRow.area" :searchable="false" :options="_.values(areaList)"></v-select>
+                  </div>
+                </div>
+                <div class="form-group">
+                  <label class="col-md-3 control-label">设备类型</label>
+                  <div class="col-md-9">
+                    <v-select required v-model="activatedRow.device_type" :searchable="false" :options="_.values(deviceType)"></v-select>
+                  </div>
+                </div>
+                <div class="form-group">
+                  <label class="col-md-3 control-label">设备类型</label>
+                  <div class="col-md-9">
+                    <v-select required v-model="activatedRow.func_status" :searchable="false" :options="_.values(funcStatus)"></v-select>
+                  </div>
+                </div>
+                <div class="form-group">
+                  <div class="col-md-12">
+                    <button class="btn btn-primary btn-block btn-flat" type="submit">提交</button>
+                  </div>
+                </div>
+              </form>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div id="create-server-modal" class="modal fade" tabindex="-1">
+        <div class="modal-dialog">
+          <div class="modal-content">
+            <div class="modal-header">
+              <button class="close" type="button" data-dismiss="modal">x</button>
+              <h4 class="text-center">新建功能开关</h4>
+            </div>
+
+            <div class="modal-body">
+              <form class="form-horizontal" @submit.prevent="createServer">
+                <div class="form-group">
+                  <label class="col-md-3 control-label">功能标识</label>
+                  <div class="col-md-9">
+                    <v-select multiple v-model="createServerData.func_mark" required :searchable="false" :options="_.values(funcMarks)"></v-select>
+                  </div>
+                </div>
+                <div class="form-group">
+                  <label class="col-md-3 control-label">渠道标识</label>
+                  <div class="col-md-9">
+                    <v-select required v-model="createServerData.platform" :searchable="true" :options="_.values(platformList)"></v-select>
+                  </div>
+                </div>
+                <div class="form-group">
+                  <label class="col-md-3 control-label">选择版本</label>
+                  <div class="col-md-9">
+                    <v-select required v-model="createServerData.ver_switch" :searchable="false" :options="_.values(verSwitch)"></v-select>
+                  </div>
+                </div>
+                <div class="form-group">
+                  <label class="col-md-3 control-label">版本号</label>
+                  <div class="col-md-9">
+                    <input type="text" v-model="createServerData.client_version" class="form-control" required placeholder="必填">
+                  </div>
+                </div>
+                <div class="form-group">
+                  <label class="col-md-3 control-label">地区</label>
+                  <div class="col-md-9">
+                    <v-select required v-model="createServerData.area" :searchable="false" :options="_.values(areaList)"></v-select>
+                  </div>
+                </div>
+                <div class="form-group">
+                  <label class="col-md-3 control-label">设备类型</label>
+                  <div class="col-md-9">
+                    <v-select required v-model="createServerData.device_type" :searchable="false" :options="_.values(deviceType)"></v-select>
+                  </div>
+                </div>
+                <div class="form-group">
+                  <label class="col-md-3 control-label">状态</label>
+                  <div class="col-md-9">
+                    <v-select required v-model="createServerData.func_status" :searchable="false" :options="_.values(funcStatus)"></v-select>
+                  </div>
+                </div>
+                <div class="form-group">
+                  <div class="col-md-12">
+                    <button class="btn btn-primary btn-block btn-flat" type="submit">提交</button>
+                  </div>
+                </div>
+              </form>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div id="delete-server-modal" class="modal fade" tabindex="-1">
+        <div class="modal-dialog">
+          <div class="modal-content">
+            <div class="modal-header">
+              <button class="close" type="button" data-dismiss="modal">x</button>
+              <h3 class="text-center">
+                确定删除功能开关 <span class="text-danger">{{ activatedRow.id }}</span>
+              </h3>
+            </div>
+
+            <div class="modal-footer">
+              <button class="btn btn-flat btn-danger btn-lg pull-left" @click="deleteServer">
+                删除
+              </button>
+              <button class="btn btn-flat btn-success btn-lg" data-dismiss="modal">
+                取消
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+
+      <my-toastr ref="toastr"></my-toastr>
+    </section>
+    <!-- /.content -->
+
+  </div>
+  <!-- /.content-wrapper -->
+
+  <!-- Main Footer -->
+  <!--#include virtual="/ssi/main-footer.html"-->
+
+</div>
+<!-- ./wrapper -->
+
+<script src="/dist/webpack/admin/gm/server/func-switch.js"></script>
+</body>
+</html>

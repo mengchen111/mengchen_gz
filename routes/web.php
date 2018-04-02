@@ -128,11 +128,11 @@ Route::group([
     Route::get('system/log', 'SystemController@showLog');
 
     //功能开关控制
-    Route::get('platform/func-switch','Platform\FuncSwitchController@index');
-    Route::get('platform/func-switch/form-info/{id?}','Platform\FuncSwitchController@formInfo');
-    Route::post('platform/func-switch','Platform\FuncSwitchController@store');
-    Route::put('platform/func-switch/{func}','Platform\FuncSwitchController@update')->where('func', '[0-9]+');
-    Route::delete('platform/func-switch/{func}','Platform\FuncSwitchController@destroy')->where('func','[0-9]+');
+    Route::get('platform/server/func-switch','Platform\FuncSwitchController@index');
+    Route::get('platform/server/func-switch/form-info','Platform\FuncSwitchController@formInfo');
+    Route::post('platform/server/func-switch','Platform\FuncSwitchController@store');
+    Route::put('platform/server/func-switch/{func}','Platform\FuncSwitchController@update')->where('func', '[0-9]+');
+    Route::delete('platform/server/func-switch/{func}','Platform\FuncSwitchController@destroy')->where('func','[0-9]+');
 });
 
 //管理员视图路由
@@ -172,6 +172,9 @@ Route::group([
     Route::get('order/item', 'ViewController@orderItem');
 
     Route::get('system/log', 'ViewController@systemLog');
+
+    //功能开关
+    Route::get('gm/server/func-switch','ViewController@funcSwitch');
 });
 
 //代理商接口

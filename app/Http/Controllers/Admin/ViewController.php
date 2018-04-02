@@ -127,4 +127,9 @@ class ViewController extends Controller
     {
         return view('admin.system.log');
     }
+
+    public function funcSwitch(Request $request)
+    {
+        return view('admin.gm.server.func-switch');
+    }
 }

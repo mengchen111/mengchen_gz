@@ -152,11 +152,11 @@ cd $codeDir
 | order/item | GET | 获取道具列表 |
 | order/item/{item} | PUT | 更新道具单价 |
 | system/log | GET | 系统操作日志记录 | 
-| platform/func-switch | GET | 功能开关列表 |
-| platform/func-switch/form-info/{id?} | GET | 功能开关表单信息 |
-| platform/func-switch | POST | 添加功能开关 |
-| platform/func-switch/{id} | PUT | 编辑功能开关 |
-| platform/func-switch/{id} | DELETE | 删除功能开关 |
+| platform/server/func-switch | GET | 功能开关列表 |
+| platform/server/func-switch/form-info | GET | 功能开关表单信息 |
+| platform/server/func-switch | POST | 添加功能开关 |
+| platform/server/func-switch/{id} | PUT | 编辑功能开关 |
+| platform/server/func-switch/{id} | DELETE | 删除功能开关 |
 
 ### 代理商接口
 > **前缀/agent/api/**  

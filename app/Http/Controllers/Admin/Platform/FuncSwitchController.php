@@ -11,6 +11,20 @@ use GuzzleHttp\Psr7\Request;
 
 class FuncSwitchController extends Controller
 {
+    public $deviceType = [
+        'android' => 'android-安卓',
+        'ios' => 'ios-苹果',
+        'windows' => 'windows-微软window',
+    ];
+    public $verSwitch = [
+        1 => '平台版',
+        2 => '单独版',
+    ];
+    public $funcStatus = [
+        1 => '开启',
+        2 => '关闭',
+    ];
+
     /**
      * 功能开关列表
      * @param AdminRequest $request
@@ -49,11 +63,11 @@ class FuncSwitchController extends Controller
 
         $result = $model->paginate($this->per_page);
         foreach ($result as $item) {
-            $func_mark = explode(',', $item);
+            $func_mark = explode(',', $item['func_mark']);
             $mark_name = '';
             foreach ($func_mark as $v) {
                 if (isset($func_marks[$v])) {
-                    $mark_name .= $v . '-' . $func_marks[$v] . '|';
+                    $mark_name .= $func_marks[$v] . '|';
                 }
             }
             $item['mark_name'] = rtrim($mark_name, '|');
@@ -64,22 +78,21 @@ class FuncSwitchController extends Controller
     /**
      * 功能开关表单信息
      * @param AdminRequest $request
-     * @param mixed $id
      * @return mixed
      */
-    public function formInfo(AdminRequest $request, $id = '')
+    public function formInfo(AdminRequest $request)
     {
         $funcSwitch = app(FuncSwitch::class);
         $data['func_marks'] = $funcSwitch->funcMarks;
         $data['area_list'] = $funcSwitch->areaList;
         //渠道
-        $platform = Platform::all();
-        $data['platform_list'] = $platform;
-        if (!empty($id)) {
-            $result = $funcSwitch->findOrFail($id);
-            $result['func_mark'] = explode(',', $result['func_mark']);
-            $data['data'] = $result;
+        $platform = Platform::all()->pluck('name', 'flag');
+        foreach ($platform as $key => $val) {
+            $data['platform_list'][$key] = $key . '-' . $val;
         }
+        $data['device_type'] = $this->deviceType;
+        $data['ver_switch'] = $this->verSwitch;
+        $data['func_status'] = $this->funcStatus;
         return $data;
     }
 
@@ -90,14 +103,10 @@ class FuncSwitchController extends Controller
      */
     public function store(AdminRequest $request)
     {
+        $this->validator($request);
         $this->addLog('添加功能开关控制');
 
-        $data = $request->all();
-        $func_mark = $data['func_mark'];
-        if (!is_array($func_mark)) {
-            $func_mark = [$func_mark];
-        }
-        $data['func_mark'] = implode(',', $func_mark);
+        $data = $this->buildData($request);
         $result = FuncSwitch::create($data);
         return [
             'message' => '添加功能开关' . $result ? '成功' : '失败',
@@ -112,14 +121,10 @@ class FuncSwitchController extends Controller
      */
     public function update(AdminRequest $request, FuncSwitch $func)
     {
+        $this->validator($request);
         $this->addLog('修改功能开关控制');
 
-        $data = $request->all();
-        $func_mark = $data['func_mark'];
-        if (!is_array($func_mark)) {
-            $func_mark = [$func_mark];
-        }
-        $data['func_mark'] = implode(',', $func_mark);
+        $data = $this->buildData($request);
         $result = $func->update($data);
         return [
             'message' => '编辑功能开关' . $result ? '成功' : '失败',
@@ -142,6 +147,47 @@ class FuncSwitchController extends Controller
         ];
     }
 
+    protected function buildData($request)
+    {
+        $item = $this->formInfo($request);
+        $data = $request->only(['ver_switch', 'area', 'func_mark', 'platform', 'func_name', 'func_status', 'device_type', 'client_version']);
+        if (isset($data['area'])) {
+            $data['area'] = array_search($data['area'], $item['area_list']);
+        }
+        if (isset($data['device_type'])) {
+            $data['device_type'] = array_search($data['device_type'], $item['device_type']);
+        }
+        if (isset($data['func_mark'])) {
+            $funcMarks = [];
+            foreach ($data['func_mark'] as $key => $mark) {
+                $funcMarks[] = array_search($mark, $item['func_marks']);
+            }
+            $data['func_mark'] = implode(',', $funcMarks);
+        }
+        if (isset($data['func_status'])) {
+            $data['func_status'] = array_search($data['func_status'], $item['func_status']);
+        }
+        if (isset($data['platform'])) {
+            $data['platform'] = array_search($data['platform'], $item['platform_list']);
+        }
+        if (isset($data['ver_switch'])) {
+            $data['ver_switch'] = array_search($data['ver_switch'], $item['ver_switch']);
+        }
+        return $data;
+    }
+
+    public function validator(AdminRequest $request)
+    {
+        $this->validate($request, [
+            'ver_switch' => 'required',
+            'area' => 'required',
+            'platform' => 'required',
+            'func_status' => 'required',
+            'device_type' => 'required',
+            'client_version' => 'required'
+        ]);
+    }
+
     /**
      * 添加操作日志
      * @param string $message
@@ -151,4 +197,6 @@ class FuncSwitchController extends Controller
         OperationLogs::add(request()->user()->id, request()->path(), request()->method(),
             $message, request()->header('User-Agent'), json_encode(request()->all()));
     }
+
+
 }

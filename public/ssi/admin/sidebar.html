@@ -66,8 +66,11 @@
                     </a>
                         <ul class="treeview-menu">
                             <li :class="{ active: uri.gm.server.list.isActive }"><a href="/admin/gm/server/list"><i class="fa fa-circle-o"></i>游戏服列表</a></li>
+                            <li :class="{ active: uri.gm.server['func-switch'].isActive }"><a href="/admin/gm/server/func-switch"><i class="fa fa-circle-o"></i>功能开关控制</a></li>
+
                         </ul>
                     </li>
+
                 </ul>
             </li>
             <li class="treeview" :class="{ active: uri.stock.isActive }">

@@ -63,6 +63,9 @@ new Vue({
           list: {
             isActive: false,
           },
+          'func-switch': {
+            isActive: false,
+          },
         },
       },
       stock: {
