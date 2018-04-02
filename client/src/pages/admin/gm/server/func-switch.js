@@ -41,7 +41,7 @@ new Vue({
     tableFields: [
       {
         name: 'id',
-        title: '功能控制ID',
+        title: 'id',
       },
       {
         name: 'ver_switch',
