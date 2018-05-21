@@ -157,6 +157,8 @@ cd $codeDir
 | platform/server/func-switch | POST | 添加功能开关 |
 | platform/server/func-switch/{id} | PUT | 编辑功能开关 |
 | platform/server/func-switch/{id} | DELETE | 删除功能开关 |
+| statement/summary | GET | 数据报表-数据总览 |
+| statement/real-time | GET | 数据总览-实时 |
 
 ### 代理商接口
 > **前缀/agent/api/**  

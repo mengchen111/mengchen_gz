@@ -8,14 +8,17 @@
 
 namespace App\Http\Controllers\Admin;
 
+use App\Exceptions\CustomException;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\AdminRequest;
 use App\Models\Group;
 use App\Models\GroupIdMap;
 use App\Models\OperationLogs;
+use App\Models\StatementDaily;
 use App\Models\TopUpAdmin;
 use App\Models\User;
 use App\Services\Paginator;
+use App\Services\StatisticsService;
 use Illuminate\Http\Request;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\DB;
@@ -34,10 +37,81 @@ class StatementController extends Controller
     protected $per_page = 15;   //每页数据
     protected $page = 1;        //当前页
 
+    protected $data = [
+        'average_online_players' => 0,      //日均在线
+        'peak_online_players' => 0,         //日高峰
+//        'peak_in_game_players' => 0,        //当日最高处于游戏中的玩家数量
+        'active_players' => 0,              //当日活跃玩家
+        'incremental_players' => 0,         //新增玩家数
+        'one_day_remained' => '0|0|0.00',   //次日留存, 留存玩家数|创建日新增玩家数|百分比(保留两位小数)
+        'one_week_remained' => '0|0|0.00',  //7日留存
+        'two_weeks_remained' => '0|0|0.00', //14日留存
+        'one_month_remained' => '0|0|0.00', //30日留存
+        'card_consumed_data' => '0|0|0',    //当日耗卡数|当日有过耗卡记录的玩家总数|平均耗卡数(向上取整的比值)
+        'card_bought_data' => '0|0|0',      //当日玩家购卡总数|当日有过购卡记录的玩家总数|平均购卡数(向上取整的比值)
+        'card_consumed_sum' => 0,           //截止当日玩家耗卡总数
+        'card_bought_sum' => 0,             //截止当日给玩家充卡总数
+        'monthly_card_bought_players' => 0, //当月累计充卡玩家数
+        'monthly_card_bought_sum' => 0,     //当月累计给玩家充卡总数
+    ];
+
     public function __construct(Request $request)
     {
         $this->per_page = $request->per_page ?: $this->per_page;
         $this->page = $request->page ?: $this->page;
+    }
+
+    public function index(AdminRequest $request, StatisticsService $statisticsService)
+    {
+        $this->validate($request, [
+            'date' => 'required|date_format:Y-m-d',
+        ]);
+        $date = $request->input('date');
+
+        //月数据
+        list($playersCount, $boughtSum) = $statisticsService->getMonthlyCardBought($date);
+        $this->data['monthly_card_bought_players'] = $playersCount;
+        $this->data['monthly_card_bought_sum'] = $boughtSum;
+
+        //如果时间为今天，查询实时数据
+        if (Carbon::parse($date)->isToday()) {
+            $this->data['average_online_players'] = $statisticsService->getAverageOnlinePlayersCount($date);
+            $this->data['peak_online_players'] = $statisticsService->getPeakOnlinePlayersAmount($date);
+            $this->data['active_players'] = $statisticsService->getActivePlayersAmount($date);
+            $this->data['incremental_players'] = $statisticsService->getIncrementalPlayersAmount($date);
+            $this->data['one_day_remained'] = $statisticsService->getRemainedData($date, 1);
+            $this->data['one_week_remained'] = $statisticsService->getRemainedData($date, 7);
+            $this->data['two_weeks_remained'] = $statisticsService->getRemainedData($date, 14);
+            $this->data['one_month_remained'] = $statisticsService->getRemainedData($date, 30);
+            $this->data['card_consumed_data'] = $statisticsService->getCardConsumedData($date);
+            $this->data['card_bought_data'] = $statisticsService->getCardBoughtData($date);
+            $this->data['card_consumed_sum'] = $statisticsService->getCardConsumedSum($date);
+            $this->data['card_bought_sum'] = $statisticsService->getCardBoughtSum($date);
+        } else {
+            //如果时间为历史时间，则从数据库中取数据
+            $statement = StatementDaily::whereDate('date', $date)->first();
+            if (empty($statement)) {
+                throw new CustomException("{$date}: 无此日期的数据");
+            }
+            $this->data = array_merge($this->data, $statement->toArray());
+        }
+
+        $this->addLog('查看报表数据总览');
+
+        return $this->data;
+    }
+
+    public function showRealTimeData(AdminRequest $request, StatisticsService $statisticsService)
+    {
+        //实时数据
+        $realTimeData = [
+            'total_players_amount' => $statisticsService->getTotalPlayersAmount(),
+            'online_players_amount' => $statisticsService->getOnlinePlayersAmount(),
+            'in_game_players_amount' => $statisticsService->getInGamePlayersAmount(),
+        ];
+        $this->addLog('查看实时报表数据');
+
+        return $realTimeData;
     }
 
     public function hourly(AdminRequest $request)
@@ -49,7 +123,7 @@ class StatementController extends Controller
         OperationLogs::add(Auth::id(), $request->path(), $request->method(),
             '查看每小时流水报表', $request->header('User-Agent'));
 
-        return $this->paginateData($result);
+        return $this->paginateData($result, $request->get('page', 1));
     }
 
     public function daily(AdminRequest $request)
@@ -61,7 +135,7 @@ class StatementController extends Controller
         OperationLogs::add(Auth::id(), $request->path(), $request->method(),
             '查看每日流水报表', $request->header('User-Agent'));
 
-        return $this->paginateData($result);
+        return $this->paginateData($result, $request->get('page', 1));
     }
 
     public function monthly(AdminRequest $request)
@@ -73,7 +147,7 @@ class StatementController extends Controller
         OperationLogs::add(Auth::id(), $request->path(), $request->method(),
             '查看每月流水报表', $request->header('User-Agent'));
 
-        return $this->paginateData($result);
+        return $this->paginateData($result, $request->get('page', 1));
     }
 
     protected function prepareData($dateFormat)
@@ -84,6 +158,7 @@ class StatementController extends Controller
 
         $mergedData = $this->mergeData($agentPurchasedData, $playerConsumedData);   //数据合并
         $sortedData = $this->sortData($mergedData);     //数据排序，以时间倒序
+
         return $this->fillData($sortedData);         //填充数据，将需要的key补满，数据补0
     }
 
@@ -123,11 +198,12 @@ class StatementController extends Controller
             ->filter(function ($value, $key) {
                 //过滤管理员自己给自己充值的。有可能用户被删除了，但是充值记录还在，此情况也得判断
                 if ($value->receiver_id && User::find($value->receiver_id)) {
-                    return (string) User::find($value->receiver_id)->group->id !== $this->adminGid;
+                    return (string)User::find($value->receiver_id)->group->id !== $this->adminGid;
                 }
+
                 return $value;
             })
-            ->groupBy(function($date) use ($dateFormat) {
+            ->groupBy(function ($date) use ($dateFormat) {
                 return Carbon::parse($date->created_at)->format($dateFormat);
             })
             ->map(function ($item, $key) use ($keyName) {
@@ -149,13 +225,15 @@ class StatementController extends Controller
             }
         });
 
-        $result =  array_merge($lastData, $firstDataCopy);
+        $result = array_merge($lastData, $firstDataCopy);
+
         return $result;
     }
 
     protected function sortData($data)
     {
         krsort($data);                  //按照时间倒序排序
+
         return array_values($data);     //返回索引数组
     }
 
@@ -175,14 +253,15 @@ class StatementController extends Controller
             array_walk($shouldFilledKeys, function ($shouldFilledKey) use (&$item) {
                 $item[$shouldFilledKey] = 0;
             });
+
             return $item;
         }, $data);
     }
 
     //准备分页数据
-    protected function paginateData($data)
+    protected function paginateData($data, $page)
     {
-        return Paginator::paginate($data);
+        return Paginator::paginate($data, $this->per_page, $page);
     }
 
     //每小时流水的图表数据

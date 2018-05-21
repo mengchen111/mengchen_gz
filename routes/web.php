@@ -133,6 +133,10 @@ Route::group([
     Route::post('platform/server/func-switch','Platform\FuncSwitchController@store');
     Route::put('platform/server/func-switch/{func}','Platform\FuncSwitchController@update')->where('func', '[0-9]+');
     Route::delete('platform/server/func-switch/{func}','Platform\FuncSwitchController@destroy')->where('func','[0-9]+');
+
+    // 统计
+    Route::get('statement/summary','StatementController@index');
+    Route::get('statement/real-time','StatementController@showRealTimeData');
 });
 
 //管理员视图路由
@@ -175,6 +179,9 @@ Route::group([
 
     //功能开关
     Route::get('gm/server/func-switch','ViewController@funcSwitch');
+
+    //数据总览
+    Route::get('statement/summary','ViewController@statementSummary');
 });
 
 //代理商接口

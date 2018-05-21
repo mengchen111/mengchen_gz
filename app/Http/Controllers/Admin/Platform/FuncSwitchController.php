@@ -109,7 +109,7 @@ class FuncSwitchController extends Controller
         $data = $this->buildData($request);
         $result = FuncSwitch::create($data);
         return [
-            'message' => '添加功能开关' . $result ? '成功' : '失败',
+            'message' => '添加功能开关' . ($result ? '成功' : '失败'),
         ];
     }
 

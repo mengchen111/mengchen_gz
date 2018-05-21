@@ -2,6 +2,7 @@
 
 namespace App\Console;
 
+use App\Console\Commands\GenerateDailyStatement;
 use Illuminate\Console\Scheduling\Schedule;
 use Illuminate\Foundation\Console\Kernel as ConsoleKernel;
 
@@ -13,7 +14,7 @@ class Kernel extends ConsoleKernel
      * @var array
      */
     protected $commands = [
-        //
+        GenerateDailyStatement::class
     ];
 
     /**
@@ -24,8 +25,12 @@ class Kernel extends ConsoleKernel
      */
     protected function schedule(Schedule $schedule)
     {
-        // $schedule->command('inspire')
-        //          ->hourly();
+        //生成每日数据报表
+        $schedule->command('admin:generate-daily-statement')
+            ->dailyAt('00:00')
+            ->withoutOverlapping()
+            ->evenInMaintenanceMode()
+            ->appendOutputTo(config('custom.cron_task_log'));
     }
 
     /**

@@ -15,4 +15,7 @@ return [
 
     //是否开启邮件通知(新的库存申请，通知管理员)
     'email_notification' => env('EMAIL_NOTIFICATION', false),
+
+    'cron_task_log' => storage_path('logs/' . env('CRON_TASK_LOG', 'artisan.log')),
+
 ];

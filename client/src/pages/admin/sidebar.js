@@ -7,6 +7,9 @@ new Vue({
       },
       statement: {
         isActive: false,
+        summary: {
+          isActive: false,
+        },
         hourly: {
           isActive: false,
         },

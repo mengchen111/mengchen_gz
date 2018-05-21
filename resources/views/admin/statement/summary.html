@@ -1,0 +1,341 @@
+<!DOCTYPE html>
+<html lang="en">
+<!--#include virtual="/ssi/header.html"-->
+
+<body class="hold-transition skin-blue sidebar-mini">
+<div class="wrapper">
+    <!-- Main Header -->
+    <!--#include virtual="/ssi/main-header.html"-->
+
+    <!-- Main sidebar -->
+    <!--#include virtual="/ssi/admin/sidebar.html"-->
+
+    <!-- Content Wrapper. Contains page content -->
+    <div class="content-wrapper">
+        <!-- Content Header (Page header) -->
+        <section class="content-header">
+            <!--#include virtual="/ssi/content-header-h1.html"-->
+
+            <ol class="breadcrumb">
+                <li><a href="#"><i class="fa fa-dashboard"></i>首页</a></li>
+                <li>数据报表</li>
+                <li class="active">数据总览</li>
+            </ol>
+        </section>
+
+        <!-- Main content -->
+        <section class="content" id="app">
+            <div class="box box-primary bg-grey">
+                <div class="box-header with-border">
+                    <h3 class="box-title">数据总览</h3>
+                </div>
+
+                <div class="box-body">
+                    <form role="form" method="GET" action="#" @submit.prevent="getStatementSummary">
+                        <div class="row">
+                            <div class="col-md-3">
+                                <div class="form-group">
+                                    <div class="input-group">
+                                        <span class="input-group-addon">选择区服</span>
+                                        <select class="form-control" disabled>
+                                            <option>惠州</option>
+                                        </select>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-3">
+                                <div class="form-group">
+                                    <div class="input-group">
+                                        <span class="input-group-addon">选择设备</span>
+                                        <select class="form-control" disabled>
+                                            <option>ios</option>
+                                        </select>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-3">
+                                <div class="from-group">
+                                    <div class="input-group">
+                                        <span class="input-group-addon">选择日期</span>
+                                        <my-date-picker required v-model="formData.date"
+                                                        placeholder="选择日期"
+                                                        :date-format="dateFormat">
+                                        </my-date-picker>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-3">
+                                <div class="row">
+                                    <div class="col-md-6">
+                                        <div class="from-group">
+                                            <button class="btn btn-block btn-primary btn-flat" type="submit">查询</button>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <div class="from-group">
+                                            <a class="btn btn-block btn-primary btn-flat"
+                                               :href="summaryExcelDataApi + '?date=' + formData.date">导出</a>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </form>
+
+                    <div class="row">
+                        <div class="col-xs-4">
+                            <div class="info-box">
+                                <span class="info-box-icon bg-aqua"><i class="fa fa-users"></i></span>
+                                <div class="info-box-content">
+                                    <span class="info-box-text">累计玩家</span>
+                                    <span class="info-box-number" v-cloak v-if="!loading">
+                                        {{ realTimeData.total_players_amount ? realTimeData.total_players_amount : 0 }}
+                                    </span>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-xs-4">
+                            <div class="info-box">
+                                <span class="info-box-icon bg-aqua"><i class="fa fa-line-chart"></i></span>
+                                <div class="info-box-content">
+                                    <span class="info-box-text">在线人数</span>
+                                    <span class="info-box-number" v-cloak v-if="!loading">
+                                        {{ realTimeData.online_players_amount ? realTimeData.online_players_amount : 0 }}
+                                    </span>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-xs-4">
+                            <div class="info-box">
+                                <span class="info-box-icon bg-aqua"><i class="fa fa-gamepad"></i></span>
+                                <div class="info-box-content">
+                                    <span class="info-box-text">游戏中</span>
+                                    <span class="info-box-number" v-cloak v-if="!loading">
+                                        {{ realTimeData.in_game_players_amount ? realTimeData.in_game_players_amount : 0 }}
+                                    </span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-xs-3">
+                            <div class="small-box white-small-box">
+                                <div class="inner">
+                                    <h5>平均在线</h5>
+                                    <h4 class="text-bold" v-cloak v-if="!loading">
+                                        {{ summaryData.average_online_players ? summaryData.average_online_players : 0 }}
+                                    </h4>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-xs-3">
+                            <div class="small-box white-small-box">
+                                <div class="inner">
+                                    <h5>日高峰</h5>
+                                    <h4 class="text-bold" v-cloak v-if="!loading">
+                                        {{ summaryData.peak_online_players ? summaryData.peak_online_players : 0 }}
+                                    </h4>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-xs-3">
+                            <div class="small-box white-small-box">
+                                <div class="inner">
+                                    <h5>活跃玩家</h5>
+                                    <h4 class="text-bold" v-cloak v-if="!loading">
+                                        {{ summaryData.active_players ? summaryData.active_players : 0 }}
+                                    </h4>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-xs-3">
+                            <div class="small-box white-small-box">
+                                <div class="inner">
+                                    <h5>新增玩家</h5>
+                                    <h4 class="text-bold" v-cloak v-if="!loading">
+                                        {{ summaryData.incremental_players ? summaryData.incremental_players : 0 }}
+                                    </h4>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="row">
+                        <div class="col-xs-3">
+                            <div class="small-box white-small-box">
+                                <div class="inner">
+                                    <h5>次日留存</h5>
+                                    <h4 class="text-bold" v-cloak v-if="!loading" v-html="
+                                        summaryData.one_day_remained
+                                        ? summaryData.one_day_remained.split('|')[2]
+                                            + '<small><b>%</b></small> ('
+                                            + summaryData.one_day_remained.split('|')[0] + '/' + summaryData.one_day_remained.split('|')[1]
+                                            +')'
+                                        : '0%' ">
+                                    </h4>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-xs-3">
+                            <div class="small-box white-small-box">
+                                <div class="inner">
+                                    <h5>7日留存</h5>
+                                    <h4 class="text-bold" v-cloak v-if="!loading" v-html="
+                                        summaryData.one_week_remained
+                                        ? summaryData.one_week_remained.split('|')[2]
+                                        + '<small><b>%</b></small> ('
+                                        + summaryData.one_week_remained.split('|')[0] + '/' + summaryData.one_week_remained.split('|')[1]
+                                        +')'
+                                        : '0%'
+                                        ">
+                                    </h4>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-xs-3">
+                            <div class="small-box white-small-box">
+                                <div class="inner">
+                                    <h5>14日留存</h5>
+                                    <h4 class="text-bold" v-cloak v-if="!loading" v-html="
+                                        summaryData.two_weeks_remained
+                                        ? summaryData.two_weeks_remained.split('|')[2]
+                                        + '<small><b>%</b></small> ('
+                                        + summaryData.two_weeks_remained.split('|')[0] + '/' + summaryData.two_weeks_remained.split('|')[1]
+                                        +')'
+                                        : '0%'
+                                        ">
+                                    </h4>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-xs-3">
+                            <div class="small-box white-small-box">
+                                <div class="inner">
+                                    <h5>30日留存</h5>
+                                    <h4 class="text-bold" v-cloak v-if="!loading" v-html="
+                                        summaryData.one_month_remained
+                                        ? summaryData.one_month_remained.split('|')[2]
+                                        + '<small><b>%</b></small> ('
+                                        + summaryData.one_month_remained.split('|')[0] + '/' + summaryData.one_month_remained.split('|')[1]
+                                        +')'
+                                        : '0%'
+                                        ">
+                                    </h4>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="row">
+                        <div class="col-xs-3">
+                            <div class="small-box white-small-box">
+                                <div class="inner">
+                                    <h5>日耗卡</h5>
+                                    <h4 class="text-bold" v-cloak v-if="!loading">
+                                        {{ summaryData.card_consumed_data
+                                        ? summaryData.card_consumed_data.split('|')[0]
+                                        : 0 }}
+                                    </h4>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-xs-3">
+                            <div class="small-box white-small-box">
+                                <div class="inner">
+                                    <h5>平均耗卡</h5>
+                                    <h4 class="text-bold" v-cloak v-if="!loading">
+                                        {{ summaryData.card_consumed_data
+                                        ? summaryData.card_consumed_data.split('|')[2]
+                                        : 0 }}
+                                    </h4>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-xs-3">
+                            <div class="small-box white-small-box">
+                                <div class="inner">
+                                    <h5>日购卡</h5>
+                                    <h4 class="text-bold" v-cloak v-if="!loading">
+                                        {{ summaryData.card_bought_data
+                                        ? summaryData.card_bought_data.split('|')[0]
+                                        : 0 }}
+                                    </h4>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-xs-3">
+                            <div class="small-box white-small-box">
+                                <div class="inner">
+                                    <h5>平均购卡</h5>
+                                    <h4 class="text-bold" v-cloak v-if="!loading">
+                                        {{ summaryData.card_bought_data
+                                        ? summaryData.card_bought_data.split('|')[2]
+                                        : 0 }}
+                                    </h4>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="row">
+                        <div class="col-xs-3">
+                            <div class="small-box white-small-box">
+                                <div class="inner">
+                                    <h5>购卡总数</h5>
+                                    <h4 class="text-bold" v-cloak v-if="!loading">
+                                        {{ summaryData.card_bought_sum ? summaryData.card_bought_sum : 0 }}
+                                    </h4>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-xs-3">
+                            <div class="small-box white-small-box">
+                                <div class="inner">
+                                    <h5>耗卡总数</h5>
+                                    <h4 class="text-bold" v-cloak v-if="!loading">
+                                        {{ summaryData.card_consumed_sum ? summaryData.card_consumed_sum : 0 }}
+                                    </h4>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-xs-3">
+                            <div class="small-box white-small-box">
+                                <div class="inner">
+                                    <h5>当月购卡累计人数</h5>
+                                    <h4 class="text-bold" v-cloak v-if="!loading">
+                                        {{ summaryData.monthly_card_bought_players ? summaryData.monthly_card_bought_players : 0 }}
+                                    </h4>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-xs-3">
+                            <div class="small-box white-small-box">
+                                <div class="inner">
+                                    <h5>当月购卡总数</h5>
+                                    <h4 class="text-bold" v-cloak v-if="!loading">
+                                        {{ summaryData.monthly_card_bought_sum ? summaryData.monthly_card_bought_sum : 0 }}
+                                    </h4>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+
+            <my-toastr ref="toastr"></my-toastr>
+        </section>
+        <!-- /.content -->
+
+    </div>
+    <!-- /.content-wrapper -->
+
+    <!-- Main Footer -->
+    <!--#include virtual="/ssi/main-footer.html"-->
+
+</div>
+<!-- ./wrapper -->
+
+<script src="/dist/webpack/admin/statement/summary.js"></script>
+</body>
+</html>

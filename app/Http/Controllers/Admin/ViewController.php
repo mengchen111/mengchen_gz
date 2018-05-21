@@ -132,4 +132,9 @@ class ViewController extends Controller
     {
         return view('admin.gm.server.func-switch');
     }
+
+    public function statementSummary(Request $request)
+    {
+        return view('admin.statement.summary');
+    }
 }
