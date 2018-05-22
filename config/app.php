@@ -190,6 +190,7 @@ return [
          * 自定义 Service Provider
          */
         App\Providers\DynamicGameDbServiceProvider::class,
+        Maatwebsite\Excel\ExcelServiceProvider::class,
     ],
 
     /*
@@ -241,6 +242,7 @@ return [
         'EasyWeChat' => Overtrue\LaravelWechat\Facade::class,
         'QrCode' => SimpleSoftwareIO\QrCode\Facades\QrCode::class,
         'Sentry' => Sentry\SentryLaravel\SentryFacade::class,
+        'Excel' => Maatwebsite\Excel\Facades\Excel::class,
     ],
 
 ];

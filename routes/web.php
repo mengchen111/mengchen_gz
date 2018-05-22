@@ -137,6 +137,7 @@ Route::group([
     // 统计
     Route::get('statement/summary','StatementController@index');
     Route::get('statement/real-time','StatementController@showRealTimeData');
+    Route::get('statement/summary/excel','StatementController@exportData2Excel');
 });
 
 //管理员视图路由

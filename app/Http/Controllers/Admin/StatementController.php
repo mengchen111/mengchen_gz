@@ -23,6 +23,7 @@ use Illuminate\Http\Request;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Auth;
+use Excel;
 
 class StatementController extends Controller
 {
@@ -61,13 +62,19 @@ class StatementController extends Controller
         $this->page = $request->page ?: $this->page;
     }
 
-    public function index(AdminRequest $request, StatisticsService $statisticsService)
+    /**
+     * 数据总览
+     * @param AdminRequest $request
+     * @return array
+     * @throws CustomException
+     */
+    public function index(AdminRequest $request)
     {
         $this->validate($request, [
             'date' => 'required|date_format:Y-m-d',
         ]);
         $date = $request->input('date');
-
+        $statisticsService = app(StatisticsService::class);
         //月数据
         list($playersCount, $boughtSum) = $statisticsService->getMonthlyCardBought($date);
         $this->data['monthly_card_bought_players'] = $playersCount;
@@ -101,8 +108,14 @@ class StatementController extends Controller
         return $this->data;
     }
 
-    public function showRealTimeData(AdminRequest $request, StatisticsService $statisticsService)
+    /**
+     * 实时数据
+     * @param AdminRequest $request
+     * @return array
+     */
+    public function showRealTimeData(AdminRequest $request)
     {
+        $statisticsService = app(StatisticsService::class);
         //实时数据
         $realTimeData = [
             'total_players_amount' => $statisticsService->getTotalPlayersAmount(),
@@ -112,6 +125,70 @@ class StatementController extends Controller
         $this->addLog('查看实时报表数据');
 
         return $realTimeData;
+    }
+
+    /**
+     * 导出
+     * @param AdminRequest $request
+     */
+    public function exportData2Excel(AdminRequest $request)
+    {
+        $this->validate($request, [
+            'date' => 'required|date_format:Y-m-d',
+        ]);
+        $realTimeData = $this->showRealTimeData($request);
+        $summaryData = $this->index($request);
+
+        $this->addLog('导出实时报表数据');
+
+        $filename = '数据总览_' . $request->input('date');
+        $data = $this->buildExcelData($realTimeData, $summaryData);
+
+        Excel::create($filename, function ($excel) use ($data) {
+            $excel->sheet('数据总览', function ($sheet) use ($data) {
+                foreach ($data as $k => $v) {
+                    $sheet->appendRow([$k, $v]);
+                }
+            });
+        })->export('xls');
+    }
+
+    protected function buildExcelData($realTimeData, $summaryData)
+    {
+        $data = [];
+        $data['累计玩家'] = $realTimeData['total_players_amount'];
+        $data['在线人数'] = $realTimeData['online_players_amount'];
+        $data['游戏中人数'] = $realTimeData['in_game_players_amount'];
+
+        $data['平均在线'] = $summaryData['average_online_players'];
+        $data['日高峰'] = $summaryData['peak_online_players'];
+        //$data['游戏中最高玩家数'] = $summaryData['peak_in_game_players'];
+        $data['活跃玩家'] = $summaryData['active_players'];
+        $data['新增玩家'] = $summaryData['incremental_players'];
+
+        $oneDayRemainData = explode('|', $summaryData['one_day_remained']);
+        $data['次日留存'] = $oneDayRemainData[2] . '% (' . $oneDayRemainData[0] . '/' . $oneDayRemainData[1] . ')';
+        $oneWeekRemainData = explode('|', $summaryData['one_week_remained']);
+        $data['7日留存'] = $oneWeekRemainData[2] . '% (' . $oneWeekRemainData[0] . '/' . $oneWeekRemainData[1] . ')';
+        $twoWeeksRemainData = explode('|', $summaryData['two_weeks_remained']);
+        $data['14日留存'] = $twoWeeksRemainData[2] . '% (' . $twoWeeksRemainData[0] . '/' . $twoWeeksRemainData[1] . ')';
+        $oneMonthRemainData = explode('|', $summaryData['one_month_remained']);
+        $data['30日留存'] = $oneMonthRemainData[2] . '% (' . $oneMonthRemainData[0] . '/' . $oneMonthRemainData[1] . ')';
+
+        $cardConsumedData = explode('|', $summaryData['card_consumed_data']);
+        $data['日耗卡'] = $cardConsumedData[0];
+        $data['平均耗卡'] = $cardConsumedData[2];
+
+        $cardBoughtData = explode('|', $summaryData['card_bought_data']);
+        $data['日购卡'] = $cardBoughtData[0];
+        $data['平均购卡'] = $cardBoughtData[2];
+
+        $data['购卡总数'] = $summaryData['card_bought_sum'];
+        $data['耗卡总数'] = $summaryData['card_consumed_sum'];
+        $data['当月购卡累计人数'] = $summaryData['monthly_card_bought_players'];
+        $data['当月购卡总数'] = $summaryData['monthly_card_bought_sum'];
+
+        return $data;
     }
 
     public function hourly(AdminRequest $request)
