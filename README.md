@@ -159,6 +159,7 @@ cd $codeDir
 | platform/server/func-switch/{id} | DELETE | 删除功能开关 |
 | statement/summary | GET | 数据报表-数据总览 |
 | statement/real-time | GET | 数据总览-实时 |
+| statement/summary/excel | GET | 数据总览-导出 |
 
 ### 代理商接口
 > **前缀/agent/api/**  

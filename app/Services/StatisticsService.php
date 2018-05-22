@@ -237,6 +237,7 @@ class StatisticsService
         $loginNewPlayer = RoleLogin::query()
             ->whereIn('rid', $newPlayer->pluck('rid'))
             ->whereBetween('login_time', $between)
+            ->groupBy('rid')
             ->count();
 
         $remainedRate = sprintf('%.2f', $loginNewPlayer / $countNewPlayer * 100);
