@@ -233,12 +233,13 @@ class StatisticsService
             return "0|0|0.00";
         }
 
-        // 新增用户中登录用户数
+        // 新增用户中登录用户数 登录了2次以上，因为添加用户时候默认会添加1条数据
         $loginNewPlayer = RoleLogin::query()
             ->select('rid')
             ->whereIn('rid', $newPlayer->pluck('rid'))
             ->whereBetween('login_time', $between)
             ->groupBy('rid')
+            ->having(DB::raw('count(rid)'), '>=', 2)
             ->get()
             ->count();
 
