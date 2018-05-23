@@ -235,9 +235,11 @@ class StatisticsService
 
         // 新增用户中登录用户数
         $loginNewPlayer = RoleLogin::query()
+            ->select('rid')
             ->whereIn('rid', $newPlayer->pluck('rid'))
             ->whereBetween('login_time', $between)
             ->groupBy('rid')
+            ->get()
             ->count();
 
         $remainedRate = sprintf('%.2f', $loginNewPlayer / $countNewPlayer * 100);
